@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "__error": "Not found",
+    "package-lock.json": true,
+	"desktop.ini": true,
+    ".vscode": true,
+  }
+}

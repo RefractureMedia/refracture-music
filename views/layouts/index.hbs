@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    {{> partials/head }}
+</head>
+
+<body>
+    <header class="titlebar">
+        <div class="sidebar_bit"></div>
+        {{> partials/window_controls }}
+    </header>
+
+    <main class='main'>
+        {{> partials/sidebar}}
+        {{> (lookup . 'page') }}
+    </main>
+    <footer class="now_playing">
+        <div class="sidebar_bit">
+            <div class="version">Version {{ version }}</div>
+        </div>
+        {{> partials/now_playing }}
+    </footer>
+    {{> partials/loading }}
+</body>
+
+</html>

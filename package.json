@@ -1,0 +1,41 @@
+{
+  "name": "sparkframe",
+  "version": "1.0.0",
+  "description": "Desktop Electron App",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^4.0.0",
+    "electron-titlebar": "0.0.3",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.12",
+    "node-run-cmd": "^1.0.1",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  },
+  "scripts": {
+    "test": "test",
+    "start_express": "node ./",
+    "start": "npm start_express && cd app && electron ./",
+    "dev": "nodemon npm start_express && cd app && electron ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MulverineX/SparkFrame.git"
+  },
+  "keywords": [
+    "electron",
+    "web-based",
+    "stopmotion",
+    "stop",
+    "motion"
+  ],
+  "author": "MulverineX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MulverineX/SparkFrame/issues"
+  },
+  "homepage": "https://github.com/MulverineX/SparkFrame#readme"
+}
