@@ -6,21 +6,28 @@
 
 <body>
     <header class="titlebar">
-        <div class="sidebar_bit"></div>
+        <div class="sidebar sidebar-top"></div>
         {{> partials/window_controls }}
     </header>
-
-    <main class='main'>
-        {{> partials/sidebar}}
-        {{> (lookup . 'page') }}
-    </main>
-    <footer class="now_playing">
-        <div class="sidebar_bit">
-            <div class="version">Version {{ version }}</div>
+    <div class="whole">
+        <div class='content clear'>
+            <div class="sidebar">{{> partials/sidebar}}</div>
+            <div class="wrap">
+                <a class="sidebar_toggle" onclick="sidebar_toggle();">≡</a>
+                {{> (lookup . 'page') }}
+            </div>
         </div>
-        {{> partials/now_playing }}
-    </footer>
-    {{> partials/loading }}
+        <footer class="clear">
+            <div class="sidebar sidebar-bottom">
+                <div class="version sidebar_content">
+                    <p><a href="library">⟳</a></p>
+                    <p>Version {{ version }}</p>
+                </div>
+            </div>
+            <div class="now_playing">{{> partials/now_playing }}</div>
+        </footer>
+    </div>
+    <!-- {{> partials/loading }} -->
 </body>
 
 </html>

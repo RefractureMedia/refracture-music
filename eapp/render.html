@@ -5,11 +5,38 @@
         body {
             width: 100vw;
             height: 100vh;
+            margin: 0 0 0 0 !important;
+            disable_-webkit-app-region: no-drag;
+            background: #191F28;
+        }
+
+        ::-webkit-scrollbar {
+            display: none !important
+        }
+
+        ::-webkit-scrollbar-track {
+            display: none !important
+        }
+
+        ::-webkit-scrollbar-track:hover {
+            display: none !important
+        }
+
+        ::-webkit-scrollbar-thumb {
+            display: none !important
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            display: none !important
+        }
+
+        ::-webkit-scrollbar-corner {
+            display: none !important
         }
     </style>
 </head>
 
-<body style="margin: 0 0 0 0 !important;">
+<body>
     <script>
         const remote = require('electron').remote;
         function win_minimize() {
@@ -18,8 +45,9 @@
         function win_maximize() {
             remote.BrowserWindow.getFocusedWindow().isMaximized() ? remote.BrowserWindow.getFocusedWindow().unmaximize() : remote.BrowserWindow.getFocusedWindow().maximize();
         }
+        remote.BrowserWindow.getFocusedWindow().setSize(window.innerWidth, window.innerHeight + 1);
     </script>
-    <iframe id="content" width="100%" height="100%" src="http://localhost:21122/home" frameborder="0"></iframe>
+    <iframe id="content" width="100%" height="100%" src="http://localhost:21122/library" frameborder="0"></iframe>
 </body>
 
 </html>

@@ -9,9 +9,10 @@
     </div>
 </div>
 <script>
+
     const load = () => {
         document.getElementsByClassName('loader')[0].className = "loader loaded"
-        let elem = document.getElementsByClassName('main')[0].style;
+        let elem = document.getElementsByClassName('whole')[0].style;
         elem.visibility = 'visible';
         elem.display = 'block';
         document.getElementsByClassName('preloader')[0].innerHTML = '';
@@ -20,4 +21,6 @@
         elem.display = 'none';
     }
     window.onload = load;
+
+
 </script>

@@ -1,9 +1,10 @@
 {
-  "name": "sparkframe",
+  "name": "Refracture Music",
   "version": "1.0.0",
   "description": "Desktop Electron App",
   "main": "main.js",
   "dependencies": {
+    "@types/typescript": "^2.0.0",
     "electron": "^4.0.0",
     "electron-titlebar": "0.0.3",
     "express": "^4.16.4",
@@ -17,25 +18,21 @@
   },
   "scripts": {
     "test": "test",
-    "start_express": "node ./",
-    "start": "npm start_express && cd app && electron ./",
-    "dev": "nodemon npm start_express && cd app && electron ./"
+    "start": "electron ./",
+    "dev": "tsc && electron ./"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MulverineX/SparkFrame.git"
+    "url": "git+https://github.com/refracturemedia/refracture-music.git"
   },
   "keywords": [
     "electron",
-    "web-based",
-    "stopmotion",
-    "stop",
-    "motion"
+    "web-based"
   ],
   "author": "MulverineX",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MulverineX/SparkFrame/issues"
+    "url": "https://github.com/refracturemedia/refracture-music/issues"
   },
-  "homepage": "https://github.com/MulverineX/SparkFrame#readme"
+  "homepage": "https://github.com/refracturemedia/refracture-music#readme"
 }

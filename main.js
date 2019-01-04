@@ -30,12 +30,13 @@ function createWindow() {
   const win_settings = {
     minHeight: 400,
     minWidth: 600,
-    width: 800,
+    width: 1200,
     height: 600,
     frame: false,
+    useContentSize: true,
     //icon: path.join(app.getexpressPath(), "download.png"),
     autoHideMenuBar: true,
-    backgroundColor: '#000',
+    backgroundColor: '#191F28',
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,

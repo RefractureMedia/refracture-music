@@ -5,7 +5,8 @@
         "sourceMap": true,
         "outDir": "./public/assets/scripts",
         "lib": [
-            "es2018"
+            "es2018",
+            "dom"
         ]
     }
 }

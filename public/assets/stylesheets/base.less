@@ -1,15 +1,128 @@
 @import "theme";
 
+@sidebar-width: 20%;
+@now_playing-height: 6rem;
+
+::-webkit-scrollbar {
+    width: .4rem;
+    height: .6rem;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border: none;
+    &:hover {
+        background: rgba(255,255,255,.1);
+        border-radius: .3rem;
+        transition: 500ms;
+    }
+}
+
+::-webkit-scrollbar-thumb {
+    background: @accent-primary; 
+    border-radius: .3rem;
+    &:hover {
+        background: @accent-secondary;
+        transition: 700ms;
+    }
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 body {
     font-family: Roboto;
     margin: 0;
+    overflow: hidden;
+    background: @background-primary;
 }
-
-main {
-    margin-top: 1.8rem;
+.whole {
+    height:100%;
+    margin-top: -.1rem; // stop and look what i did i took the width of the control element (for the win and subtracted it)
+    background: @background-primary;
+}
+.content {
+    display: flex;
+    height: 90%;
 }
 
 #hide {
     display: none;
     visibility: hidden;
+}
+
+.sidebar {
+    @top-bottom-height: 2rem;
+    width: 0px;
+    background: @background-secondary;
+
+    &-top {
+        height: 2rem;
+        width: 0px;
+    }
+    
+    &-bottom {
+        display: inline-block;
+        height: @now_playing-height;
+    }
+}
+
+footer {
+    width: 100%;
+    display:flex;
+    background: @background-thirdindary;
+    height: @now_playing-height;
+}
+
+.now_playing {
+    height: 100%;
+    width: 100%;
+    color: red;
+    display: inline-block;
+}
+
+.version {
+    height: 100%;
+    text-align: center;
+}
+
+.wrap  {
+    width: 100%;
+    background: transparent;
+    min-height: calc(100%-(1.8rem+20%));
+    float: right;
+    overflow:scroll;
+}
+
+.clear:after {
+    clear: both;
+    display: table;
+    content: "";
+}
+
+.sidebar_toggle {
+    cursor: pointer;
+    margin-left: .5rem;
+    font-size: 3rem;
+}
+
+.sidebar_title {
+    float: left;
+}
+
+a.sidebar_toggle_x {
+    cursor: pointer;
+    margin-left: .5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding-right: .8rem;
+}
+div.sidebar_toggle_x {
+    margin-top: -10rem;
+    float: right;
+}
+
+.sidebar_content {
+    display: none;
 }
