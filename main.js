@@ -7,6 +7,7 @@ const express_app = express();
 const electron = require('electron');
 const { app } = require('electron')
 const { BrowserWindow } = require('electron');
+const { Tray } = require('electron');
 
 
 function exhbs_init() {
@@ -26,15 +27,15 @@ function exhbs_init() {
 }
 
 function createWindow() {
-  //const tray = new Tray("download.png");
+  const tray = new Tray("logo.png");
   const win_settings = {
     minHeight: 400,
-    minWidth: 600,
-    width: 1200,
+    minWidth: 840,
+    width: 840,
     height: 600,
     frame: false,
     useContentSize: true,
-    //icon: path.join(app.getexpressPath(), "download.png"),
+    icon: "./logo.png",
     autoHideMenuBar: true,
     backgroundColor: '#191F28',
     webPreferences: {
@@ -48,7 +49,6 @@ function createWindow() {
   win.on('closed', function () {
     win = null
   })
-  win.webContents.openDevTools()
   function message_handler(event, message) {
     switch (message.action) {
     }

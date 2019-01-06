@@ -37,14 +37,24 @@ body {
     overflow: hidden;
     background: @background-primary;
 }
+
+a {
+    color: @accent-primary;
+    text-decoration: none;
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
 .whole {
-    height:100%;
+    height: 100%;
     margin-top: -.1rem; // stop and look what i did i took the width of the control element (for the win and subtracted it)
     background: @background-primary;
 }
 .content {
     display: flex;
-    height: 90%;
+    height: 85%;
 }
 
 #hide {
@@ -78,7 +88,6 @@ footer {
 .now_playing {
     height: 100%;
     width: 100%;
-    color: red;
     display: inline-block;
 }
 
@@ -105,10 +114,19 @@ footer {
     cursor: pointer;
     margin-left: .5rem;
     font-size: 3rem;
+    text-decoration: none !important;
+}
+
+.sidebar_top {
+    display: flex;
 }
 
 .sidebar_title {
     float: left;
+    & > img {
+        min-width: 100px;
+        width: 100%;
+    }
 }
 
 a.sidebar_toggle_x {
@@ -125,4 +143,55 @@ div.sidebar_toggle_x {
 
 .sidebar_content {
     display: none;
+}
+
+.media-buttons {
+    display: inline-flex;
+}
+
+.media-controls {
+    cursor: pointer;
+    color: @accent-secondary;
+    height: 2.8rem;
+    width: 2.8rem;
+    margin: .5rem;
+    &:hover {
+            color: @accent-primary;
+    }
+    & > div {
+        & > svg {
+            height: 2.8rem;
+            width: 2.8rem;
+        }
+        &.pause {
+            display: none;
+        }
+        &.saved {
+            display: none;
+        }
+    }
+    &.back > div > svg {
+        transform: rotate(180deg);
+    }
+}
+
+.trackbar {
+    display: inline-flex;
+    & > .bar {
+    height: 1rem;
+    width: 40rem;
+    background: @accent-secondary;
+        & > span {
+            &.progress {
+                width: calc(50%-(50%*(30/166)));
+                height: -webkit-fill-available;
+                background: @accent-primary;
+            }
+            &.left {
+                width: calc(50%-(50%*(166-30)/166));
+                height: -webkit-fill-available;
+                background: transparent;
+            }
+        }
+    }
 }

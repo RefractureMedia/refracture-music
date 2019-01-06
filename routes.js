@@ -5,7 +5,7 @@ module.exports = function (express_app) {
         console.log(req.params.path)
         req.params.page = 'layouts/' + req.params.path;
         req.params.style = '/assets/stylesheets/layouts/' + req.params.path + '.less';
-        req.params.script = '/assets/js/' + req.params.path + '.js';
+        req.params.script = '/assets/scripts/' + req.params.path + '.js';
         res.render('index', req.params);
     })
     express_app.get('/', (req, res) => res.redirect('/home'))
