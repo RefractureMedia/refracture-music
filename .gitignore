@@ -1,4 +1,4 @@
 node_modules
 package-lock.json
 desktop.ini
-src/assets/scripts
+public/assets/scripts
