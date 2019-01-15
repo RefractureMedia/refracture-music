@@ -53,7 +53,7 @@ a {
 
 .content {
     display: flex;
-    height: 85%;
+    height: 80vh;
 }
 
 #hide {
@@ -79,7 +79,7 @@ footer {
     width: 100%;
     display: flex;
     background: @background-thirdindary;
-    height: @now_playing-height;
+    height: 20vh;
 }
 
 .now_playing {
@@ -176,47 +176,31 @@ div.sidebar_toggle_x {
 .trackbar {
     display: inline-flex;
     &>.bar {
+        overflow: hidden;
+        width: 80vw;
         height: 1rem;
-        width: 40rem;
-        background: @accent-secondary;
-        &>span {
-            &.progress {
-                width: calc(50%-(50%*(30/166)));
-                height: -webkit-fill-available;
-                background: @accent-primary;
-            }
-            &.left {
-                width: calc(50%-(50%*(166-30)/166));
-                height: -webkit-fill-available;
-                background: transparent;
-            }
+        -webkit-appearance: none;
+        background-color: @accent-secondary;
+        &:focus {
+            outline: 0 none !important;
+        }
+        cursor: pointer;
+        &::-webkit-slider-runnable-track {
+            height: 1rem;
+            -webkit-appearance: none;
+            color: #13bba4;
+            margin-top: -1px;
+        }
+        &::-webkit-slider-thumb {
+            margin-top: -.07rem;
+            padding: 0 0 0 0;
+            width: 1rem;
+            -webkit-appearance: none;
+            height: 1rem;
+            border-radius: .35rem;
+            cursor: pointer;
+            background: @background-primary;
+            box-shadow: -101vw 0 0 100vw @accent-primary;
         }
     }
-}
-
-input[type='range'] {
-    overflow: hidden;
-    width: 80px;
-    -webkit-appearance: none;
-    background-color: #9a905d;
-    &:focus {
-        outline: 0 none !important;
-    }
-    cursor: pointer;
-}
-
-input[type='range']::-webkit-slider-runnable-track {
-    height: 10px;
-    -webkit-appearance: none;
-    color: #13bba4;
-    margin-top: -1px;
-}
-
-input[type='range']::-webkit-slider-thumb {
-    width: 10px;
-    -webkit-appearance: none;
-    height: 10px;
-    cursor: pointer;
-    background: #434343;
-    box-shadow: -100vw 0 0 100vw @accent-primary;
 }
