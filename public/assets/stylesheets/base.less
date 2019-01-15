@@ -71,7 +71,7 @@ a {
     }
     &-bottom {
         display: inline-block;
-        height: @now_playing-height;
+        height: 20vh;
     }
 }
 
@@ -85,7 +85,16 @@ footer {
 .now_playing {
     height: 100%;
     width: 100%;
-    display: inline-block;
+    display: inline-flex;
+    &>.album-art {
+        &>img {
+            padding: .5rem;
+        }
+    }
+    &>center {
+        margin-top: .9vh;
+        height: 100%;
+    }
 }
 
 .version {
@@ -175,9 +184,9 @@ div.sidebar_toggle_x {
 
 .trackbar {
     display: inline-flex;
-    &>.bar {
+    &>div>.bar {
         overflow: hidden;
-        width: 80vw;
+        width: 78vw;
         height: 1rem;
         -webkit-appearance: none;
         background-color: @accent-secondary;
