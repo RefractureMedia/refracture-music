@@ -13,19 +13,25 @@ function addStyleString(str) {
 document.onkeydown = function (e) {
     if (e.ctrlKey && e.which == 82) {
         location.reload();
-    } else if(e.ctrlKey && e.shiftKey && e.which == 73) {
+    } else if (e.ctrlKey && e.shiftKey && e.which == 73) {
         window.parent.inspect(); // ignore error, initiates inspect on window correctly
     }
 };
 
-function resize_album() {
-    let size = document.getElementById('album-art').clientHeight * 1.67;
-    console.log(size);
-    console.log('test');
-    addStyleString('.now_playing>.album-art { width: ' + size + 'px !important; }')
+function cm() {
+    addStyleString('.now_playing>center { margin-left: -' + document.getElementsByClassName('song-info')[0].clientWidth + 'px }')
+}
+function center_margin() {
+    console.log('foo')
+    window.setTimeout(cm, 2);
 }
 window.top.onresize = () => {
-    addStyleString('.now_playing>.album-art { width: ' + document.getElementById('album-art').clientWidth + ' !important; }')
+    cm();
+}
+
+function update_trackbar() {
+    let bar_value = document.getElementById('bar').value;
+    addStyleString('background-image: -webkit-gradient(linear, left top, right top, color-stop(' + bar_value + ', #2f466b), color-stop(' + bar_value + ', #d3d3db))');
 }
 
 
