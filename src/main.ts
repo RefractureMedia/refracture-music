@@ -18,6 +18,20 @@ document.onkeydown = function (e) {
     }
 };
 
+function resize_album() {
+    let size = document.getElementById('album-art').clientHeight * 1.67;
+    console.log(size);
+    console.log('test');
+    addStyleString('.now_playing>.album-art { width: ' + size + 'px !important; }')
+}
+window.top.onresize = () => {
+    addStyleString('.now_playing>.album-art { width: ' + document.getElementById('album-art').clientWidth + ' !important; }')
+}
+
+
+
+
+
 function sidebar_toggle() {
     if (sidebar_open) {
         addStyleString('.sidebar_content { display: none; transition: display 0.2s;} .sidebar { width: 0px !important; transition: width 0.2s;} .sidebar-top { width: 0px !important; transition: width 0.2s;} .sidebar-bottom { width: 0px !important; transition: width 0.2s;} .sidebar_toggle { margin-left: .5rem !important; transition: margin-left 0.2s;} div.sidebar_toggle_x { margin-top: -10rem !important; transition: margin-top 0.2s;} .bar { width: 78vw !important; transition: width 0.2s;}')
