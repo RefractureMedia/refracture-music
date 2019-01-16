@@ -1,6 +1,5 @@
 @import "theme";
 @sidebar-width: 20%;
-@now_playing-height: 6rem;
 ::-webkit-scrollbar {
     width: .4rem;
     height: .6rem;
@@ -45,6 +44,11 @@ a {
     }
 }
 
+p {
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
 .whole {
     height: 100%;
     margin-top: -.1rem; // stop and look what i did i took the width of the control element (for the win and subtracted it)
@@ -72,32 +76,6 @@ a {
     &-bottom {
         display: inline-block;
         height: 20vh;
-    }
-}
-
-footer {
-    width: 100%;
-    display: flex;
-    background: @background-thirdindary;
-    height: 20vh;
-}
-
-.now_playing {
-    height: 100%;
-    width: 100%;
-    display: inline-flex;
-    &>.album-art {
-        height: 12.5vh;
-        padding: .5rem;
-        &>img {
-            height: 12.5vh;
-            padding: none !important;
-            object-fit: contain;
-        }
-    }
-    &>center {
-        margin-top: .9vh;
-        height: 100%;
     }
 }
 
@@ -156,8 +134,49 @@ div.sidebar_toggle_x {
     display: none;
 }
 
+footer {
+    width: 100%;
+    display: flex;
+    background: @background-thirdindary;
+    height: 20vh;
+}
+
+.now_playing {
+    height: 100%;
+    width: 100%;
+    display: inline-flex;
+    &>.album-art {
+        height: 12.5vh;
+        &>img {
+            height: 12.5vh;
+            padding: none !important;
+            margin: 1.5vh;
+            object-fit: contain;
+        }
+    }
+    &>.song-info {
+        margin-top: 1.5vh;
+        &>p {
+            overflow: hidden;
+            white-space: nowrap;
+            &.song {
+                font-size: 1.5rem;
+            }
+            &.artist {
+                font-size: 1.2rem;
+            }
+        }
+    }
+    &>center {
+        margin-top: .9vh;
+        height: 100%;
+    }
+}
+
 .media-buttons {
     display: inline-flex;
+    margin-top: -.8vh;
+    margin-bottom: .8vh;
 }
 
 .media-controls {
