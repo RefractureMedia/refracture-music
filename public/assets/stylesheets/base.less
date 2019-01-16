@@ -205,12 +205,13 @@ footer {
     }
 }
 
+@trackbar-height: .63rem;
 .trackbar {
     display: inline-flex;
     &>div>.bar {
         overflow: hidden;
         width: 78vw;
-        height: 1rem;
+        height: @trackbar-height;
         -webkit-appearance: none;
         background-color: @accent-secondary;
         &:focus {
@@ -218,7 +219,7 @@ footer {
         }
         cursor: pointer;
         &::-webkit-slider-runnable-track {
-            height: 1rem;
+            height: @trackbar-height;
             -webkit-appearance: none;
             color: @accent-primary;
             margin-top: -1px;
@@ -241,8 +242,8 @@ footer {
                 transition: width 0.5s;
                 transition: background 0.5s;
                 transition: box-shadow 0.5s;
-                width: 1rem;
-                height: 1rem;
+                width: @trackbar-height;
+                height: @trackbar-height;
                 background: @background-primary;
             }
         }

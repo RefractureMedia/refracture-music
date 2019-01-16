@@ -3,7 +3,6 @@ let playing: boolean = false;
 let repeating: boolean = false;
 let shuffling: boolean = false;
 let saved: boolean = false;
-
 function addStyleString(str) {
     var node = document.createElement('style');
     node.innerHTML = str;
@@ -14,6 +13,7 @@ document.onkeydown = function (e) {
     if (e.ctrlKey && e.which == 82) {
         location.reload();
     } else if (e.ctrlKey && e.shiftKey && e.which == 73) {
+        //@ts-ignore
         window.parent.inspect(); // ignore error, initiates inspect on window correctly
     }
 };
@@ -21,15 +21,22 @@ document.onkeydown = function (e) {
 function cm() {
     addStyleString('.now_playing>center { margin-left: -' + document.getElementsByClassName('song-info')[0].clientWidth + 'px }')
 }
-function center_margin() {
-    console.log('foo')
-    window.setTimeout(cm, 2);
-}
+
+
 window.top.onresize = () => {
-    cm();
+    cm(); //test
 }
 
+function init() {
+    cm();
+    console.log("JESYS")
+}
+
+window.onload = () => {
+    setTimeout(init, 1);
+}
 function update_trackbar() {
+    //@ts-ignore
     let bar_value = document.getElementById('bar').value;
     addStyleString('background-image: -webkit-gradient(linear, left top, right top, color-stop(' + bar_value + ', #2f466b), color-stop(' + bar_value + ', #d3d3db))');
 }
