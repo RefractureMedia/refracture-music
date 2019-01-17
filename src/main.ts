@@ -3,6 +3,7 @@ let playing: boolean = true;
 let repeating: boolean = false;
 let shuffling: boolean = false;
 let saved: boolean = false;
+let time_set: boolean = false;
 
 
 function addStyleString(str) {
@@ -14,6 +15,7 @@ function addStyleString(str) {
 document.onkeydown = function (e) {
     if (e.ctrlKey && e.which == 82) {
         location.reload();
+        setTimeout(cm, 100);
     } else if (e.ctrlKey && e.shiftKey && e.which == 73) {
         //@ts-ignore
         window.parent.inspect(); // ignore error, initiates inspect on window correctly
@@ -22,6 +24,7 @@ document.onkeydown = function (e) {
 
 function cm() {
     addStyleString('.now_playing>center { margin-left: -' + document.getElementsByClassName('song-info')[0].clientWidth + 'px }')
+    console.log('cm')
 }
 
 window.top.onresize = () => {
@@ -35,6 +38,7 @@ function ms() {
 function init() {
     cm();
     ms();
+    console.log('init')
 }
 
 window.onload = () => {
@@ -42,9 +46,74 @@ window.onload = () => {
 }
 
 function update_trackbar() {
+    let audioelement = <HTMLAudioElement>document.getElementById("playing");
     //@ts-ignore
-    let bar_value = document.getElementById('bar').value;
+    let bar_value: number = <HTMLInputElement>document.getElementById('bar').value;
     addStyleString('background-image: -webkit-gradient(linear, left top, right top, color-stop(' + bar_value + ', #2f466b), color-stop(' + bar_value + ', #d3d3db))');
+
+    audioelement.currentTime = bar_value; //test
+    time_set = true;
+}
+
+function set_duration() {
+    let audioelement = <HTMLAudioElement>document.getElementById("playing");
+    let bar_element = <HTMLInputElement>document.getElementById("bar");
+    let dur_element = <HTMLParagraphElement>document.getElementsByClassName("total")[0];
+    let seconds: number = Math.floor(audioelement.duration % 60);
+    let minutes: number = Math.floor((audioelement.duration / 60) % 60);
+    let time: string = '';
+    if (minutes != 0) {
+        time = minutes + ':' + seconds;
+    } else {
+        if (seconds < 10) {
+            time = '0:0' + seconds;
+        } else {
+            time = '0:' + seconds;
+        }
+    }
+
+    bar_element.min = '0';
+    bar_element.max = audioelement.duration.toString();
+
+    dur_element.textContent = time;
+}
+
+function update_timestamp() {
+    let audioelement = <HTMLAudioElement>document.getElementById("playing");
+    let bar_element = <HTMLInputElement>document.getElementById("bar");
+    let through_element = <HTMLParagraphElement>document.getElementsByClassName("through")[0];
+    let seconds: number = Math.floor(audioelement.currentTime % 60);
+    let minutes: number = Math.floor((audioelement.currentTime / 60) % 60);
+    let time: string = '';
+    if (minutes != 0) {
+        if (seconds < 10) {
+            time = minutes + ':0' + seconds;
+        } else {
+            time = minutes + ':' + seconds;
+        }
+    } else {
+        if (seconds < 10) {
+            time = '0:0' + seconds;
+        } else {
+            time = '0:' + seconds;
+        }
+    }
+
+    if (!time_set) {
+        bar_element.value = audioelement.currentTime.toString();
+    } else {
+        time_set = false;
+    }
+
+    through_element.textContent = time;
+
+    if (audioelement.currentTime == audioelement.duration) {
+        console.log('[Media] Song Ended')
+        addStyleString('.pause { display: none !important; } .play { display: block !important }');
+        playing = false;
+    }
+
+    set_duration();
 }
 
 function sidebar_toggle() {
@@ -92,13 +161,11 @@ function play_pause() {
     const audioelement = <HTMLAudioElement>document.getElementById("playing");
     if (playing) {
         console.log('[Media] Paused')
-        //media.pause();
         addStyleString('.pause { display: none !important; } .play { display: block !important }');
         audioelement.pause();
         playing = false;
     } else {
         console.log('[Media] Playing')
-        //media.play();
         addStyleString('.pause { display: block !important; } .play { display: none !important }');
         audioelement.play();
         playing = true;
