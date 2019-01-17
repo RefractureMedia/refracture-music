@@ -45,14 +45,18 @@ window.onload = () => {
     setTimeout(init, 3);
 }
 
+function time_change() {
+    time_set=true;
+}
+
 function update_trackbar() {
     let audioelement = <HTMLAudioElement>document.getElementById("playing");
     //@ts-ignore
     let bar_value: number = <HTMLInputElement>document.getElementById('bar').value;
     addStyleString('background-image: -webkit-gradient(linear, left top, right top, color-stop(' + bar_value + ', #2f466b), color-stop(' + bar_value + ', #d3d3db))');
 
-    audioelement.currentTime = bar_value; //test
-    time_set = true;
+    audioelement.currentTime = (bar_value / 100000);
+    time_set = false;
 }
 
 function set_duration() {
@@ -73,7 +77,7 @@ function set_duration() {
     }
 
     bar_element.min = '0';
-    bar_element.max = audioelement.duration.toString();
+    bar_element.max = (audioelement.duration * 100000).toString();
 
     dur_element.textContent = time;
 }
@@ -85,42 +89,42 @@ function update_timestamp() {
     let seconds: number = Math.floor(audioelement.currentTime % 60);
     let minutes: number = Math.floor((audioelement.currentTime / 60) % 60);
     let time: string = '';
-    if (minutes != 0) {
-        if (seconds < 10) {
-            time = minutes + ':0' + seconds;
-        } else {
-            time = minutes + ':' + seconds;
-        }
+    if (time_set) {
+        update_trackbar();
     } else {
-        if (seconds < 10) {
-            time = '0:0' + seconds;
+        if (minutes != 0) {
+            if (seconds < 10) {
+                time = minutes + ':0' + seconds;
+            } else {
+                time = minutes + ':' + seconds;
+            }
         } else {
-            time = '0:' + seconds;
-        }
-    }
-
-    if (!time_set) {
-        bar_element.value = audioelement.currentTime.toString();
-    } else {
-        time_set = false;
-    }
-
-    through_element.textContent = time;
-
-    if (audioelement.currentTime == audioelement.duration) {
-        if (!repeating) {
-            console.log('[Media] Song Ended')
-            addStyleString('.pause { display: none !important; } .play { display: block !important }');
-            playing = false;
-        } else {
-            console.log('[Media] Song Repeated')
-            play_pause();
-            play_pause();
+            if (seconds < 10) {
+                time = '0:0' + seconds;
+            } else {
+                time = '0:' + seconds;
+            }
         }
 
-    }
+        bar_element.value = (audioelement.currentTime * 100000).toString();
 
-    set_duration();
+        through_element.textContent = time;
+
+        if (audioelement.currentTime == audioelement.duration) {
+            if (!repeating) {
+                console.log('[Media] Song Ended')
+                addStyleString('.pause { display: none !important; } .play { display: block !important }');
+                playing = false;
+            } else {
+                console.log('[Media] Song Repeated')
+                play_pause();
+                play_pause();
+            }
+
+        }
+
+        set_duration();
+    }
 }
 
 function sidebar_toggle() {
