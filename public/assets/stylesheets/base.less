@@ -82,6 +82,13 @@ p {
 .version {
     height: 100%;
     text-align: center;
+    position: relative;
+    &>p {
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 6vh;
+        margin-left: 6vh;
+    }
 }
 
 .wrap {
@@ -179,6 +186,10 @@ footer {
     margin-bottom: .8vh;
 }
 
+center.controls {
+    margin-top: 2vh;
+}
+
 .media-controls {
     cursor: pointer;
     color: @accent-secondary;
@@ -193,7 +204,7 @@ footer {
             height: 2.8rem;
             width: 2.8rem;
         }
-        &.pause {
+        &.play {
             display: none;
         }
         &.saved {
@@ -208,6 +219,11 @@ footer {
 @trackbar-height: .63rem;
 .trackbar {
     display: inline-flex;
+    &>.timestamp {
+        margin-top: -.4vh;
+        padding-left: .2vw;
+        padding-right: .2vw;
+    }
     &>div>.bar {
         overflow: hidden;
         width: 78vw;
