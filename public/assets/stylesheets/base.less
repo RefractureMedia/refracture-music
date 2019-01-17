@@ -33,6 +33,7 @@ body {
     margin: 0;
     overflow: hidden;
     background: @background-primary;
+    user-select: none;
 }
 
 a {
@@ -139,6 +140,89 @@ div.sidebar_toggle_x {
 
 .sidebar_content {
     display: none;
+    margin-top: 2vh;
+    margin-left: 1vw;
+    & div>p {
+        padding-left: 1rem;
+        margin-top: .5vw;
+        margin-bottom: .5vw;
+        font-size: 1.3rem;
+        transition: padding-left .1s;
+        color: @accent-secondary;
+        transition: color .05s;
+        &:hover {
+            padding-left: 1.6rem;
+            transition: margin-left .1s;
+            color: @accent-primary;
+            transition: color .05s;
+        }
+        &>a {
+            color: @accent-secondary;
+            transition: color .05s;
+            &:hover {
+                text-decoration: none;
+                color: @accent-primary;
+                transition: color .05s;
+            }
+        }
+        & .current-category {
+            color: @accent-primary;
+            &:hover {
+                &::before {
+                    padding-left: 1rem;
+                }
+            }
+        }
+    }
+    &>.bottom-items {
+        display: flex;
+        align-items: center;
+        height: -webkit-fill-available;
+        & .bottom-items-content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        & .left {
+            float: left;
+            
+        }
+        & .right {
+            width: 3vw;
+            height: 3vw;
+            background: @background-primary;
+            border-radius: 1vw;
+            padding: .3rem;
+            float: right;
+            margin-left: auto;
+            margin-right: 1vw;
+            color: @accent-secondary;
+            cursor: pointer;
+            transition: border-radius 0.05s;
+            
+            &:hover {
+                color: @accent-primary;
+                border-radius: .5vw;
+                transition: border-radius 0.05s;
+            }
+        }
+    }
+}
+
+.nav-bar {
+    margin-top: -4vh;
+    font-size: 2rem;
+    font-weight: bolder;
+    & a {
+        color: @accent-secondary;
+        &:hover {
+            text-decoration: none;
+            color: @accent-primary
+        }
+    }
+    & .current-page {
+        color: @accent-primary;
+    }
 }
 
 footer {
@@ -227,7 +311,7 @@ center.controls {
     &>div>.bar {
         overflow: hidden;
         width: 78vw;
-        height: @trackbar-height;
+        height: .5rem;
         -webkit-appearance: none;
         background-color: @accent-secondary;
         &:focus {
@@ -254,6 +338,7 @@ center.controls {
             box-shadow: -100.5vw 0 0 100vw @accent-primary;
         }
         &:hover {
+            height: @trackbar-height;
             &::-webkit-slider-thumb {
                 transition: width 0.5s;
                 transition: background 0.5s;

@@ -108,9 +108,16 @@ function update_timestamp() {
     through_element.textContent = time;
 
     if (audioelement.currentTime == audioelement.duration) {
-        console.log('[Media] Song Ended')
-        addStyleString('.pause { display: none !important; } .play { display: block !important }');
-        playing = false;
+        if (!repeating) {
+            console.log('[Media] Song Ended')
+            addStyleString('.pause { display: none !important; } .play { display: block !important }');
+            playing = false;
+        } else {
+            console.log('[Media] Song Repeated')
+            play_pause();
+            play_pause();
+        }
+
     }
 
     set_duration();
@@ -121,7 +128,7 @@ function sidebar_toggle() {
         addStyleString('.sidebar_content { display: none; transition: display 0.2s;} .sidebar { width: 0px !important; transition: width 0.2s;} .sidebar-top { width: 0px !important; transition: width 0.2s;} .sidebar-bottom { width: 0px !important; transition: width 0.2s;} .sidebar_toggle { margin-left: .5rem !important; transition: margin-left 0.2s;} div.sidebar_toggle_x { margin-top: -10rem !important; transition: margin-top 0.2s;} .bar { width: 78vw !important; transition: width 0.2s;}')
         sidebar_open = false;
     } else {
-        addStyleString('.sidebar_content { display: block; transition: display 0.2s;} .sidebar { width: 20vw !important; transition: width 0.2s;} .sidebar-top { width: 16.65vw !important; transition: width 0.2s;} .sidebar-bottom { width: 20vw !important; transition: width 0.2s;} .sidebar_toggle { margin-left: -3rem !important; transition: margin-left 0.2s;} div.sidebar_toggle_x { margin-top: .85rem !important; transition: margin-top 0.2s;} .bar { width: 61vw !important; transition: width 0.2s;}')
+        addStyleString('.sidebar_content { display: block; transition: display 0.2s;} .sidebar { width: 20vw !important; transition: width 0.2s;} .sidebar-top { width: 16.65vw !important; transition: width 0.2s;} .sidebar-bottom { width: 20vw !important; transition: width 0.2s;} .sidebar_toggle { margin-left: -3rem !important; transition: margin-left 0.2s;} div.sidebar_toggle_x { margin-top: 1.7rem !important; transition: margin-top 0.2s;} .bar { width: 61vw !important; transition: width 0.2s;}')
         sidebar_open = true;
     }
 }
