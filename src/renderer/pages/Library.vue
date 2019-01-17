@@ -31,7 +31,7 @@
 <script>
   export default {
     name: 'landing-page',
-    components: {  },
+    components: { },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
