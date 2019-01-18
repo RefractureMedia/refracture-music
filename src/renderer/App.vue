@@ -1,8 +1,16 @@
 <template>
   <div id="app">
-    <rf-sidebar></rf-sidebar>
-    <router-view></router-view>
-    <control-bar></control-bar>
+    <sidebar></sidebar>
+    <div class="wrap">
+      <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
+      <div class="content clear">
+        <router-view></router-view>
+      </div>
+      <footer class="clear">
+        <control-bar></control-bar>
+      </footer>
+    </div>
+
   </div>
 </template>
 
@@ -15,6 +23,20 @@ export default {
   components: {
     ControlBar,
     Sidebar
+  },
+  data() {
+    return {
+      state: "open"
+    }
+  },
+  methods: {
+    sidebar_toggle() {
+      if (this.$data.state == "closed") {
+        this.$data.state = "open"
+      } else {
+        this.$data.state = "closed"
+      }
+    }
   }
 }
 </script>
@@ -341,6 +363,37 @@ center.controls {
         background: @background-primary;
       }
     }
+  }
+}
+
+.sidebar_open {
+  .sidebar_content {
+    display: none;
+    transition: display 0.2s;
+  }
+  .sidebar {
+    width: 0px !important;
+    transition: width 0.2s;
+  }
+  .sidebar-top {
+    width: 0px !important;
+    transition: width 0.2s;
+  }
+  .sidebar-bottom {
+    width: 0px !important;
+    transition: width 0.2s;
+  }
+  .sidebar_toggle {
+    margin-left: 0.5rem !important;
+    transition: margin-left 0.2s;
+  }
+  div.sidebar_toggle_x {
+    margin-top: -10rem !important;
+    transition: margin-top 0.2s;
+  }
+  .bar {
+    width: 78vw !important;
+    transition: width 0.2s;
   }
 }
 </style>

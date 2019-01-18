@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="sidebar">
     <div class="sidebar_top clear">
       <div class="sidebar_title sidebar_content">
-        <img srcset="/assets/images/banner.svg" width="100%" onload="center_margin();">
+        <img srcset="/assets/images/banner.svg" width="100%" v-on:load="center_margin();">
       </div>
       <div class="sidebar_toggle_x">
         <a class="sidebar_toggle_x" onclick="sidebar_toggle();">╳</a>
@@ -38,11 +38,11 @@
   </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 @import "../../variables.less";
 .sidebar {
   @top-bottom-height: 2rem;
-  width: 0px;
+  width: 20vw;
   background: @background-secondary;
   &-top {
     height: 2rem;
@@ -64,10 +64,88 @@
     width: 100%;
   }
 }
+
+.sidebar_content {
+  display: block;
+  margin-top: 2vh;
+  margin-left: 1vw;
+  & div > p {
+    padding-left: 1rem;
+    margin-top: 0.5vw;
+    margin-bottom: 0.5vw;
+    font-size: 1.3rem;
+    transition: padding-left 0.1s;
+    color: @accent-secondary;
+    transition: color 0.05s;
+    &:hover {
+      padding-left: 1.6rem;
+      transition: margin-left 0.1s;
+      color: @accent-primary;
+      transition: color 0.05s;
+    }
+    & > a {
+      color: @accent-secondary;
+      transition: color 0.05s;
+      &:hover {
+        text-decoration: none;
+        color: @accent-primary;
+        transition: color 0.05s;
+      }
+    }
+    & .current-category {
+      color: @accent-primary;
+      &:hover {
+        &::before {
+          padding-left: 1rem;
+        }
+      }
+    }
+  }
+  & > .bottom-items {
+    display: flex;
+    align-items: center;
+    height: -webkit-fill-available;
+    & .bottom-items-content {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    & .left {
+      float: left;
+    }
+    & .right {
+      width: 3vw;
+      height: 3vw;
+      background: @background-primary;
+      border-radius: 1vw;
+      padding: 0.3rem;
+      float: right;
+      margin-left: auto;
+      margin-right: 1vw;
+      color: @accent-secondary;
+      cursor: pointer;
+      transition: border-radius 0.05s;
+
+      &:hover {
+        color: @accent-primary;
+        border-radius: 0.5vw;
+        transition: border-radius 0.05s;
+      }
+    }
+  }
+}
 </style>
 
 <script>
 export default {
-  name: "rf-sidebar"
+  name: "sidebar",
+  mounted() {
+    this.me
+  },
+  methods: {
+    center_margin() {}
+  }
 }
 </script>
+
+

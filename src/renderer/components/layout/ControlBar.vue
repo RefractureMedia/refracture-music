@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="now_playing">
     <div class="album-art">
       <img id="album-art" src="/assets/images/crabrave_512.jpg">
     </div>
@@ -65,10 +65,41 @@
 </template>
 
 <style lang="less" scoped>
+.now_playing {
+  height: 100%;
+  width: 100%;
+  display: inline-flex;
+  & > .album-art {
+    height: 12.5vh;
+    & > img {
+      height: 12.5vh;
+      padding: none !important;
+      margin: 1.5vh;
+      object-fit: contain;
+    }
+  }
+  & > .song-info {
+    margin-top: 1.5vh;
+    & > p {
+      overflow: hidden;
+      white-space: nowrap;
+      &.song {
+        font-size: 1.5rem;
+      }
+      &.artist {
+        font-size: 1.2rem;
+      }
+    }
+  }
+  & > center {
+    margin-top: 0.9vh;
+    height: 100%;
+  }
+}
 </style>
 
 <script>
 export default {
-  name: "rf-control-bar"
+  name: "control-bar"
 }
 </script>
