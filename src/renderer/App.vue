@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <p>test</p>
     <router-view></router-view>
   </div>
 </template>
@@ -10,6 +11,6 @@ export default {
 };
 </script>
 
-<style>
-/* CSS */
+<style lang="less">
+/* GLOBAL VARS GO HERE*/
 </style>

@@ -15,14 +15,25 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    minHeight: 400,
+    minWidth: 840,
+    width: 840,
     useContentSize: true,
-    width: 1000
+    height: 600,
+    frame: false,
+    icon: './logo.png',
+    autoHideMenuBar: true,
+    backgroundColor: '#191F28',
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true
+    }
   })
 
   mainWindow.loadURL(winURL)
