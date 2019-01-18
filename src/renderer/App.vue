@@ -5,11 +5,11 @@
 </template>
 
 <script>
-  export default {
-    name: 'refrcture-music'
-  }
+export default {
+  name: "refracture-music"
+};
 </script>
 
 <style>
-  /* CSS */
+/* CSS */
 </style>

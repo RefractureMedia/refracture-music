@@ -1,0 +1,31 @@
+{
+  "files.exclude": {
+    "__error": "Not found",
+    "package-lock.json": true,
+    ".babelrc": true,
+    ".eslintignore": true,
+    ".eslintrc.js": true,
+    ".travis.yml": true,
+    "appveyor.yml": true,
+    "desktop.ini": true,
+    "build": true,
+    ".electron-vue": true,
+    "dist": true,
+    ".vscode": true
+  },
+  "git.autofetch": true,
+  "editor.formatOnSave": true,
+  "vetur.format.defaultFormatter.js": "prettier-eslint",
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap_attributes": false,
+      "sortAttributes": true
+    },
+    "prettier": {
+      "semi": false,
+    }
+  },
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false
+}

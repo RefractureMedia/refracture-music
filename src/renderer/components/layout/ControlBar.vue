@@ -5,6 +5,6 @@
 
 <script>
 export default {
-  name: "rf-album"
+  name: ""
 };
 </script>
