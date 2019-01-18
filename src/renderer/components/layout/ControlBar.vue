@@ -1,7 +1,8 @@
 <template>
+<div class="clear">
   <div class="now_playing">
     <div class="album-art">
-      <img id="album-art" src="/assets/images/crabrave_512.jpg">
+      <img id="album-art" :src="song">
     </div>
     <div class="song-info">
       <p class="song">Crab Rave</p>
@@ -62,12 +63,13 @@
       </div>
     </center>
   </div>
+</div>
 </template>
 
 <style lang="less" scoped>
 .now_playing {
   height: 100%;
-  width: 100%;
+  width: 80vw;
   display: inline-flex;
   & > .album-art {
     height: 12.5vh;
@@ -99,7 +101,37 @@
 </style>
 
 <script>
-export default {
-  name: "control-bar"
+function addStyleString(str) {
+    var node = document.createElement('style');
+    node.innerHTML = str;
+    document.body.appendChild(node);
 }
+
+function cm() {
+    addStyleString('.now_playing>center { margin-left: -' + document.getElementsByClassName('song-info')[0].clientWidth + 'px; } .trackbar { margin-left: -' + document.getElementsByClassName('song-info')[0].clientWidth + 'px; }')
+    console.log('cm')
+}
+
+window.top.onresize = () => {
+    cm();
+}
+
+function ms() {
+    setTimeout(ms, 1);
+}
+
+function init() {
+    cm();
+    ms();
+    console.log('init')
+}
+
+window.onload = () => {
+    setTimeout(init, 3);
+}
+
+export default {
+  name: "control-bar",
+  props: ["song"]
+  }
 </script>

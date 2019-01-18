@@ -8,8 +8,8 @@
         <div class="content clear">
           <router-view></router-view>
         </div>
-        <footer class="clear">
-          <control-bar></control-bar>
+        <footer>
+          <control-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698"></control-bar>
         </footer>
       </div>
     </div>
@@ -98,19 +98,20 @@ a {
 }
 
 p {
-  margin-block-end: 0;
-  margin-block-start: 0;
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
 }
 
 .whole {
   height: 100%;
+  display: flex;
   margin-top: -0.1rem; // stop and look what i did i took the width of the control element (for the win and subtracted it)
   background: @background-primary;
 }
 
 .content {
   display: flex;
-  height: 80vh;
+  height: 75vh;
 }
 
 #hide {
@@ -275,6 +276,11 @@ footer {
         font-size: 1.2rem;
       }
     }
+    @media only screen and (max-width:985px) {
+      display: none;
+      width: 0;
+      height: 0;
+    }
   }
   & > center {
     margin-top: 0.9vh;
@@ -321,6 +327,10 @@ center.controls {
 @trackbar-height: 0.63rem;
 .trackbar {
   display: inline-flex;
+  width: 50vw;
+  @media only screen and (max-width:985px) {
+    margin-left: -13vw !important;
+  }
   & > .timestamp {
     margin-top: -0.4vh;
     padding-left: 0.2vw;
@@ -328,7 +338,7 @@ center.controls {
   }
   & > div > .bar {
     overflow: hidden;
-    width: 78vw;
+    width: 55vw;
     height: 0.5rem;
     -webkit-appearance: none;
     background-color: @accent-secondary;

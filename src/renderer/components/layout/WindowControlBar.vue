@@ -2,10 +2,10 @@
   <header class="titlebar">
     <div class="sidebar sidebar-top"></div>
     <div class="window_control">
-      <li class="window-controls not-mac" onclick="win_minimize();">
+      <li class="window-controls not-mac" v-on:click="win_minimize();">
         <i class="min-btn window-controls">─</i>
       </li>
-      <li class="window-controls not-mac" onclick="win_maximize();">
+      <li class="window-controls not-mac" v-on:click="win_maximize();">
         <i class="max-btn window-controls">
           <svg
             width="45"
