@@ -1,44 +1,47 @@
 <template>
   <div id="app">
-    <sidebar></sidebar>
-    <div class="wrap">
-      <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
-      <div class="content clear">
-        <router-view></router-view>
+    <window-control-bar></window-control-bar>
+    <div class="whole">
+      <sidebar></sidebar>
+      <div class="wrap">
+        <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
+        <div class="content clear">
+          <router-view></router-view>
+        </div>
+        <footer class="clear">
+          <control-bar></control-bar>
+        </footer>
       </div>
-      <footer class="clear">
-        <control-bar></control-bar>
-      </footer>
     </div>
-
   </div>
 </template>
 
 <script>
-import ControlBar from "./components/layout/ControlBar.vue"
-import Sidebar from "./components/layout/Sidebar.vue"
-
+import ControlBar from "./components/layout/ControlBar.vue";
+import Sidebar from "./components/layout/Sidebar.vue";
+import WindowControlBar from "./components/layout/WindowControlBar.vue";
 export default {
   name: "refracture-music",
   components: {
+    WindowControlBar,
     ControlBar,
     Sidebar
   },
   data() {
     return {
       state: "open"
-    }
+    };
   },
   methods: {
     sidebar_toggle() {
       if (this.$data.state == "closed") {
-        this.$data.state = "open"
+        this.$data.state = "open";
       } else {
-        this.$data.state = "closed"
+        this.$data.state = "closed";
       }
     }
   }
-}
+};
 </script>
 
 <style lang="less">
