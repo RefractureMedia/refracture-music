@@ -3,8 +3,6 @@
     "__error": "Not found",
     "package-lock.json": true,
     ".babelrc": true,
-    ".eslintignore": false,
-    ".eslintrc.js": false,
     ".travis.yml": true,
     "appveyor.yml": true,
     "node_modules": true,
