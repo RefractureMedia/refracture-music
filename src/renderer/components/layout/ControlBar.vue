@@ -1,4 +1,5 @@
 <template>
+<div class="clear">
   <div class="now_playing">
     <div class="album-art">
       <img id="album-art" src="/assets/images/crabrave_512.jpg">
@@ -62,12 +63,13 @@
       </div>
     </center>
   </div>
+</div>
 </template>
 
 <style lang="less" scoped>
 .now_playing {
   height: 100%;
-  width: 100%;
+  width: 80vw;
   display: inline-flex;
   & > .album-art {
     height: 12.5vh;

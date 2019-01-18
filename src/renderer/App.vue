@@ -8,7 +8,7 @@
         <div class="content clear">
           <router-view></router-view>
         </div>
-        <footer class="clear">
+        <footer>
           <control-bar></control-bar>
         </footer>
       </div>
@@ -104,13 +104,14 @@ p {
 
 .whole {
   height: 100%;
+  display: flex;
   margin-top: -0.1rem; // stop and look what i did i took the width of the control element (for the win and subtracted it)
   background: @background-primary;
 }
 
 .content {
   display: flex;
-  height: 80vh;
+  height: 75vh;
 }
 
 #hide {
@@ -321,6 +322,7 @@ center.controls {
 @trackbar-height: 0.63rem;
 .trackbar {
   display: inline-flex;
+  width: 60vw;
   & > .timestamp {
     margin-top: -0.4vh;
     padding-left: 0.2vw;
@@ -328,7 +330,7 @@ center.controls {
   }
   & > div > .bar {
     overflow: hidden;
-    width: 78vw;
+    width: 60vw;
     height: 0.5rem;
     -webkit-appearance: none;
     background-color: @accent-secondary;
