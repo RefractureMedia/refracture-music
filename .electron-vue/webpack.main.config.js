@@ -3,7 +3,9 @@
 process.env.BABEL_ENV = 'main'
 
 const path = require('path')
-const { dependencies } = require('../package.json')
+const {
+  dependencies
+} = require('../package.json')
 const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
@@ -16,8 +18,7 @@ let mainConfig = {
     ...Object.keys(dependencies || {})
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         use: 'babel-loader',
         exclude: /node_modules/
@@ -68,5 +69,6 @@ if (process.env.NODE_ENV === 'production') {
     })
   )
 }
+
 
 module.exports = mainConfig

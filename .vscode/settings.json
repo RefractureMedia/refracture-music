@@ -1,27 +1,10 @@
 {
   "files.exclude": {
     "__error": "Not found",
-    "package-lock.json": true,
+    "src\\renderer\\store": true,
     ".babelrc": true,
-    ".travis.yml": true,
+    "package-lock.json": true,
     "appveyor.yml": true,
-    "node_modules": true,
-    "desktop.ini": true,
-    ".gitignore": true
-  },
-  "git.autofetch": true,
-  "editor.formatOnSave": true,
-  "vetur.format.defaultFormatter.js": "prettier-eslint",
-  "vetur.format.defaultFormatterOptions": {
-    "js-beautify-html": {
-      "wrap_attributes": false,
-      "sortAttributes": true
-    },
-    "prettier": {
-      "semi": false,
-    }
-  },
-  "vetur.format.defaultFormatter.html": "js-beautify-html",
-  "git.enableSmartCommit": true,
-  "git.confirmSync": false
+    ".travis.yml": true
+  }
 }

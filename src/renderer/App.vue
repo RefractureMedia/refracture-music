@@ -1,24 +1,27 @@
 <template>
   <div id="app">
-    <p>test</p>
+    <rf-sidebar></rf-sidebar>
     <router-view></router-view>
+    <control-bar></control-bar>
   </div>
 </template>
 
 <script>
+import ControlBar from "./components/layout/ControlBar.vue"
+import Sidebar from "./components/layout/Sidebar.vue"
+
 export default {
-  name: "refracture-music"
-};
+  name: "refracture-music",
+  components: {
+    ControlBar,
+    Sidebar
+  }
+}
 </script>
 
 <style lang="less">
 @import "./vendor/stylesheets/fonts/roboto.css";
-@background-primary: #191f28;
-@background-secondary: #0e131a;
-@background-thirdindary: #151a21;
-@accent-primary: #2fc8c3;
-@accent-secondary: #1a6b68;
-
+@import "./variables.less";
 body {
   background: @background-primary;
   color: @accent-primary;
