@@ -1,6 +1,9 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import {
+  app,
+  BrowserWindow
+} from 'electron';
 
 /**
  * Set `__static` path to static files in production
@@ -11,9 +14,9 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
+const winURL = process.env.NODE_ENV === 'development' ?
+  `http://localhost:9080` :
+  `file://${__dirname}/index.html`
 
 function createWindow() {
   /**
@@ -23,7 +26,7 @@ function createWindow() {
     minHeight: 400,
     minWidth: 840,
     width: 840,
-    useContentSize: true,
+    useContentSize: false,
     height: 600,
     frame: false,
     icon: './logo.png',
@@ -32,9 +35,11 @@ function createWindow() {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      nodeIntegrationInWorker: true
+      nodeIntegrationInWorker: true,
+      zoomFactor: 1.0
     }
   })
+  mainWindow.webContents.setVisualZoomLevelLimits(1, 1)
 
   mainWindow.loadURL(winURL)
 
