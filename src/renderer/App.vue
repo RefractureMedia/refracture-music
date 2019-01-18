@@ -2,7 +2,7 @@
   <div id="app">
     <window-control-bar></window-control-bar>
     <div class="whole">
-      <sidebar></sidebar>
+      <sidebar v-bind:class="state"></sidebar>
       <div class="wrap">
         <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
         <div class="content clear">
