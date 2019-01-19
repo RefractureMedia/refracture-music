@@ -216,20 +216,7 @@ window.top.onresize = () => {
   cm();
 };
 
-function ms() {
-  setTimeout(ms, 1);
-}
-
-function init() {
-  cm();
-  ms();
-  console.log("init");
-}
-
-window.onload = () => {
-  setTimeout(init, 3);
-};
-
+cm();
 export default {
   name: "control-bar",
   props: ["song"],

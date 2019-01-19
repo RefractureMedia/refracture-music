@@ -3,32 +3,16 @@
     <window-control-bar></window-control-bar>
     <div class="whole">
       <div class="content clear">
-        <sidebar v-bind:class="state"></sidebar>
+        <sidebar ref="sidebar" v-bind:class="state"></sidebar>
         <div class="wrap">
           <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
           <div class="nav-bar">
             <center>
               <p>
-                <router-link
-                  to="Songs"
-                  v-bind:class="current_page(0)"
-                  onclick="going_to('Songs')"
-                >Songs</router-link>
-                <router-link
-                  to="Artists"
-                  v-bind:class="current_page(1)"
-                  onclick="going_to('Artists')"
-                >Artists</router-link>
-                <router-link
-                  to="Albums"
-                  v-bind:class="current_page(2)"
-                  onclick="going_to('Albums')"
-                >Albums</router-link>
-                <router-link
-                  to="Playlists"
-                  v-bind:class="current_page(3)"
-                  onclick="going_to('Playlists')"
-                >Playlists</router-link>
+                <router-link to="Songs">Songs</router-link>
+                <router-link to="Artists">Artists</router-link>
+                <router-link to="Albums">Albums</router-link>
+                <router-link to="Playlists">Playlists</router-link>
               </p>
             </center>
           </div>
@@ -44,42 +28,6 @@
 import ControlBar from "./components/layout/ControlBar.vue";
 import Sidebar from "./components/layout/Sidebar.vue";
 import WindowControlBar from "./components/layout/WindowControlBar.vue";
-let page_store = "Songs";
-let songs_toggle = "current-page",
-  artists_toggle = "",
-  albums_toggle = "",
-  playlists_toggle = "";
-
-function going_to(going_to_page) {
-  console.log(going_to_page);
-  if (going_to_page != page_store) {
-    if ((page_store = "Songs")) {
-      songs_toggle = "";
-    }
-    if ((page_store = "Artists")) {
-      songs_toggle = "";
-    }
-    if ((page_store = "Albums")) {
-      songs_toggle = "";
-    }
-    if ((page_store = "Playlists")) {
-      songs_toggle = "";
-    }
-    if ((going_to_page = "Songs")) {
-      songs_toggle = "current-page";
-    }
-    if ((going_to_page = "Artists")) {
-      songs_toggle = "current-page";
-    }
-    if ((going_to_page = "Albums")) {
-      songs_toggle = "current-page";
-    }
-    if ((going_to_page = "Playlists")) {
-      songs_toggle = "current-page";
-    }
-    page_store = going_to_page;
-  }
-}
 
 export default {
   name: "refracture-music",
@@ -100,45 +48,7 @@ export default {
       } else {
         this.$data.state = "closed";
       }
-    },
-    current_page(test) {
-      let temp = [
-        songs_toggle,
-        artists_toggle,
-        albums_toggle,
-        playlists_toggle
-      ];
-      return temp[test];
-    },
-    going_to(going_to_page) {
-      console.log(going_to_page);
-      if (going_to_page != page_store) {
-        if ((page_store = "Songs")) {
-          songs_toggle = "";
-        }
-        if ((page_store = "Artists")) {
-          songs_toggle = "";
-        }
-        if ((page_store = "Albums")) {
-          songs_toggle = "";
-        }
-        if ((page_store = "Playlists")) {
-          songs_toggle = "";
-        }
-        if ((going_to_page = "Songs")) {
-          songs_toggle = "current-page";
-        }
-        if ((going_to_page = "Artists")) {
-          songs_toggle = "current-page";
-        }
-        if ((going_to_page = "Albums")) {
-          songs_toggle = "current-page";
-        }
-        if ((going_to_page = "Playlists")) {
-          songs_toggle = "current-page";
-        }
-        page_store = going_to_page;
-      }
+      $refs.message.$data.state = this.$data.state;
     }
   }
 };
