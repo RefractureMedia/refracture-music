@@ -48,7 +48,7 @@ export default {
       } else {
         this.$data.state = "closed";
       }
-      $refs.message.$data.state = this.$data.state;
+      $parent.$refs.message.$data.state = this.$data.state;
     }
   }
 };

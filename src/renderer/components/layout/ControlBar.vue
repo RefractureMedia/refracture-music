@@ -215,8 +215,6 @@ function cm() {
 window.top.onresize = () => {
   cm();
 };
-
-cm();
 export default {
   name: "control-bar",
   props: ["song"],
