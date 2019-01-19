@@ -1,4 +1,6 @@
-<template></template>
+<template>
+  <p>Beats</p>
+</template>
 
 <style lang="less" scoped>
 </style>

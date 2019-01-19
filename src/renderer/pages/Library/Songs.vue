@@ -1,5 +1,7 @@
 <template>
-  <p>test</p>
+  <center>
+    <p>Noisestorm - Crab Rave</p>
+  </center>
 </template>
 
 <style lang="less" scoped>

@@ -6,6 +6,32 @@
         <sidebar v-bind:class="state"></sidebar>
         <div class="wrap">
           <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
+          <div class="nav-bar">
+            <center>
+              <p>
+                <router-link
+                  to="Songs"
+                  v-bind:class="current_page(0)"
+                  onclick="going_to('Songs')"
+                >Songs</router-link>
+                <router-link
+                  to="Artists"
+                  v-bind:class="current_page(1)"
+                  onclick="going_to('Artists')"
+                >Artists</router-link>
+                <router-link
+                  to="Albums"
+                  v-bind:class="current_page(2)"
+                  onclick="going_to('Albums')"
+                >Albums</router-link>
+                <router-link
+                  to="Playlists"
+                  v-bind:class="current_page(3)"
+                  onclick="going_to('Playlists')"
+                >Playlists</router-link>
+              </p>
+            </center>
+          </div>
           <router-view></router-view>
         </div>
       </div>
@@ -18,6 +44,43 @@
 import ControlBar from "./components/layout/ControlBar.vue";
 import Sidebar from "./components/layout/Sidebar.vue";
 import WindowControlBar from "./components/layout/WindowControlBar.vue";
+let page_store = "Songs";
+let songs_toggle = "current-page",
+  artists_toggle = "",
+  albums_toggle = "",
+  playlists_toggle = "";
+
+function going_to(going_to_page) {
+  console.log(going_to_page);
+  if (going_to_page != page_store) {
+    if ((page_store = "Songs")) {
+      songs_toggle = "";
+    }
+    if ((page_store = "Artists")) {
+      songs_toggle = "";
+    }
+    if ((page_store = "Albums")) {
+      songs_toggle = "";
+    }
+    if ((page_store = "Playlists")) {
+      songs_toggle = "";
+    }
+    if ((going_to_page = "Songs")) {
+      songs_toggle = "current-page";
+    }
+    if ((going_to_page = "Artists")) {
+      songs_toggle = "current-page";
+    }
+    if ((going_to_page = "Albums")) {
+      songs_toggle = "current-page";
+    }
+    if ((going_to_page = "Playlists")) {
+      songs_toggle = "current-page";
+    }
+    page_store = going_to_page;
+  }
+}
+
 export default {
   name: "refracture-music",
   components: {
@@ -36,6 +99,45 @@ export default {
         this.$data.state = "open";
       } else {
         this.$data.state = "closed";
+      }
+    },
+    current_page(test) {
+      let temp = [
+        songs_toggle,
+        artists_toggle,
+        albums_toggle,
+        playlists_toggle
+      ];
+      return temp[test];
+    },
+    going_to(going_to_page) {
+      console.log(going_to_page);
+      if (going_to_page != page_store) {
+        if ((page_store = "Songs")) {
+          songs_toggle = "";
+        }
+        if ((page_store = "Artists")) {
+          songs_toggle = "";
+        }
+        if ((page_store = "Albums")) {
+          songs_toggle = "";
+        }
+        if ((page_store = "Playlists")) {
+          songs_toggle = "";
+        }
+        if ((going_to_page = "Songs")) {
+          songs_toggle = "current-page";
+        }
+        if ((going_to_page = "Artists")) {
+          songs_toggle = "current-page";
+        }
+        if ((going_to_page = "Albums")) {
+          songs_toggle = "current-page";
+        }
+        if ((going_to_page = "Playlists")) {
+          songs_toggle = "current-page";
+        }
+        page_store = going_to_page;
       }
     }
   }
@@ -325,9 +427,11 @@ div.sidebar_toggle_x {
       margin-left: auto;
       margin-right: 1vw;
       color: @accent-secondary;
-      cursor: pointer;
+      cursor: pointer !important;
       transition: border-radius 0.05s;
-
+      & > svg {
+        cursor: inherit;
+      }
       &:hover {
         color: @accent-primary;
         border-radius: 0.5vw;
@@ -491,6 +595,21 @@ center.controls {
   .bar {
     width: 78vw !important;
     transition: width 0.2s;
+  }
+}
+
+.nav-bar {
+  font-size: 2rem;
+  font-weight: bolder;
+  & a {
+    color: @accent-secondary;
+    &:hover {
+      text-decoration: none;
+      color: @accent-primary;
+    }
+  }
+  & .current-page {
+    color: @accent-primary;
   }
 }
 </style>
