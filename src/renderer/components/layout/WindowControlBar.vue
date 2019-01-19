@@ -111,7 +111,7 @@ header {
 }
 
 li.window-controls {
-  margin-left: -7px !important;
+  margin-left: -5px !important;
 }
 
 i.window-controls {
