@@ -1,7 +1,15 @@
 <template>
   <header class="titlebar">
-    <div class="sidebar sidebar-top"></div>
-    <div class="window_control">
+    <div
+      class="sidebar sidebar-top no-drag"
+      v-bind:style="'width: 16.669vw; margin-right: -3.5px;'"
+    >
+      <div class="drag"></div>
+    </div>
+    <div class="window-title no-drag" v-bind:style="'width: 67.8vw;'">
+      <div class="drag"></div>
+    </div>
+    <div class="window_control" id="window_control">
       <li class="window-controls not-mac" v-on:click="win_minimize();">
         <i class="min-btn window-controls">─</i>
       </li>
@@ -55,6 +63,7 @@
 </template>
 
 <style lang="less" scoped>
+@import "../../variables.less";
 @dark: hsl(215, 30%, 8%);
 @red: hsla(0, 100%, 50%, 65%);
 @titlebar-height: 1.8rem;
@@ -62,17 +71,32 @@
 
 @window-controls-color-hover: rgba(88, 88, 88, 0.63);
 @window-controls-width: 8.8rem;
+.sidebar {
+  background: @background-secondary;
+}
 
 header {
-  -webkit-app-region: drag;
   grid-area: header;
   overflow: hidden;
   white-space: nowrap;
+  margin-bottom: -4px;
   & > * {
     display: inline-block;
-    -webkit-app-region: no-drag;
   }
 }
+
+.no-drag {
+  height: 1.8rem;
+}
+
+.drag {
+  margin-top: 2px;
+  margin-left: 3px;
+  height: -webkit-fill-available;
+  width: -webkit-fill-available;
+  -webkit-app-region: drag;
+}
+
 .window_control {
   float: right;
   & li {
@@ -129,6 +153,7 @@ import { remote } from "electron";
 
 export default {
   name: "window-control-bar",
+  mounted() {},
   methods: {
     win_minimize() {
       remote.BrowserWindow.getFocusedWindow().minimize();
@@ -137,7 +162,18 @@ export default {
       remote.BrowserWindow.getFocusedWindow().isMaximized()
         ? remote.BrowserWindow.getFocusedWindow().unmaximize()
         : remote.BrowserWindow.getFocusedWindow().maximize();
-    }
+    } /*,
+    get_window_controls_width() {
+      document.getElementById("window_control").clientWidth;
+    }*/
+  },
+  data() {
+    return {
+      windowWidth: 873,
+      sidebarTopWidth: 0 /*document.getElementsByClassName("sidebar-top")[0]
+        .clientWidth*/,
+      windowControlsWidth: 140
+    };
   }
 };
 </script>

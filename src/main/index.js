@@ -23,11 +23,11 @@ function createWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    minHeight: 400,
-    minWidth: 840,
-    width: 840,
+    minHeight: 655,
+    minWidth: 868,
+    width: 868,
     useContentSize: false,
-    height: 600,
+    height: 655,
     frame: false,
     icon: './logo.png',
     autoHideMenuBar: true,
