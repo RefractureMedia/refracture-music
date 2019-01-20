@@ -8,7 +8,11 @@
       <div class="drag"></div>
     </div>
     <div class="window-title no-drag" v-bind:style="'width: 67.8vw;'">
-      <div class="drag"></div>
+      <div class="drag" style>
+        <div style="position: absolute; margin-top: 0.5vh; margin-left: 30vw">
+          <a>Refracture Music - Crab Rave</a>
+        </div>
+      </div>
     </div>
     <div class="window_control" id="window_control">
       <li class="window-controls not-mac" v-on:click="win_minimize();">

@@ -3,7 +3,14 @@
     <window-control-bar v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
-        <sidebar ref="sidebar" v-bind:class="'sidebar sidebar_main sidebar_' + state"></sidebar>
+        <div class="sidebar_toggle_x">
+          <a v-bind:class="'sidebar_toggle_x sidebar_' + state" v-on:click="sidebar_toggle">╳</a>
+        </div>
+        <sidebar
+          ref="sidebar"
+          v-bind:class="'sidebar sidebar_main sidebar_' + state"
+          @sidebar_internal="state"
+        ></sidebar>
         <div class="wrap">
           <a v-bind:class="'sidebar_toggle sidebar_' + state" v-on:click="sidebar_toggle">≡</a>
           <div class="nav-bar">
@@ -37,6 +44,7 @@ import WindowControlBar from "./components/layout/WindowControlBar.vue";
 
 export default {
   name: "refracture-music",
+  meta: { title: "Refracture Music - Crab Rave" },
   components: {
     WindowControlBar,
     ControlBar,
@@ -163,10 +171,26 @@ p {
   margin-left: 0.5rem;
   font-size: 3rem;
   text-decoration: none !important;
+  transition: margin-left 0.15s;
+  &.sidebar_open {
+    margin-left: -10rem !important;
+    transition: margin-left 0.15s;
+  }
+  &_x {
+    margin-top: 1.3vh;
+    margin-left: 13vw;
+    position: absolute;
+    background: transparent !important;
+    &.sidebar_closed {
+      margin-left: -20vw;
+    }
+  }
 }
 
 .sidebar_top {
   display: flex;
+  width: 16.65vw !important;
+  transition: width 0s !important;
 }
 
 a.sidebar_toggle_x {
@@ -204,10 +228,6 @@ div.sidebar_toggle_x {
   .sidebar_content {
     display: none !important;
     transition: display 0.15s;
-  }
-  .sidebar_toggle {
-    margin-left: 0.5rem !important;
-    transition: margin-left 0.15s;
   }
   div.sidebar_toggle_x {
     margin-top: -10rem !important;

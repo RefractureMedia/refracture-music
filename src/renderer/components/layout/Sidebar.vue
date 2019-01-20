@@ -583,9 +583,6 @@
           </defs>
         </svg>
       </div>
-      <div class="sidebar_toggle_x">
-        <a class="sidebar_toggle_x" v-on:click="sidebar_toggle();">╳</a>
-      </div>
     </div>
     <div class="sidebar_content">
       <div class="top-items">
@@ -643,6 +640,7 @@
 
 .sidebar_title {
   float: left;
+  margin-right: 2vw;
   & > img {
     min-width: 100px;
     width: 100%;
@@ -726,6 +724,7 @@ export default {
   props: ["state"],
   data() {
     return {
+      state: "open",
       currentCatagory: "Library",
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs"
@@ -735,7 +734,15 @@ export default {
     this.me;
   },
   methods: {
-    center_margin() {}
+    center_margin() {},
+    sidebar_toggle() {
+      if (this.$data.state == "closed") {
+        this.$data.state = "open";
+      } else {
+        this.$data.state = "closed";
+      }
+      this.sidebar_internal = this.$data.state;
+    }
   }
 };
 </script>

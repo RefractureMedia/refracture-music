@@ -335,7 +335,6 @@ function cm() {
       document.getElementsByClassName("song-info")[0].clientWidth +
       "px; }"
   );
-  console.log("cm");
 }
 
 window.top.onresize = () => {
