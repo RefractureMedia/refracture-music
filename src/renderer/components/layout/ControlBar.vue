@@ -1,6 +1,6 @@
 <template>
   <footer class="clear">
-    <div class="sidebar sidebar-bottom">
+    <div v-bind:class="'sidebar sidebar-bottom sidebar_' + state">
       <div class="version sidebar_content">
         <p>Version {{ version }}</p>
       </div>
@@ -194,6 +194,132 @@
 </template>
 
 <style lang="less" scoped>
+@import "./../../variables.less";
+footer {
+  width: 100%;
+  display: flex;
+  background: @background-thirdindary;
+  height: 20vh;
+}
+
+.now_playing {
+  height: 100%;
+  width: 100%;
+  display: inline-flex;
+  & > .album-art {
+    height: 12.5vh;
+    & > img {
+      height: 12.5vh;
+      padding: none !important;
+      margin: 1.5vh;
+      object-fit: contain;
+    }
+  }
+  & > .song-info {
+    margin-top: 1.5vh;
+    & > p {
+      overflow: hidden;
+      white-space: nowrap;
+      &.song {
+        font-size: 1.5rem;
+      }
+      &.artist {
+        font-size: 1.2rem;
+      }
+    }
+  }
+  & > center {
+    margin-top: 0.9vh;
+    height: 100%;
+  }
+}
+
+.media-buttons {
+  display: inline-flex;
+  margin-top: -0.8vh;
+  margin-bottom: 0.8vh;
+}
+
+center.controls {
+  margin-top: 2vh;
+}
+
+.media-controls {
+  cursor: pointer;
+  color: @accent-secondary;
+  height: 2.8rem;
+  width: 2.8rem;
+  margin: 0.5rem;
+  &:hover {
+    color: @accent-primary;
+  }
+  & > div {
+    & > svg {
+      height: 2.8rem;
+      width: 2.8rem;
+    }
+    &.play {
+      display: none;
+    }
+    &.saved {
+      display: none;
+    }
+  }
+  &.back > div > svg {
+    transform: rotate(180deg);
+  }
+}
+
+@trackbar-height: 0.63rem;
+.trackbar {
+  display: inline-flex;
+  & > .timestamp {
+    margin-top: -0.4vh;
+    padding-left: 0.2vw;
+    padding-right: 0.2vw;
+  }
+  & > div > .bar {
+    overflow: hidden;
+    width: 60vw;
+    height: 0.5rem;
+    -webkit-appearance: none;
+    background-color: @accent-secondary;
+    &:focus {
+      outline: 0 none !important;
+    }
+    cursor: pointer;
+    &::-webkit-slider-runnable-track {
+      height: @trackbar-height;
+      -webkit-appearance: none;
+      color: @accent-primary;
+      margin-top: -1px;
+    }
+    &::-webkit-slider-thumb {
+      // padding: 0 0 0 0;
+      width: 0;
+      height: 0;
+      -webkit-appearance: none;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      background: transparent;
+      transition: width 0.5s;
+      transition: background 0.5s;
+      transition: box-shadow 0.5s;
+      box-shadow: -100.5vw 0 0 100vw @accent-primary;
+    }
+    &:hover {
+      height: @trackbar-height;
+      &::-webkit-slider-thumb {
+        transition: width 0.5s;
+        transition: background 0.5s;
+        transition: box-shadow 0.5s;
+        width: @trackbar-height;
+        height: @trackbar-height;
+        background: @background-primary;
+      }
+    }
+  }
+}
 </style>
 
 <script>
@@ -217,7 +343,7 @@ window.top.onresize = () => {
 };
 export default {
   name: "control-bar",
-  props: ["song"],
+  props: ["song", "state"],
   mounted() {},
   data() {
     return {

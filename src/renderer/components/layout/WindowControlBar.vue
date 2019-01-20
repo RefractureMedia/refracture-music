@@ -1,7 +1,7 @@
 <template>
   <header class="titlebar">
     <div
-      class="sidebar sidebar-top no-drag"
+      v-bind:class="'sidebar no-drag sidebar-top sidebar_' + state"
       v-bind:style="'width: 16.669vw; margin-right: -3.5px;'"
     >
       <div class="drag"></div>
@@ -153,6 +153,7 @@ import { remote } from "electron";
 
 export default {
   name: "window-control-bar",
+  props: ["state"],
   mounted() {},
   methods: {
     win_minimize() {
