@@ -9,10 +9,13 @@
           <div class="nav-bar">
             <center>
               <p>
-                <router-link to="Songs">Songs</router-link>
-                <router-link to="Artists">Artists</router-link>
-                <router-link to="Albums">Albums</router-link>
-                <router-link to="Playlists">Playlists</router-link>
+                <router-link
+                  v-for="page in pages"
+                  v-bind:key="page"
+                  v-bind:class="['page', { active: currentPage === page }]"
+                  v-on:click="currentPage = page"
+                  v-bind:to="page"
+                >{{ page + ' ' }}</router-link>
               </p>
             </center>
           </div>
@@ -41,7 +44,11 @@ export default {
   },
   data() {
     return {
-      state: "open"
+      state: "open",
+      currentCatagory: "Library",
+      categories: ["Browse", "Library", "Visualize"],
+      currentPage: "Songs",
+      pages: ["Songs", "Artists", "Albums", "Playlists"]
     };
   },
   methods: {
@@ -232,7 +239,7 @@ div.sidebar_toggle_x {
       color: @accent-primary;
     }
   }
-  & .current-page {
+  & .router-link-active {
     color: @accent-primary;
   }
 }

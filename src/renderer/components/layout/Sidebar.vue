@@ -590,13 +590,25 @@
     <div class="sidebar_content">
       <div class="top-items">
         <p>
-          <a class="current-category">Browse</a>
+          <router-link
+            v-on:click="currentCategory = 'Browse'"
+            v-bind:class="['category', { active: currentCategory === 'Browse' }]"
+            to="../Browse"
+          >Browse</router-link>
         </p>
         <p>
-          <a>Library</a>
+          <router-link
+            v-on:click="currentCategory = 'Library'"
+            v-bind:class="{'current_category': (currentCategory === 'Library')}"
+            to="../Library"
+          >Library</router-link>
         </p>
         <p>
-          <a>Visualize</a>
+          <router-link
+            v-on:click="currentCategory = 'none'"
+            v-bind:class="['category', { active: currentCategory === 'none' }]"
+            to="../Visualizer"
+          >Visualizer</router-link>
         </p>
       </div>
       <div class="bottom-items">
@@ -664,7 +676,7 @@
         transition: color 0.05s;
       }
     }
-    & .current-category {
+    & .router-link-active {
       color: @accent-primary;
       &:hover {
         &::before {
@@ -712,6 +724,13 @@
 export default {
   name: "sidebar",
   props: ["state"],
+  data() {
+    return {
+      currentCatagory: "Library",
+      categories: ["Browse", "Library", "Visualize"],
+      currentPage: "Songs"
+    };
+  },
   mounted() {
     this.me;
   },

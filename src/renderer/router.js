@@ -56,7 +56,12 @@ export default new Router({
       path: '/browse/popular',
       name: 'browse',
       component: require('@/pages/Browse/Popular').default
-    }
+    },
     /* =============== BROWSE END =============== */
+    {
+      path: '/visualizer',
+      name: 'visualizer',
+      component: require('@/pages/Visualizer').default
+    }
   ]
 })
