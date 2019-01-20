@@ -1,6 +1,7 @@
 <template>
   <header class="titlebar">
     <div
+      ref="sidebar-top"
       v-bind:class="'sidebar no-drag sidebar-top sidebar_' + state"
       v-bind:style="'width: 16.669vw; margin-right: -3.5px;'"
     >

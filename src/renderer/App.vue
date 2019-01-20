@@ -52,7 +52,6 @@ export default {
         this.$data.state = "closed";
       }
       this.$refs.sidebar.$data.state = this.$data.state;
-      this.$refs.sidebar_top.$data.state = this.$data.state;
     }
   }
 };
