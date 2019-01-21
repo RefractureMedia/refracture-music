@@ -1,41 +1,31 @@
 <template>
   <center>
-    <div class="divTable">
-      <div class="divTableBody">
-        <div class="divTableRow">
-          <div class="divTableCell">Song Name</div>
-          <div class="divTableCell">Artist</div>
-        </div>
-        <div class="divTableRow">
-          <div class="divTableCell">&nbsp;</div>
-          <div class="divTableCell">&nbsp;</div>
-        </div>
-        <div class="divTableRow">
-          <div class="divTableCell">&nbsp;</div>
-          <div class="divTableCell">&nbsp;</div>
-        </div>
-        <div class="divTableRow">
-          <div class="divTableCell">&nbsp;</div>
-          <div class="divTableCell">&nbsp;</div>
-        </div>
-      </div>
-    </div>
-    <!-- DivTable.com -->
+    <desk>
+      <desk-row class="header">
+        <div class="divTableCell">Song Name</div>
+        <div class="divTableCell">Artist</div>
+      </desk-row>
+      <desk-row>
+        <div class="divTableCell">&nbsp;</div>
+        <div class="divTableCell">&nbsp;</div>
+      </desk-row>
+      <desk-row>
+        <div class="divTableCell">&nbsp;</div>
+        <div class="divTableCell">&nbsp;</div>
+      </desk-row>
+      <desk-row>
+        <div class="divTableCell">&nbsp;</div>
+        <div class="divTableCell">&nbsp;</div>
+      </desk-row>
+    </desk>
   </center>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "./../../variables.less";
-.divTable {
-  display: table;
-  width: 100%;
-}
-.divTableRow {
-  display: table-row;
-  height: 3rem;
-}
-.divTableHeading {
-  background-color: @background-primary;
+
+.header {
+  background-color: @background-secondary;
   display: table-header-group;
 }
 .divTableCell,
@@ -54,12 +44,16 @@
   display: table-footer-group;
   font-weight: bold;
 }
-.divTableBody {
-  display: table-row-group;
-}
 </style>
 
 <script>
-export default {}
+import Desk from "../../components/desk/Desk.vue"
+import DeskRow from "../../components/desk/Row.vue"
+export default {
+  components: {
+    Desk,
+    DeskRow
+  }
+}
 </script>
 

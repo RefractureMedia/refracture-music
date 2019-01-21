@@ -19,6 +19,7 @@ export default {
 .nav-bar {
   font-size: 2rem;
   font-weight: bolder;
+  margin-bottom: 1rem;
   & a {
     color: @accent-secondary;
     &:hover {
