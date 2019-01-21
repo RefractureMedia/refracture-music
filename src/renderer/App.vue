@@ -3,8 +3,6 @@
     <window-control-bar v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
-        <div class="sidebar_toggle_x">
-        </div>
         <sidebar ref="sidebar" :state="state"></sidebar>
         <div class="wrap">
           <a v-if="state == 'closed'" v-bind:class="'sidebar_toggle'" v-on:click="sidebar_toggle">≡</a>
