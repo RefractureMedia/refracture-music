@@ -1,7 +1,13 @@
 <template>
   <div id="app">
-    <webview src="https://www.youtube.com/watch?v=9jK-NcRmVcw" preload="C:\Users\Julian\Documents\Refracture\refracture-music\src\renderer\inject.js"></webview>
-    <window-control-bar v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`" v-bind:state="state"></window-control-bar>
+    <webview
+      src="https://www.youtube.com/watch?v=LDU_Txk06tM"
+      preload="C:\Users\mulve\Documents\workspace\web\refracture\music\refracture-music\src\renderer\inject.js"
+    ></webview>
+    <window-control-bar
+      v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`"
+      v-bind:state="state"
+    ></window-control-bar>
     <div class="whole">
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
@@ -17,26 +23,128 @@
 </template>
 
 <script>
-import MediaBar from "./components/layout/MediaBar/MediaBar.vue"
-import Sidebar from "./components/layout/Sidebar.vue"
-import WindowControlBar from "./components/layout/WindowControlBar.vue"
-import NavBar from "./components/layout/NavBar.vue"
-import router from "vue-router"
-import path from "path"
+import MediaBar from "./components/layout/MediaBar/MediaBar.vue";
+import Sidebar from "./components/layout/Sidebar.vue";
+import WindowControlBar from "./components/layout/WindowControlBar.vue";
+import NavBar from "./components/layout/NavBar.vue";
+import router from "vue-router";
+import path from "path";
+import DiscordRPC from "discord-rpc";
+import chalk from "chalk";
 
 function getTimestamp(raw_time) {
-  let out_time = ""
+  let out_time = "";
   if (Math.floor((raw_time / 60) % 60) != 0) {
-    out_time =
-      Math.floor((raw_time / 60) % 60) + ":" + Math.floor(raw_time % 60)
+    if (Math.floor(raw_time % 60) < 10) {
+      out_time =
+        Math.floor((raw_time / 60) % 60) + ":0" + Math.floor(raw_time % 60);
+    } else {
+      out_time =
+        Math.floor((raw_time / 60) % 60) + ":" + Math.floor(raw_time % 60);
+    }
   } else {
     if (Math.floor(raw_time % 60) < 10) {
-      out_time = "0:0" + Math.floor(raw_time % 60)
+      out_time = "0:0" + Math.floor(raw_time % 60);
     } else {
-      out_time = "0:" + Math.floor(raw_time % 60)
+      out_time = "0:" + Math.floor(raw_time % 60);
     }
   }
-  return out_time
+  return out_time;
+}
+
+//* Create server to listen for extension
+var extension = express(),
+  http = require("http"),
+  socketServer = http.createServer(extension),
+  io = require("socket.io")(socketServer);
+
+//* Define needed variables
+var lastKeepAliveSwitch = 0;
+
+//* Keep alive check to automatically remove presence if browser not running/not using YT
+setInterval(keepAliveCheck, 1000);
+
+async function keepAliveCheck() {
+  if (lastKeepAliveSwitch > 0) {
+    setupServices.forEach(service => {
+      service.rpc.destroy();
+    });
+    setupServices = [];
+    serviceLogins = [];
+  }
+  lastKeepAliveSwitch += 1;
+}
+
+//* Listen on port 3020
+socketServer.listen(3020, () => {
+  console.log(CONSOLEPREFIX + chalk.green("Listening on Port 3020"));
+});
+
+//* Socket connection event
+io.on("connection", function(socket) {
+  global.EXTENSIONSOCKET = socket;
+  BROWSERCONNECTIONSTATE = "CONNECTED";
+
+  socket.on("playBackChange", updatePresence);
+  socket.on("updateData", updatePresence);
+});
+
+var setupServices = [],
+  serviceLogins = [],
+  presencePauseSwitch = 0;
+
+//* Updates the presence with the incomming data
+async function updatePresence(data) {
+  lastKeepAliveSwitch = 0;
+
+  var setupService = setupServices.find(
+    svice => svice.serviceName == data.service
+  );
+
+  if (!data.playback) presencePauseSwitch++;
+  else presencePauseSwitch = 0;
+  if (presencePauseSwitch >= 60) {
+    if (setupService != null) {
+      setupService.rpc.clearActivity();
+    }
+  } else {
+    if (setupService) {
+      if (userSettings.get("titleMenubar"))
+        setupService.rpc.setActivity(data.presenceData);
+    } else {
+      tryLogin(data.service, data.clientID);
+      serviceLogins.push({
+        serviceName: data.service,
+        intervalID: setInterval(
+          () => tryLogin(data.service, data.clientID),
+          10 * 1000
+        )
+      });
+    }
+  }
+}
+
+/**
+ * Try to login to RPC until connected
+ */
+async function tryLogin(service, clientID) {
+  setupServices.push({
+    rpc: new DiscordRPC.Client({ transport: "ipc" }),
+    serviceName: service,
+    ready: false
+  });
+  var serviceRPC = setupServices.find(svice => svice.serviceName == service);
+  serviceRPC.rpc
+    .login({ clientId: clientID })
+    .catch(err =>
+      console.log(`${CONSOLEPREFIX}Refracture Music - RPC: ${err.message}`)
+    );
+  serviceRPC.rpc.on("ready", () => {
+    clearInterval(
+      serviceLogins.find(svice => svice.serviceName == service).intervalID
+    );
+    serviceRPC.ready = true;
+  });
 }
 
 export default {
@@ -60,40 +168,40 @@ export default {
         currentTime: "0:00",
         duration: "0:00"
       },
-      player: new Audio(
-        "https://t4.bcbits.com/stream/a63a067166c4048cc079f9e5fe3bf012/mp3-128/1349106371?p=0&ts=1548142188&t=0f3992c28a326f625a6b70f3f2a56ba144ae9cdd&token=1548142188_319ddf768b0524d4892c746cf900627d2ff73c70"
-      )
-    }
+      player: new Audio("")
+    };
   },
   mounted() {
-    const downloader = document.getElementsByTagName("webview")[0]
+    const downloader = document.getElementsByTagName("webview")[0];
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
-      )
-    }
+      );
+    };
     this.$data.player.ondurationchange = () => {
-      this.$data.currentSong.duration = getTimestamp(this.$data.player.duration)
-      console.log(getTimestamp(this.$data.player.duration))
-    }
-    setTimeout(() => downloader.send("ping"), 3009)
-    setTimeout(() => downloader.setAudioMuted(true), 100)
+      this.$data.currentSong.duration = getTimestamp(
+        this.$data.player.duration
+      );
+      console.log(getTimestamp(this.$data.player.duration));
+    };
+    setTimeout(() => downloader.send("ping"), 3009);
+    setTimeout(() => downloader.setAudioMuted(true), 100);
     downloader.addEventListener("ipc-message", event => {
-      console.log(event.channel)
-      this.$data.player.src = event.channel[0].url
-      downloader.setAttribute("src", ".")
-    })
+      console.log(event.channel);
+      this.$data.player.src = event.channel[0].url;
+      downloader.setAttribute("src", ".");
+    });
   },
   methods: {
     sidebar_toggle() {
       if (this.$data.state == "closed") {
-        this.$data.state = "open"
+        this.$data.state = "open";
       } else {
-        this.$data.state = "closed"
+        this.$data.state = "closed";
       }
     }
   }
-}
+};
 </script>
 
 <style lang="less">
