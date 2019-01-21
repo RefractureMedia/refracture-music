@@ -18,7 +18,7 @@
         <div class="trackbar">
           <div class="timestamp through">{{ song.currentTime }}</div>
           <div class="trackbar-center">
-            <input type="range" min="0" max="192" value="1" class="bar" id="bar" onclick="time_change();">
+            <input type="range" min="0" :max="$parent.player.duration" v-model="$parent.player.currentTime" class="bar">
           </div>
           <div class="timestamp total"> {{ song.duration }}</div>
         </div>
@@ -46,6 +46,9 @@ export default {
     )
   },
   methods: {
+    onChg() {
+      this.tmpVal = $.target.value
+    },
     toggleRepeatState() {
       if ($parent.currentSong.player.loop)
         $parent.currentSong.player.loop = false

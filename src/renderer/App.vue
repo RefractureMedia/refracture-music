@@ -55,8 +55,8 @@ export default {
       currentSong: {
         name: "Crab Rave",
         artist: "Noisestorm",
-        currentTime: "",
-        duration: ""
+        currentTime: "0:00",
+        duration: "0:00"
       },
       player: new Audio(
         "https://t4.bcbits.com/stream/a63a067166c4048cc079f9e5fe3bf012/mp3-128/1349106371?p=0&ts=1548142188&t=0f3992c28a326f625a6b70f3f2a56ba144ae9cdd&token=1548142188_319ddf768b0524d4892c746cf900627d2ff73c70"
