@@ -26,7 +26,6 @@
 
 .header {
   background-color: @background-secondary;
-  display: table-header-group;
 }
 .divTableCell,
 .divTableHead {
