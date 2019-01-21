@@ -122,13 +122,11 @@ i.window-controls {
 </style>
 
 <script>
-// const remote = require("electron").remote;
 import { remote } from "electron"
 
 export default {
   name: "window-control-bar",
   props: ["state", "title"],
-  mounted() {},
   methods: {
     win_minimize() {
       remote.BrowserWindow.getFocusedWindow().minimize()
@@ -137,18 +135,29 @@ export default {
       remote.BrowserWindow.getFocusedWindow().isMaximized()
         ? remote.BrowserWindow.getFocusedWindow().unmaximize()
         : remote.BrowserWindow.getFocusedWindow().maximize()
-    } /*,
-    get_window_controls_width() {
-      document.getElementById("window_control").clientWidth;
-    }*/
+    }
   },
   data() {
     return {
       windowWidth: 873,
-      sidebarTopWidth: 0 /*document.getElementsByClassName("sidebar-top")[0]
-        .clientWidth*/,
+      sidebarTopWidth: 0,
       windowControlsWidth: 140
     }
+  },
+  updated() {
+    remote.BrowserWindow.getFocusedWindow().setTitle(this.$props.title)
+    remote.BrowserWindow.getAllWindows().setTitle(this.$props.title)
+  },
+
+  mounted() {
+    remote.BrowserWindow.getFocusedWindow().setTitle(this.$props.title)
+
+    remote.BrowserWindow.getAllWindows().setTitle(this.$props.title)
+  },
+  created() {
+    remote.BrowserWindow.getFocusedWindow().setTitle(this.$props.title)
+
+    remote.BrowserWindow.getAllWindows().setTitle(this.$props.title)
   }
 }
 </script>

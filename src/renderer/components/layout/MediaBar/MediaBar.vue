@@ -14,18 +14,7 @@
         <p class="artist">{{this.$parent.currentSong.artist}}</p>
       </div>
       <center class="controls" id="controls">
-        <div class="media-buttons">
-          <div class="media-controls save" onclick="save();">
-            <media-control icon="save" onclick="back();"></media-control>
-            <media-control icon="saved" onclick="back();"></media-control>
-          </div>
-          <media-control icon="back" onclick="back();"></media-control>
-          <media-control icon="repeat" onclick="repeat();"></media-control>
-          <media-control icon="play-pause" onclick="play-pause();"></media-control>
-          <media-control icon="skip" onclick="skip();"></media-control>
-          <media-control icon="shuffle" onclick="shuffle();"></media-control>
-          <media-control icon="more" onclick="more();"></media-control>
-        </div>
+        <controls />
         <div class="trackbar">
           <div class="timestamp through">0:00</div>
           <div class="trackbar-center">
@@ -38,8 +27,26 @@
   </footer>
 </template>
 
+<script>
+import Controls from "./Controls.vue"
+
+export default {
+  name: "media-bar",
+  props: ["song", "state"],
+  components: { Controls },
+  mounted() {
+    this.$nextTick(function() {
+      document.getElementById("controls").style.marginLeft = String(
+        "-" + document.getElementById("song-info").clientWidth + "px"
+      )
+    }, 100)
+  }
+}
+</script>
+
 <style lang="less" scoped>
-@import "./../../variables.less";
+@import "./../../../variables.less";
+
 footer {
   width: 100%;
   display: flex;
@@ -83,9 +90,10 @@ footer {
   display: inline-flex;
   margin-top: -0.8vh;
   margin-bottom: 0.8vh;
+  height: (1rem + 3rem);
 }
 
-center.controls {
+.controls {
   margin-top: 2vh;
 }
 
@@ -140,42 +148,3 @@ center.controls {
   }
 }
 </style>
-
-<script>
-import MediaControl from "./MediaControl.vue"
-import { setTimeout } from "timers"
-function addStyleString(str) {
-  var node = document.createElement("style")
-  node.innerHTML = str
-  document.body.appendChild(node)
-}
-
-function cm() {
-  addStyleString(".now_playing>center ")
-}
-
-window.top.onresize = () => {
-  cm()
-}
-export default {
-  name: "control-bar",
-  props: ["song", "state"],
-  components: { MediaControl },
-  mounted() {
-    this.$nextTick(function() {
-      document.getElementById("controls").style.marginLeft = String(
-        "-" + document.getElementById("song-info").clientWidth + "px"
-      )
-    }, 100)
-    console.log("11")
-  },
-  changed() {
-    this.$nextTick(function() {
-      document.getElementById("controls").style.marginLeft = String(
-        "-" + document.getElementById("song-info").clientWidth + "px"
-      )
-    }, 100)
-    console.log("11")
-  }
-}
-</script>

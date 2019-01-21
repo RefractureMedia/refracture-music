@@ -54,13 +54,13 @@
 
 <script>
 export default {
-  name: "media-control",
+  name: "control-button",
   props: ["icon"]
 }
 </script>
 
 <style lang='less' scoped>
-@import "./../../variables.less";
+@import "./../../../variables.less";
 
 .media-controls {
   cursor: pointer;

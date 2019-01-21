@@ -5,7 +5,7 @@
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
         <div class="wrap">
-          <a v-if="state == 'closed'" v-bind:class="'sidebar_toggle'" v-on:click="sidebar_toggle">≡</a>
+          <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <div class="nav-bar">
             <center>
               <p style="display:inline;" v-for="page in pages" v-bind:key="page" v-on:click="currentPage = page">
@@ -16,13 +16,13 @@
           <router-view></router-view>
         </div>
       </div>
-      <control-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698" v-bind:state="state"></control-bar>
+      <media-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698" v-bind:state="state"></media-bar>
     </div>
   </div>
 </template>
 
 <script>
-import ControlBar from "./components/layout/ControlBar.vue"
+import MediaBar from "./components/layout/MediaBar/MediaBar.vue"
 import Sidebar from "./components/layout/Sidebar.vue"
 import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import router from "vue-router"
@@ -31,7 +31,7 @@ export default {
   name: "refracture-music",
   components: {
     WindowControlBar,
-    ControlBar,
+    MediaBar,
     Sidebar
   },
   data() {
@@ -60,6 +60,7 @@ export default {
 @import "./variables.less";
 @import "./roboto.less";
 @import "./scrollbar.less";
+
 body {
   background: @background-primary;
   color: @accent-primary;
