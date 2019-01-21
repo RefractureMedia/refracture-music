@@ -11,7 +11,7 @@
       </div>
       <div id="song-info" class="song-info">
         <p class="song">{{this.$parent.currentSong.name}}</p>
-        <p class="artist">Noisestorm</p>
+        <p class="artist">{{this.$parent.currentSong.artist}}</p>
       </div>
       <center class="controls" id="controls">
         <div class="media-buttons">

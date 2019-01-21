@@ -6,7 +6,7 @@
     <div class="window-title no-drag" v-bind:style="'width: 67.8vw;'">
       <div class="drag" style>
         <div style="position: absolute; margin-top: 0.5vh; margin-left: 30vw">
-          <a>Refracture Music - Crab Rave</a>
+          <a>{{title}}</a>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ import { remote } from "electron"
 
 export default {
   name: "window-control-bar",
-  props: ["state"],
+  props: ["state", "title"],
   mounted() {},
   methods: {
     win_minimize() {

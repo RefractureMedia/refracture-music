@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <window-control-bar v-bind:state="state"></window-control-bar>
+    <window-control-bar v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`" v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
@@ -29,7 +29,6 @@ import router from "vue-router"
 
 export default {
   name: "refracture-music",
-  meta: { title: "Refracture Music - Crab Rave" },
   components: {
     WindowControlBar,
     ControlBar,
@@ -42,7 +41,7 @@ export default {
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs",
       pages: ["Songs", "Artists", "Albums", "Playlists"],
-      currentSong: { name: "Crab Rave" }
+      currentSong: { name: "Crab Rave", artist: "Noisestorm" }
     }
   },
   methods: {
