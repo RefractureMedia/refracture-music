@@ -8,24 +8,35 @@
           <a v-if="state == 'closed'" v-bind:class="'sidebar_toggle'" v-on:click="sidebar_toggle">≡</a>
           <div class="nav-bar">
             <center>
-              <p style="display:inline;" v-for="page in pages" v-bind:key="page" v-on:click="currentPage = page">
-                <router-link v-bind:class="['page', { active: currentPage === page }]" v-bind:to="page">{{ page + ' ' }}</router-link>
+              <p
+                style="display:inline;"
+                v-for="page in pages"
+                v-bind:key="page"
+                v-on:click="currentPage = page"
+              >
+                <router-link
+                  v-bind:class="['page', { active: currentPage === page }]"
+                  v-bind:to="page"
+                >{{ page + ' ' }}</router-link>
               </p>
             </center>
           </div>
           <router-view></router-view>
         </div>
       </div>
-      <control-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698" v-bind:state="state"></control-bar>
+      <control-bar
+        song="https://i.kym-cdn.com/photos/images/original/001/400/708/698"
+        v-bind:state="state"
+      ></control-bar>
     </div>
   </div>
 </template>
 
 <script>
-import ControlBar from "./components/layout/ControlBar.vue"
-import Sidebar from "./components/layout/Sidebar.vue"
-import WindowControlBar from "./components/layout/WindowControlBar.vue"
-import router from "vue-router"
+import ControlBar from "./components/layout/ControlBar.vue";
+import Sidebar from "./components/layout/Sidebar.vue";
+import WindowControlBar from "./components/layout/WindowControlBar.vue";
+import router from "vue-router";
 
 export default {
   name: "refracture-music",
@@ -42,18 +53,18 @@ export default {
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs",
       pages: ["Songs", "Artists", "Albums", "Playlists"]
-    }
+    };
   },
   methods: {
     sidebar_toggle() {
       if (this.$data.state == "closed") {
-        this.$data.state = "open"
+        this.$data.state = "open";
       } else {
-        this.$data.state = "closed"
+        this.$data.state = "closed";
       }
     }
   }
-}
+};
 </script>
 
 <style lang="less">
@@ -156,18 +167,10 @@ p {
   font-size: 3rem;
   text-decoration: none !important;
   transition: margin-left 0.15s;
+  position: absolute;
   &.sidebar_open {
     margin-left: -10rem !important;
     transition: margin-left 0.15s;
-  }
-  &_x {
-    margin-top: 1.3vh;
-    margin-left: 13vw;
-    position: absolute;
-    background: transparent !important;
-    &.sidebar_closed {
-      margin-left: -20vw;
-    }
   }
 }
 
