@@ -36,13 +36,13 @@ function createWindow() {
       webSecurity: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      zoomFactor: 1.0
+      zoomFactor: 1.0,
+      webviewTag:
     }
   })
   mainWindow.webContents.setVisualZoomLevelLimits(1, 1)
 
   mainWindow.loadURL(winURL)
-
   mainWindow.on('closed', () => {
     mainWindow = null
   })

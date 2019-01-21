@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <webview src="https://www.yt-download.org/@api/button/mp3/tAGnKpE4NCI" preload="C:\Users\Julian\Documents\Refracture\refracture-music\src\renderer\inject.js"></webview>
     <window-control-bar v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`" v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
@@ -21,6 +22,7 @@ import Sidebar from "./components/layout/Sidebar.vue"
 import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import NavBar from "./components/layout/NavBar.vue"
 import router from "vue-router"
+import path from "path"
 
 function getTimestamp(raw_time) {
   let out_time = ""
@@ -64,6 +66,7 @@ export default {
     }
   },
   mounted() {
+    const downloader = document.getElementsByTagName("webview")[0]
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
@@ -73,6 +76,12 @@ export default {
       this.$data.currentSong.duration = getTimestamp(this.$data.player.duration)
       console.log(getTimestamp(this.$data.player.duration))
     }
+    setTimeout(() => downloader.send("ping"), 3009)
+
+    downloader.addEventListener("ipc-message", event => {
+      console.log(event.channel)
+      // Prints "pong"
+    })
   },
   methods: {
     sidebar_toggle() {
@@ -91,6 +100,9 @@ export default {
 @import "./roboto.less";
 @import "./scrollbar.less";
 
+webview {
+  height: 0;
+}
 body {
   background: @background-primary;
   color: @accent-primary;
