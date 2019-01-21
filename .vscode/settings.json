@@ -1,10 +1,6 @@
 {
   "files.exclude": {
-    "__error": "Not found",
-    "package-lock.json": true,
-	"desktop.ini": true,
-    ".vscode": true,
+    "__error": "Not found"
   },
-  "vscode.tsc.compiler.alertOnError": "never",
   "vscode.tsc.compiler.alertTSConfigChanges": "never"
 }
