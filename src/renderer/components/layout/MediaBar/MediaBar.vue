@@ -81,7 +81,6 @@ footer {
     }
   }
   & > center {
-    margin-top: 0.9vh;
     height: 100%;
   }
 }
@@ -100,7 +99,7 @@ footer {
 @trackbar-height: 0.63rem;
 .trackbar {
   display: inline-flex;
-  & > .timestamp {
+  & .timestamp {
     margin-top: -0.4vh;
     padding-left: 0.2vw;
     padding-right: 0.2vw;
@@ -145,6 +144,18 @@ footer {
         background: @background-primary;
       }
     }
+  }
+}
+
+.version {
+  height: 100%;
+  text-align: center;
+  position: relative;
+  & p {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 6vh;
   }
 }
 </style>

@@ -6,13 +6,7 @@
         <sidebar ref="sidebar" :state="state"></sidebar>
         <div class="wrap">
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
-          <div class="nav-bar">
-            <center>
-              <p style="display:inline;" v-for="page in pages" v-bind:key="page" v-on:click="currentPage = page">
-                <router-link v-bind:class="['page', { active: currentPage === page }]" v-bind:to="page">{{ page + ' ' }}</router-link>
-              </p>
-            </center>
-          </div>
+          <nav-bar></nav-bar>
           <router-view></router-view>
         </div>
       </div>
@@ -25,6 +19,7 @@
 import MediaBar from "./components/layout/MediaBar/MediaBar.vue"
 import Sidebar from "./components/layout/Sidebar.vue"
 import WindowControlBar from "./components/layout/WindowControlBar.vue"
+import NavBar from "./components/layout/NavBar.vue"
 import router from "vue-router"
 
 export default {
@@ -32,7 +27,8 @@ export default {
   components: {
     WindowControlBar,
     MediaBar,
-    Sidebar
+    Sidebar,
+    NavBar
   },
   data() {
     return {
@@ -125,21 +121,10 @@ p {
   }
 }
 
-.version {
-  height: 100%;
-  text-align: center;
-  position: relative;
-  & > p {
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 6vh;
-    margin-left: 6vh;
-  }
-}
-
 .wrap {
   width: 100%;
   background: transparent;
+  padding: 1rem;
   min-height: calc(100%- (1.8rem+20%));
   float: right;
   overflow: scroll;
@@ -224,20 +209,5 @@ div.sidebar_toggle_x {
 .sidebar-bottom.sidebar_closed {
   width: 0px !important;
   transition: width 0.15s;
-}
-
-.nav-bar {
-  font-size: 2rem;
-  font-weight: bolder;
-  & a {
-    color: @accent-secondary;
-    &:hover {
-      text-decoration: none;
-      color: @accent-primary;
-    }
-  }
-  & .router-link-active {
-    color: @accent-primary;
-  }
 }
 </style>

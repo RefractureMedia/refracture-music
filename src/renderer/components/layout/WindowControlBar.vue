@@ -44,6 +44,7 @@
 
 @window-controls-color-hover: rgba(88, 88, 88, 0.63);
 @window-controls-width: 8.8rem;
+
 .sidebar {
   background: @background-secondary;
 }

@@ -3,7 +3,9 @@
     <div class="sidebar_top clear">
       <div class="sidebar_title sidebar_content">
         <banner />
-        <a v-if="state == 'open'" v-bind:class="'sidebar_toggle'" v-on:click="sidebar_toggle">≡</a>
+        <div class="sidebar_toggle_x" style="width: 15px;">
+          <a v-if="state == 'open'" class="sidebar_toggle_x" v-on:click="sidebar_toggle">╳</a>
+        </div>
       </div>
     </div>
     <div class="sidebar_content">
