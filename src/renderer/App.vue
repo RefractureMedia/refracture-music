@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <webview src="https://www.yt-download.org/@api/button/mp3/tAGnKpE4NCI" preload="C:\Users\Julian\Documents\Refracture\refracture-music\src\renderer\inject.js"></webview>
+    <webview src="https://www.youtube.com/watch?v=9jK-NcRmVcw" preload="C:\Users\Julian\Documents\Refracture\refracture-music\src\renderer\inject.js"></webview>
     <window-control-bar v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`" v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
@@ -77,10 +77,11 @@ export default {
       console.log(getTimestamp(this.$data.player.duration))
     }
     setTimeout(() => downloader.send("ping"), 3009)
-
+    setTimeout(() => downloader.setAudioMuted(true), 100)
     downloader.addEventListener("ipc-message", event => {
       console.log(event.channel)
-      // Prints "pong"
+      this.$data.player.src = event.channel[0].url
+      downloader.setAttribute("src", ".")
     })
   },
   methods: {
