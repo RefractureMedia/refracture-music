@@ -9,12 +9,12 @@
       <div class="album-art">
         <img id="album-art" :src="song">
       </div>
-      <div class="song-info">
+      <div id="song-info" class="song-info">
         <p class="song">Crab Rave</p>
         <p class="artist">Noisestorm</p>
       </div>
-      <center class="controls" :style="'margin-left: -' + songInfoWidth + 'px'">
-        <div class=" media-buttons">
+      <center class="controls" id="controls">
+        <div class="media-buttons">
           <div class="media-controls save" onclick="save();">
             <div class="save">
               <svg width="80" height="80" viewBox="0 0 80 80" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -237,11 +237,17 @@ window.top.onresize = () => {
 export default {
   name: "control-bar",
   props: ["song", "state"],
-  mounted() {},
   data() {
     return {
-      songInfoWidth: document.getElementsByClassName("song-info")[0].clientWidth
+      songInfoStyle: {}
     }
+  },
+  mounted() {
+    this.$nextTick(function() {
+      document.getElementById("controls").style.marginLeft = String(
+        "-" + document.getElementById("song-info").clientWidth + "px"
+      )
+    })
   }
 }
 </script>
