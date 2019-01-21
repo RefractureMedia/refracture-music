@@ -10,7 +10,7 @@
           <router-view></router-view>
         </div>
       </div>
-      <media-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698" v-bind:state="state"></media-bar>
+      <media-bar :song="currentSong" :state="state"></media-bar>
     </div>
   </div>
 </template>
@@ -21,6 +21,21 @@ import Sidebar from "./components/layout/Sidebar.vue"
 import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import NavBar from "./components/layout/NavBar.vue"
 import router from "vue-router"
+
+function getTimestamp(raw_time) {
+  let out_time = ""
+  if (Math.floor((raw_time / 60) % 60) != 0) {
+    out_time =
+      Math.floor((raw_time / 60) % 60) + ":" + Math.floor(raw_time % 60)
+  } else {
+    if (Math.floor(raw_time % 60) < 10) {
+      out_time = "0:0" + Math.floor(raw_time % 60)
+    } else {
+      out_time = "0:" + Math.floor(raw_time % 60)
+    }
+  }
+  return out_time
+}
 
 export default {
   name: "refracture-music",
@@ -37,7 +52,26 @@ export default {
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs",
       pages: ["Songs", "Artists", "Albums", "Playlists"],
-      currentSong: { name: "Crab Rave", artist: "Noisestorm" }
+      currentSong: {
+        name: "Crab Rave",
+        artist: "Noisestorm",
+        currentTime: "",
+        duration: ""
+      },
+      player: new Audio(
+        "https://t4.bcbits.com/stream/a63a067166c4048cc079f9e5fe3bf012/mp3-128/1349106371?p=0&ts=1548142188&t=0f3992c28a326f625a6b70f3f2a56ba144ae9cdd&token=1548142188_319ddf768b0524d4892c746cf900627d2ff73c70"
+      )
+    }
+  },
+  mounted() {
+    this.$data.player.ontimeupdate = () => {
+      this.$data.currentSong.currentTime = getTimestamp(
+        this.$data.player.currentTime
+      )
+    }
+    this.$data.player.ondurationchange = () => {
+      this.$data.currentSong.duration = getTimestamp(this.$data.player.duration)
+      console.log(getTimestamp(this.$data.player.duration))
     }
   },
   methods: {

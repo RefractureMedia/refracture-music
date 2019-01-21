@@ -10,17 +10,17 @@
         <img id="album-art" :src="song">
       </div>
       <div id="song-info" class="song-info">
-        <p class="song">{{this.$parent.currentSong.name}}</p>
-        <p class="artist">{{this.$parent.currentSong.artist}}</p>
+        <p class="song">{{song.name}}</p>
+        <p class="artist">{{song.artist}}</p>
       </div>
       <center class="controls" id="controls">
         <controls />
         <div class="trackbar">
-          <div class="timestamp through">0:00</div>
+          <div class="timestamp through">{{ song.currentTime }}</div>
           <div class="trackbar-center">
             <input type="range" min="0" max="192" value="1" class="bar" id="bar" onclick="time_change();">
           </div>
-          <div class="timestamp total">0:00</div>
+          <div class="timestamp total"> {{ song.duration }}</div>
         </div>
       </center>
     </div>
@@ -29,7 +29,6 @@
 
 <script>
 import Controls from "./Controls.vue"
-
 export default {
   name: "media-bar",
   props: ["song", "state"],
@@ -40,6 +39,33 @@ export default {
         "-" + document.getElementById("song-info").clientWidth + "px"
       )
     }, 100)
+  },
+  updated() {
+    document.getElementById("controls").style.marginLeft = String(
+      "-" + document.getElementById("song-info").clientWidth + "px"
+    )
+  },
+  methods: {
+    toggleRepeatState() {
+      if ($parent.currentSong.player.loop)
+        $parent.currentSong.player.loop = false
+      else $parent.currentSong.player.loop = true
+    },
+    togglePlayingState() {
+      if (this.$parent.player.paused) {
+        this.$parent.player.play()
+      } else this.$parent.player.pause()
+    },
+    toggleShuffleState() {
+      // if ($parent.queue.shuffle) $parent.queue.shuffle = false
+      // else $parent.queue.shuffle = true
+    },
+    toggleSavedState() {},
+    previousSong() {},
+    nextSong() {
+      $parent.currentSong.player.currentSrc =
+        $parent.songQueue[$parent.currentSong.numberInQueue].src
+    }
   }
 }
 </script>
