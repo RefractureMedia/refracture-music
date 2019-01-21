@@ -8,35 +8,24 @@
           <a v-if="state == 'closed'" v-bind:class="'sidebar_toggle'" v-on:click="sidebar_toggle">≡</a>
           <div class="nav-bar">
             <center>
-              <p
-                style="display:inline;"
-                v-for="page in pages"
-                v-bind:key="page"
-                v-on:click="currentPage = page"
-              >
-                <router-link
-                  v-bind:class="['page', { active: currentPage === page }]"
-                  v-bind:to="page"
-                >{{ page + ' ' }}</router-link>
+              <p style="display:inline;" v-for="page in pages" v-bind:key="page" v-on:click="currentPage = page">
+                <router-link v-bind:class="['page', { active: currentPage === page }]" v-bind:to="page">{{ page + ' ' }}</router-link>
               </p>
             </center>
           </div>
           <router-view></router-view>
         </div>
       </div>
-      <control-bar
-        song="https://i.kym-cdn.com/photos/images/original/001/400/708/698"
-        v-bind:state="state"
-      ></control-bar>
+      <control-bar song="https://i.kym-cdn.com/photos/images/original/001/400/708/698" v-bind:state="state"></control-bar>
     </div>
   </div>
 </template>
 
 <script>
-import ControlBar from "./components/layout/ControlBar.vue";
-import Sidebar from "./components/layout/Sidebar.vue";
-import WindowControlBar from "./components/layout/WindowControlBar.vue";
-import router from "vue-router";
+import ControlBar from "./components/layout/ControlBar.vue"
+import Sidebar from "./components/layout/Sidebar.vue"
+import WindowControlBar from "./components/layout/WindowControlBar.vue"
+import router from "vue-router"
 
 export default {
   name: "refracture-music",
@@ -52,19 +41,20 @@ export default {
       currentCatagory: "Library",
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs",
-      pages: ["Songs", "Artists", "Albums", "Playlists"]
-    };
+      pages: ["Songs", "Artists", "Albums", "Playlists"],
+      currentSong: { name: "Crab Rave" }
+    }
   },
   methods: {
     sidebar_toggle() {
       if (this.$data.state == "closed") {
-        this.$data.state = "open";
+        this.$data.state = "open"
       } else {
-        this.$data.state = "closed";
+        this.$data.state = "closed"
       }
     }
   }
-};
+}
 </script>
 
 <style lang="less">
