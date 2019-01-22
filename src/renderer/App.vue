@@ -53,7 +53,7 @@ function getTimestamp(raw_time) {
 }
 
 //* Create server to listen for extension
-var extension = express(),
+/*var extension = express(),
   http = require("http"),
   socketServer = http.createServer(extension),
   io = require("socket.io")(socketServer);
@@ -127,7 +127,7 @@ async function updatePresence(data) {
 /**
  * Try to login to RPC until connected
  */
-async function tryLogin(service, clientID) {
+/*async function tryLogin(service, clientID) {
   setupServices.push({
     rpc: new DiscordRPC.Client({ transport: "ipc" }),
     serviceName: service,
@@ -145,7 +145,7 @@ async function tryLogin(service, clientID) {
     );
     serviceRPC.ready = true;
   });
-}
+}*/
 
 export default {
   name: "refracture-music",
@@ -185,7 +185,7 @@ export default {
       console.log(getTimestamp(this.$data.player.duration));
     };
     setTimeout(() => downloader.send("ping"), 3009);
-    setTimeout(() => downloader.setAudioMuted(true), 100);
+    setTimeout(() => downloader.setAudioMuted(true), 30);
     downloader.addEventListener("ipc-message", event => {
       console.log(event.channel);
       this.$data.player.src = event.channel[0].url;

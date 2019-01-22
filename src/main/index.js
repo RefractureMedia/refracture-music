@@ -36,8 +36,7 @@ function createWindow() {
       webSecurity: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      zoomFactor: 1.0,
-      webviewTag:
+      zoomFactor: 1.0
     }
   })
   mainWindow.webContents.setVisualZoomLevelLimits(1, 1)
