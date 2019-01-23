@@ -1,7 +1,7 @@
 const {
   ipcRenderer
 } = require('electron')
-
+document.addEventListener("DOMContentLoaded", function (event) {
 ipcRenderer.on('ping', () => {
   let currURL = window.location.href,
     prevURL = '';
@@ -69,6 +69,6 @@ ipcRenderer.on('ping', () => {
         Loop through the previously made, now sorted arrays and display the required infomation.
     */
 
-  }
+  } 
 
-})
+})})

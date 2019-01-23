@@ -57,99 +57,100 @@ function getTimestamp(raw_time) {
 }
 
 //* Create server to listen for extension
-/*var extension = express(),
-  http = require("http"),
-  socketServer = http.createServer(extension),
-  io = require("socket.io")(socketServer);
+  /*var extension = express(),
+    http = require("http"),
+    socketServer = http.createServer(extension),
+    io = require("socket.io")(socketServer);
 
-//* Define needed variables
-var lastKeepAliveSwitch = 0;
+  //* Define needed variables
+  var lastKeepAliveSwitch = 0;
 
-//* Keep alive check to automatically remove presence if browser not running/not using YT
-setInterval(keepAliveCheck, 1000);
+  //* Keep alive check to automatically remove presence if browser not running/not using YT
+  setInterval(keepAliveCheck, 1000);
 
-async function keepAliveCheck() {
-  if (lastKeepAliveSwitch > 0) {
-    setupServices.forEach(service => {
-      service.rpc.destroy();
-    });
-    setupServices = [];
-    serviceLogins = [];
-  }
-  lastKeepAliveSwitch += 1;
-}
-
-//* Listen on port 3020
-socketServer.listen(3020, () => {
-  console.log(CONSOLEPREFIX + chalk.green("Listening on Port 3020"));
-});
-
-//* Socket connection event
-io.on("connection", function(socket) {
-  global.EXTENSIONSOCKET = socket;
-  BROWSERCONNECTIONSTATE = "CONNECTED";
-
-  socket.on("playBackChange", updatePresence);
-  socket.on("updateData", updatePresence);
-});
-
-var setupServices = [],
-  serviceLogins = [],
-  presencePauseSwitch = 0;
-
-//* Updates the presence with the incomming data
-async function updatePresence(data) {
-  lastKeepAliveSwitch = 0;
-
-  var setupService = setupServices.find(
-    svice => svice.serviceName == data.service
-  );
-
-  if (!data.playback) presencePauseSwitch++;
-  else presencePauseSwitch = 0;
-  if (presencePauseSwitch >= 60) {
-    if (setupService != null) {
-      setupService.rpc.clearActivity();
-    }
-  } else {
-    if (setupService) {
-      if (userSettings.get("titleMenubar"))
-        setupService.rpc.setActivity(data.presenceData);
-    } else {
-      tryLogin(data.service, data.clientID);
-      serviceLogins.push({
-        serviceName: data.service,
-        intervalID: setInterval(
-          () => tryLogin(data.service, data.clientID),
-          10 * 1000
-        )
+  async function keepAliveCheck() {
+    if (lastKeepAliveSwitch > 0) {
+      setupServices.forEach(service => {
+        service.rpc.destroy();
       });
+      setupServices = [];
+      serviceLogins = [];
+    }
+    lastKeepAliveSwitch += 1;
+  }
+
+  //* Listen on port 3020
+  socketServer.listen(3020, () => {
+    console.log(CONSOLEPREFIX + chalk.green("Listening on Port 3020"));
+  });
+
+  //* Socket connection event
+  io.on("connection", function(socket) {
+    global.EXTENSIONSOCKET = socket;
+    BROWSERCONNECTIONSTATE = "CONNECTED";
+
+    socket.on("playBackChange", updatePresence);
+    socket.on("updateData", updatePresence);
+  });
+
+  var setupServices = [],
+    serviceLogins = [],
+    presencePauseSwitch = 0;
+
+  //* Updates the presence with the incomming data
+  async function updatePresence(data) {
+    lastKeepAliveSwitch = 0;
+
+    var setupService = setupServices.find(
+      svice => svice.serviceName == data.service
+    );
+
+    if (!data.playback) presencePauseSwitch++;
+    else presencePauseSwitch = 0;
+    if (presencePauseSwitch >= 60) {
+      if (setupService != null) {
+        setupService.rpc.clearActivity();
+      }
+    } else {
+      if (setupService) {
+        if (userSettings.get("titleMenubar"))
+          setupService.rpc.setActivity(data.presenceData);
+      } else {
+        tryLogin(data.service, data.clientID);
+        serviceLogins.push({
+          serviceName: data.service,
+          intervalID: setInterval(
+            () => tryLogin(data.service, data.clientID),
+            10 * 1000
+          )
+        });
+      }
     }
   }
-}
 
-/**
- * Try to login to RPC until connected
- */
-/*async function tryLogin(service, clientID) {
-  setupServices.push({
-    rpc: new DiscordRPC.Client({ transport: "ipc" }),
-    serviceName: service,
-    ready: false
-  });
-  var serviceRPC = setupServices.find(svice => svice.serviceName == service);
-  serviceRPC.rpc
-    .login({ clientId: clientID })
-    .catch(err =>
-      console.log(`${CONSOLEPREFIX}Refracture Music - RPC: ${err.message}`)
-    );
-  serviceRPC.rpc.on("ready", () => {
-    clearInterval(
-      serviceLogins.find(svice => svice.serviceName == service).intervalID
-    );
-    serviceRPC.ready = true;
-  });
-}*/
+  /**
+   * Try to login to RPC until connected
+   */
+  /*async function tryLogin(service, clientID) {
+    setupServices.push({
+      rpc: new DiscordRPC.Client({ transport: "ipc" }),
+      serviceName: service,
+      ready: false
+    });
+    var serviceRPC = setupServices.find(svice => svice.serviceName == service);
+    serviceRPC.rpc
+      .login({ clientId: clientID })
+      .catch(err =>
+        console.log(`${CONSOLEPREFIX}Refracture Music - RPC: ${err.message}`)
+      );
+    serviceRPC.rpc.on("ready", () => {
+      clearInterval(
+        serviceLogins.find(svice => svice.serviceName == service).intervalID
+      );
+      serviceRPC.ready = true;
+    });
+  }
+*/
 
 export default {
   name: "refracture-music",
@@ -209,8 +210,10 @@ export default {
       }
     },
     finalCountDown() {
+      document.getElementsByTagName("webview")[0].loadURL("")
+      document.getElementsByTagName("webview")[0].reload()
       this.$data.webviewURL = "https://www.youtube.com/watch?v=9jK-NcRmVcw"
-      document.getElementsByTagName("webview")[0].loadURL('https://www.youtube.com/watch?v=9jK-NcRmVcw')
+      document.getElementsByTagName("webview")[0].reload()
     }
   }
 };
@@ -222,7 +225,7 @@ export default {
 @import "./scrollbar.less";
 
 webview {
-  height: 0;
+  //height: 0;
 }
 body {
   background: @background-primary;
