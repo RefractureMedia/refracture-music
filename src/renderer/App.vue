@@ -107,6 +107,13 @@ function getTimestamp(raw_time) {
       out_time = "0:" + Math.floor(raw_time % 60);
     }
   }
+  if(Math.floor((((raw_time / 60)/60) % 60)) >= 1) {
+    if(Math.floor((raw_time / 60) % 60) > 10) {
+      out_time = Math.floor((((raw_time / 60)/60) % 60)) + ':' + out_time
+    } else {
+      out_time = Math.floor((((raw_time / 60)/60) % 60)) + ':0' + out_time
+    }
+  }
   return out_time;
 }
 
@@ -244,6 +251,7 @@ export default {
       );
     };
     this.$data.player.ondurationchange = () => {
+      console.log(this.$data.player.duration)
       this.$data.currentSong.duration = getTimestamp(
         this.$data.player.duration
       );
