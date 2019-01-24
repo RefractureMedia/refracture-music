@@ -2,7 +2,6 @@ const {
   ipcRenderer
 } = require('electron')
 document.addEventListener("DOMContentLoaded", function (event) {
-ipcRenderer.on('ping', () => {
   let currURL = window.location.href,
     prevURL = '';
   setInterval(checkURL, 250);
@@ -60,6 +59,7 @@ ipcRenderer.on('ping', () => {
       return parseInt(b.contentLength) - parseInt(a.contentLength);
     });
     ipcRenderer.sendToHost(adaptiveAudio)
+    console.log(adaptiveAudio)
     // Sorts the "formats" array by content length (filesize)
     formats.sort((a, b) => {
       return parseInt(b.contentLength) - parseInt(a.contentLength);
@@ -69,6 +69,5 @@ ipcRenderer.on('ping', () => {
         Loop through the previously made, now sorted arrays and display the required infomation.
     */
 
-  } 
-
-})})
+  }
+})
