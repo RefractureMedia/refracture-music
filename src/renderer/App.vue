@@ -19,10 +19,8 @@
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
           <router-view></router-view>
-          <form>
-            <input type="text" name="youtubeURL" class="songInput">
-            <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
-          </form>
+          <input type="url" name="youtubeURL" class="songInput" placeholder="YouTube URL">
+          <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
         </div>
       </div>
       <media-bar :song="currentSong" :state="state"></media-bar>
@@ -265,11 +263,13 @@ export default {
     document
       .getElementsByClassName("songInput")[0]
       .addEventListener("keyup", function(event) {
-        event.preventDefault();
         if (event.keyCode === 13) {
           document.getElementById("submitSong").click();
+          event.preventDefault();
+          return false;
         }
       });
+    document.getElementsByClassName("songInput")[0].preventDefault();
   },
   methods: {
     sidebar_toggle() {
@@ -464,6 +464,9 @@ div.sidebar_toggle_x {
   cursor: text;
   &::placeholder {
     color: @accent-secondary;
+  }
+  &:focus {
+    color: @accent-primary;
   }
 }
 </style>
