@@ -19,12 +19,11 @@
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
           <router-view></router-view>
-          <a v-on:click="setSong('9jK-NcRmVcw')">Different Song</a>
           <form>
             Song:
             <input type="text" name="youtubeURL" class="songInput">
             <br>
-            <input type="submit" value="Submit" v-on:click="customSong">
+            <div v-on:click="customSong">Submit</div>
           </form>
         </div>
       </div>
@@ -288,7 +287,6 @@ export default {
       fetchSource(video);
     },
     customSong() {
-      console.log(parseYTURL(getSongInput()));
       fetchSource(parseYTURL(getSongInput()));
     }
   }

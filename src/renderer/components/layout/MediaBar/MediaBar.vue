@@ -14,13 +14,19 @@
         <p class="artist">{{song.artist}}</p>
       </div>
       <center class="controls" id="controls">
-        <controls />
+        <controls/>
         <div class="trackbar">
           <div class="timestamp through">{{ song.currentTime }}</div>
           <div class="trackbar-center">
-            <input type="range" min="0" :max="$parent.player.duration" v-model="$parent.player.currentTime" class="bar">
+            <input
+              type="range"
+              min="0"
+              :max="$parent.player.duration"
+              v-model="$parent.player.currentTime"
+              class="bar"
+            >
           </div>
-          <div class="timestamp total"> {{ song.duration }}</div>
+          <div class="timestamp total">{{ song.duration }}</div>
         </div>
       </center>
     </div>
@@ -28,36 +34,41 @@
 </template>
 
 <script>
-import Controls from "./Controls.vue"
+import Controls from "./Controls.vue";
 export default {
   name: "media-bar",
   props: ["song", "state"],
   components: { Controls },
+  data() {
+    return {
+      version: "0.0.1"
+    };
+  },
   mounted() {
     this.$nextTick(function() {
       document.getElementById("controls").style.marginLeft = String(
         "-" + document.getElementById("song-info").clientWidth + "px"
-      )
-    }, 100)
+      );
+    }, 100);
   },
   updated() {
     document.getElementById("controls").style.marginLeft = String(
       "-" + document.getElementById("song-info").clientWidth + "px"
-    )
+    );
   },
   methods: {
     onChg() {
-      this.tmpVal = $.target.value
+      this.tmpVal = $.target.value;
     },
     toggleRepeatState() {
       if ($parent.currentSong.player.loop)
-        $parent.currentSong.player.loop = false
-      else $parent.currentSong.player.loop = true
+        $parent.currentSong.player.loop = false;
+      else $parent.currentSong.player.loop = true;
     },
     togglePlayingState() {
       if (this.$parent.player.paused) {
-        this.$parent.player.play()
-      } else this.$parent.player.pause()
+        this.$parent.player.play();
+      } else this.$parent.player.pause();
     },
     toggleShuffleState() {
       // if ($parent.queue.shuffle) $parent.queue.shuffle = false
@@ -67,10 +78,10 @@ export default {
     previousSong() {},
     nextSong() {
       $parent.currentSong.player.currentSrc =
-        $parent.songQueue[$parent.currentSong.numberInQueue].src
+        $parent.songQueue[$parent.currentSong.numberInQueue].src;
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
