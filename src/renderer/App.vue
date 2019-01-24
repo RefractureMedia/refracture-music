@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <webview
+      v-if="false"
       :src="webviewURL"
       :preload="preload"
       webpreferences="allowRunningInsecureContent"
@@ -18,7 +19,13 @@
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
           <router-view></router-view>
-          <a v-on:click="finalCountDown">Different Song</a>
+          <a v-on:click="setSong('9jK-NcRmVcw')">Different Song</a>
+          <form>
+            Song:
+            <input type="text" name="youtubeURL" class="songInput">
+            <br>
+            <input type="submit" value="Submit" v-on:click="customSong">
+          </form>
         </div>
       </div>
       <media-bar :song="currentSong" :state="state"></media-bar>
@@ -35,6 +42,59 @@ import router from "vue-router";
 import path from "path";
 import DiscordRPC from "discord-rpc";
 import chalk from "chalk";
+
+function parseYTURL(input) {
+  var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+  var match = input.match(regExp);
+  if (match && match[5].length == 11) {
+    return match[5];
+  } else {
+    alert("Could not extract video ID.");
+  }
+}
+
+let sourceObtained = new CustomEvent("sourceObtained");
+
+let source;
+
+function returnSource() {
+  return source;
+}
+
+function fetchSource(vidID) {
+  let audioLoader = document.createElement("webview");
+  audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`);
+  audioLoader.setAttribute(
+    "preload",
+    `file:\\${require("path").resolve(__dirname, "./inject.js")}`
+  );
+  audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent");
+  audioLoader.setAttribute("nodeintegration", "");
+  audioLoader.setAttribute("disablewebsecurity", "");
+  setTimeout(
+    () => document.getElementsByTagName("webview")[0].setAudioMuted(true),
+    30
+  );
+
+  document.body.appendChild(audioLoader);
+  /*let audioLoader = new WebView(
+    ((src = `https://youtube.com/watch?v=${vidID}`),
+    (preload = `file:\\${require("path").resolve(__dirname, "./inject.js")}`),
+    (webpreferences = "allowRunningInsecureContent"),
+    nodeintegration,
+    disablewebsecurity).setAudioMuted(true)
+  );*/
+  audioLoader.addEventListener("ipc-message", event => {
+    console.log(event.channel);
+    // this.$data.player.src = event.channel[0].url;
+    source = event.channel[0].url;
+    document.body.dispatchEvent(sourceObtained);
+    audioLoader = null;
+    document
+      .getElementsByTagName("webview")[0]
+      .parentNode.removeChild(document.getElementsByTagName("webview")[0]);
+  });
+}
 
 function getTimestamp(raw_time) {
   let out_time = "";
@@ -54,6 +114,11 @@ function getTimestamp(raw_time) {
     }
   }
   return out_time;
+}
+
+function getSongInput() {
+  let url = document.getElementsByClassName("songInput")[0].value;
+  return url;
 }
 
 //* Create server to listen for extension
@@ -181,7 +246,6 @@ export default {
     };
   },
   mounted() {
-    const downloader = document.getElementsByTagName("webview")[0];
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
@@ -191,15 +255,26 @@ export default {
       this.$data.currentSong.duration = getTimestamp(
         this.$data.player.duration
       );
-      console.log(getTimestamp(this.$data.player.duration));
     };
+    /*const downloader = document.getElementsByTagName("webview")[0];
     setTimeout(() => downloader.send("ping"), 3009);
     setTimeout(() => downloader.setAudioMuted(true), 30);
     downloader.addEventListener("ipc-message", event => {
       console.log(event.channel);
       this.$data.player.src = event.channel[0].url;
       //downloader.setAttribute("src", ".");
-    });
+    });*/
+    setTimeout(() => {
+      fetchSource("LDU_Txk06tM");
+    }, 30);
+    document.body.addEventListener(
+      "sourceObtained",
+      () => {
+        this.$data.player.src = returnSource();
+        console.log(returnSource());
+      },
+      false
+    );
   },
   methods: {
     sidebar_toggle() {
@@ -209,11 +284,12 @@ export default {
         this.$data.state = "closed";
       }
     },
-    finalCountDown() {
-      document.getElementsByTagName("webview")[0].loadURL("");
-      document.getElementsByTagName("webview")[0].reload();
-      this.$data.webviewURL = "https://www.youtube.com/watch?v=9jK-NcRmVcw";
-      document.getElementsByTagName("webview")[0].reload();
+    setSong(video) {
+      fetchSource(video);
+    },
+    customSong() {
+      console.log(parseYTURL(getSongInput()));
+      fetchSource(parseYTURL(getSongInput()));
     }
   }
 };
