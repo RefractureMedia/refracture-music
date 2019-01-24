@@ -20,10 +20,8 @@
           <nav-bar></nav-bar>
           <router-view></router-view>
           <form>
-            Song:
             <input type="text" name="youtubeURL" class="songInput">
-            <br>
-            <div v-on:click="customSong">Submit</div>
+            <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
           </form>
         </div>
       </div>
@@ -84,7 +82,6 @@ function fetchSource(vidID) {
     disablewebsecurity).setAudioMuted(true)
   );*/
   audioLoader.addEventListener("ipc-message", event => {
-    console.log(event.channel);
     // this.$data.player.src = event.channel[0].url;
     source = event.channel[0].url;
     document.body.dispatchEvent(sourceObtained);
@@ -232,8 +229,8 @@ export default {
       currentPage: "Songs",
       pages: ["Songs", "Artists", "Albums", "Playlists"],
       currentSong: {
-        name: "Crab Rave",
-        artist: "Noisestorm",
+        name: "",
+        artist: "",
         currentTime: "0:00",
         duration: "0:00"
       },
@@ -255,14 +252,6 @@ export default {
         this.$data.player.duration
       );
     };
-    /*const downloader = document.getElementsByTagName("webview")[0];
-    setTimeout(() => downloader.send("ping"), 3009);
-    setTimeout(() => downloader.setAudioMuted(true), 30);
-    downloader.addEventListener("ipc-message", event => {
-      console.log(event.channel);
-      this.$data.player.src = event.channel[0].url;
-      //downloader.setAttribute("src", ".");
-    });*/
     setTimeout(() => {
       fetchSource("LDU_Txk06tM");
     }, 30);
@@ -270,10 +259,17 @@ export default {
       "sourceObtained",
       () => {
         this.$data.player.src = returnSource();
-        console.log(returnSource());
       },
       false
     );
+    document
+      .getElementsByClassName("songInput")[0]
+      .addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+          document.getElementById("submitSong").click();
+        }
+      });
   },
   methods: {
     sidebar_toggle() {
@@ -453,5 +449,21 @@ div.sidebar_toggle_x {
 .sidebar-bottom.sidebar_closed {
   width: 0px !important;
   transition: width 0.15s;
+}
+
+.songInput {
+  background: @background-secondary;
+  border: none;
+  height: 2rem;
+  width: 15rem;
+  border-radius: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: @accent-secondary;
+  outline-color: transparent !important;
+  cursor: text;
+  &::placeholder {
+    color: @accent-secondary;
+  }
 }
 </style>
