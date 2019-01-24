@@ -18,7 +18,7 @@
         <div class="wrap">
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
-          <router-view></router-view>
+          <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
           <input type="url" name="youtubeURL" class="songInput" placeholder="YouTube URL">
           <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
         </div>
@@ -233,9 +233,36 @@ export default {
       categories: ["Browse", "Library", "Visualize"],
       currentPage: "Songs",
       pages: ["Songs", "Artists", "Albums", "Playlists"],
+      library: {
+        songs: [
+          {
+            artists: ["Noisestorm"],
+            title: "Crab Rave",
+            featuring: [""],
+            album: "Crab Rave - Single",
+            albumArt: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          }
+        ],
+        artists: []
+      },
       currentSong: {
-        name: "",
-        artist: "",
+        meta: {
+          artists: ["Noisestorm"],
+          title: "Crab Rave",
+          featuring: [""],
+          album: "Crab Rave - Single",
+          albumArt: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
+          cachedLink: ""
+        },
         currentTime: "0:00",
         duration: "0:00"
       },
@@ -245,6 +272,15 @@ export default {
     };
   },
   mounted() {
+    for(let song of this.$data.library.songs) {
+      for(let artist of song.artists) {
+        let pushee = {
+          name: artist
+        }
+        this.$data.library.artists.push(pushee)
+      }
+      console.log(this.$data.library.artists)
+    }
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
