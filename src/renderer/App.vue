@@ -38,7 +38,25 @@ import path from "path";
 import DiscordRPC from "discord-rpc";
 import chalk from "chalk";
 
-function parseYTURL(input) {
+Array.prototype.shuffle = function() {
+    var input = this;
+     
+    for (var i = input.length-1; i >=0; i--) {
+     
+        var randomIndex = Math.floor(Math.random()*(i+1)); 
+        var itemAtIndex = input[randomIndex]; 
+         
+        input[randomIndex] = input[i]; 
+        input[i] = itemAtIndex;
+    }
+    return input;
+}
+
+function parseYTURL(input) {\
+  if (input && input.length == 11 && (input.indexOf('youtube') == -1 | input.indexOf('youtu.be') == -1)) {
+    return input
+  }
+  else {
   var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
   var match = input.match(regExp);
   if (match && match[5].length == 11) {
@@ -46,6 +64,7 @@ function parseYTURL(input) {
   } else {
     alert("Could not extract video ID.");
   }
+}
 }
 
 let sourceObtained = new CustomEvent("sourceObtained");
