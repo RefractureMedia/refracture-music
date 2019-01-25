@@ -9,7 +9,7 @@
       disablewebsecurity
     ></webview>
     <window-control-bar
-      v-bind:title="`RF Music | ${currentSong.name} by ${currentSong.artist}`"
+      v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`"
       v-bind:state="state"
     ></window-control-bar>
     <div class="whole">
@@ -39,32 +39,34 @@ import DiscordRPC from "discord-rpc";
 import chalk from "chalk";
 
 Array.prototype.shuffle = function() {
-    var input = this;
-     
-    for (var i = input.length-1; i >=0; i--) {
-     
-        var randomIndex = Math.floor(Math.random()*(i+1)); 
-        var itemAtIndex = input[randomIndex]; 
-         
-        input[randomIndex] = input[i]; 
-        input[i] = itemAtIndex;
-    }
-    return input;
-}
+  var input = this;
 
-function parseYTURL(input) {\
-  if (input && input.length == 11 && (input.indexOf('youtube') == -1 | input.indexOf('youtu.be') == -1)) {
-    return input
+  for (var i = input.length - 1; i >= 0; i--) {
+    var randomIndex = Math.floor(Math.random() * (i + 1));
+    var itemAtIndex = input[randomIndex];
+
+    input[randomIndex] = input[i];
+    input[i] = itemAtIndex;
   }
-  else {
-  var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
-  var match = input.match(regExp);
-  if (match && match[5].length == 11) {
-    return match[5];
+  return input;
+};
+
+function parseYTURL(input) {
+  if (
+    input &&
+    input.length == 11 &&
+    (input.indexOf("youtube") == -1) | (input.indexOf("youtu.be") == -1)
+  ) {
+    return input;
   } else {
-    alert("Could not extract video ID.");
+    var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+    var match = input.match(regExp);
+    if (match && match[5].length == 11) {
+      return match[5];
+    } else {
+      alert("Could not extract video ID.");
+    }
   }
-}
 }
 
 let sourceObtained = new CustomEvent("sourceObtained");
@@ -109,31 +111,21 @@ function fetchSource(vidID) {
   });
 }
 
-function getTimestamp(raw_time) {
-  let out_time = "";
-  if (Math.floor((raw_time / 60) % 60) != 0) {
-    if (Math.floor(raw_time % 60) < 10) {
-      out_time =
-        Math.floor((raw_time / 60) % 60) + ":0" + Math.floor(raw_time % 60);
-    } else {
-      out_time =
-        Math.floor((raw_time / 60) % 60) + ":" + Math.floor(raw_time % 60);
-    }
-  } else {
-    if (Math.floor(raw_time % 60) < 10) {
-      out_time = "0:0" + Math.floor(raw_time % 60);
-    } else {
-      out_time = "0:" + Math.floor(raw_time % 60);
-    }
-  }
-  if(Math.floor((((raw_time / 60)/60) % 60)) >= 1) {
-    if(Math.floor((raw_time / 60) % 60) > 10) {
-      out_time = Math.floor((((raw_time / 60)/60) % 60)) + ':' + out_time
-    } else {
-      out_time = Math.floor((((raw_time / 60)/60) % 60)) + ':0' + out_time
-    }
-  }
-  return out_time;
+function getTimesFromMs(ms) {
+  const p60 = x => Math.floor(x % 60);
+  let sec = p60(ms) < 10 ? "0" + p60(ms) : p60(ms),
+    min = p60(ms / 60) <= 0 ? 0 : p60(ms / 60),
+    hrs = p60(ms / 60 / 60);
+  return {
+    hrs: hrs,
+    sec: sec,
+    min: min
+  };
+}
+
+function getTimestamp(time) {
+  let { sec, min, hrs } = getTimesFromMs(time);
+  return hrs > 0 ? hrs + ":" + min + ":" + sec : min + ":" + sec;
 }
 
 function getSongInput() {
@@ -259,7 +251,8 @@ export default {
             title: "Crab Rave",
             featuring: [""],
             album: "Crab Rave - Single",
-            albumArt: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
+            albumArt:
+              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
             cachedLink: ""
           },
           {
@@ -279,7 +272,8 @@ export default {
           title: "Crab Rave",
           featuring: [""],
           album: "Crab Rave - Single",
-          albumArt: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
+          albumArt:
+            "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
           cachedLink: ""
         },
         currentTime: "0:00",
@@ -291,14 +285,14 @@ export default {
     };
   },
   mounted() {
-    for(let song of this.$data.library.songs) {
-      for(let artist of song.artists) {
+    for (let song of this.$data.library.songs) {
+      for (let artist of song.artists) {
         let pushee = {
           name: artist
-        }
-        this.$data.library.artists.push(pushee)
+        };
+        this.$data.library.artists.push(pushee);
       }
-      console.log(this.$data.library.artists)
+      console.log(this.$data.library.artists);
     }
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
@@ -306,7 +300,7 @@ export default {
       );
     };
     this.$data.player.ondurationchange = () => {
-      console.log(this.$data.player.duration)
+      console.log(this.$data.player.duration);
       this.$data.currentSong.duration = getTimestamp(
         this.$data.player.duration
       );
