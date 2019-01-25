@@ -262,6 +262,70 @@ export default {
             album: "Shelter - Single",
             albumArt: "http://i.imgur.com/06Obgip.jpg",
             cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
+          },
+          {
+            artists: ["Madeon", "Porter Robinson"],
+            title: "Shelter",
+            featuring: ["A1 Pictures"],
+            album: "Shelter - Single",
+            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            cachedLink: ""
           }
         ],
         artists: []
