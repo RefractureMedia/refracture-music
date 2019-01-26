@@ -104,6 +104,7 @@ export default {
 .detail {
   vertical-align: top;
   padding-top: 1.6rem;
+  //border-left: 0.8rem dashed @accent-secondary;
 }
 .divTableFoot {
   display: table-footer-group;

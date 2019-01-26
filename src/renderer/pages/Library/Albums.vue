@@ -1,5 +1,5 @@
 <template>
-  <center>
+  <center style="overflow: scroll; height: 65.5vh;">
     <div
       style="display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 12rem)); justify-content: center;"
     >
