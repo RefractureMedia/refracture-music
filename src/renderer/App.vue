@@ -18,8 +18,8 @@
         <div class="wrap">
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
+          <input type="url" name="youtubeURL" class="songInput" placeholder="Search">
           <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
-          <input type="url" name="youtubeURL" class="songInput" placeholder="YouTube URL">
           <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
         </div>
       </div>
@@ -93,15 +93,7 @@ function fetchSource(vidID) {
   );
 
   document.body.appendChild(audioLoader);
-  /*let audioLoader = new WebView(
-    ((src = `https://youtube.com/watch?v=${vidID}`),
-    (preload = `file:\\${require("path").resolve(__dirname, "./inject.js")}`),
-    (webpreferences = "allowRunningInsecureContent"),
-    nodeintegration,
-    disablewebsecurity).setAudioMuted(true)
-  );*/
   audioLoader.addEventListener("ipc-message", event => {
-    // this.$data.player.src = event.channel[0].url;
     source = event.channel[0].url;
     document.body.dispatchEvent(sourceObtained);
     audioLoader = null;
@@ -132,102 +124,6 @@ function getSongInput() {
   let url = document.getElementsByClassName("songInput")[0].value;
   return url;
 }
-
-//* Create server to listen for extension
-/*var extension = express(),
-    http = require("http"),
-    socketServer = http.createServer(extension),
-    io = require("socket.io")(socketServer);
-
-  //* Define needed variables
-  var lastKeepAliveSwitch = 0;
-
-  //* Keep alive check to automatically remove presence if browser not running/not using YT
-  setInterval(keepAliveCheck, 1000);
-
-  async function keepAliveCheck() {
-    if (lastKeepAliveSwitch > 0) {
-      setupServices.forEach(service => {
-        service.rpc.destroy();
-      });
-      setupServices = [];
-      serviceLogins = [];
-    }
-    lastKeepAliveSwitch += 1;
-  }
-
-  //* Listen on port 3020
-  socketServer.listen(3020, () => {
-    console.log(CONSOLEPREFIX + chalk.green("Listening on Port 3020"));
-  });
-
-  //* Socket connection event
-  io.on("connection", function(socket) {
-    global.EXTENSIONSOCKET = socket;
-    BROWSERCONNECTIONSTATE = "CONNECTED";
-
-    socket.on("playBackChange", updatePresence);
-    socket.on("updateData", updatePresence);
-  });
-
-  var setupServices = [],
-    serviceLogins = [],
-    presencePauseSwitch = 0;
-
-  //* Updates the presence with the incomming data
-  async function updatePresence(data) {
-    lastKeepAliveSwitch = 0;
-
-    var setupService = setupServices.find(
-      svice => svice.serviceName == data.service
-    );
-
-    if (!data.playback) presencePauseSwitch++;
-    else presencePauseSwitch = 0;
-    if (presencePauseSwitch >= 60) {
-      if (setupService != null) {
-        setupService.rpc.clearActivity();
-      }
-    } else {
-      if (setupService) {
-        if (userSettings.get("titleMenubar"))
-          setupService.rpc.setActivity(data.presenceData);
-      } else {
-        tryLogin(data.service, data.clientID);
-        serviceLogins.push({
-          serviceName: data.service,
-          intervalID: setInterval(
-            () => tryLogin(data.service, data.clientID),
-            10 * 1000
-          )
-        });
-      }
-    }
-  }
-
-  /**
-   * Try to login to RPC until connected
-   */
-/*async function tryLogin(service, clientID) {
-    setupServices.push({
-      rpc: new DiscordRPC.Client({ transport: "ipc" }),
-      serviceName: service,
-      ready: false
-    });
-    var serviceRPC = setupServices.find(svice => svice.serviceName == service);
-    serviceRPC.rpc
-      .login({ clientId: clientID })
-      .catch(err =>
-        console.log(`${CONSOLEPREFIX}Refracture Music - RPC: ${err.message}`)
-      );
-    serviceRPC.rpc.on("ready", () => {
-      clearInterval(
-        serviceLogins.find(svice => svice.serviceName == service).intervalID
-      );
-      serviceRPC.ready = true;
-    });
-  }
-*/
 
 export default {
   name: "refracture-music",
@@ -328,7 +224,8 @@ export default {
             cachedLink: ""
           }
         ],
-        artists: []
+        artists: [],
+        albums: []
       },
       currentSong: {
         meta: {
@@ -349,15 +246,31 @@ export default {
     };
   },
   mounted() {
+    let artistsTemp = [];
+    let albumsTemp = [];
     for (let song of this.$data.library.songs) {
       for (let artist of song.artists) {
-        let pushee = {
-          name: artist
-        };
-        this.$data.library.artists.push(pushee);
+        if (!artistsTemp.includes(artist)) {
+          artistsTemp.push(artist);
+          this.$data.library.artists.push({
+            name: artist
+          });
+        }
       }
-      console.log(this.$data.library.artists);
+      if (!albumsTemp.includes(song.album)) {
+        this.$data.library.albums.push({
+          name: song.album,
+          art: [song.albumArt]
+        });
+      } else {
+        for (let album of this.$data.library.albums) {
+          if (album.name == song.album && !album.art.includes(song.albumArt)) {
+            album.art.push(song.albumArt);
+          }
+        }
+      }
     }
+    console.log(this.$data.library);
     this.$data.player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
@@ -580,6 +493,9 @@ div.sidebar_toggle_x {
   padding-right: 1rem;
   color: @accent-secondary;
   outline-color: transparent !important;
+  float: right;
+  margin-top: -3.6rem;
+  position: relative;
   cursor: text;
   &::placeholder {
     color: @accent-secondary;
