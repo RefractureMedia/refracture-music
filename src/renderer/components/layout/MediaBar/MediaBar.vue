@@ -10,14 +10,29 @@
         <img id="album-art" :src="song.meta.albumArt">
       </div>
       <div id="song-info" class="song-info">
-        <p class="song">{{ song.meta.title }}<span v-if="song.meta.featuring[0] != ''"> ft. <span v-for="(feature, index) of song.meta.featuring" v-bind:key="feature"><a>{{ feature }}</a><span v-if="song.meta.featuring.length > 1 && index != song.meta.featuring.length-1"> &amp; </span></span></span></p>
-        <p class="artist"><span v-for="(artist, index) of song.meta.artists" v-bind:key="artist"><a>{{ artist }}</a><span v-if="song.meta.artists.length > 1 && index != song.meta.artists.length-1"> &amp; </span></span></p>
+        <p class="song">
+          {{ song.meta.title }}
+          <span v-if="song.meta.featuring[0] != ''">ft.
+            <span v-for="(feature, index) of song.meta.featuring" v-bind:key="feature">
+              <a>{{ feature }}</a>
+              <span
+                v-if="song.meta.featuring.length > 1 && index != song.meta.featuring.length-1"
+              >&amp;</span>
+            </span>
+          </span>
+        </p>
+        <p class="artist">
+          <span v-for="(artist, index) of song.meta.artists" v-bind:key="artist">
+            <a>{{ artist }}</a>
+            <span v-if="song.meta.artists.length > 1 && index != song.meta.artists.length-1">&amp;</span>
+          </span>
+        </p>
       </div>
       <center class="controls" id="controls">
         <controls/>
         <div class="trackbar">
           <div class="timestamp through">{{ song.currentTime }}</div>
-          <div class="trackbar-center">
+          <div class="trackbar-center" style="margin-top: -.25rem;">
             <input
               type="range"
               min="0"

@@ -18,9 +18,20 @@
         <div class="wrap">
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
-          <input type="url" name="youtubeURL" class="songInput" placeholder="Search">
-          <div id="submitSong" v-on:click="customSong" style="display: none;"></div>
+          <input
+            v-if="$route.path.split('/')[1] == 'library'"
+            type="url"
+            name="youtubeURL"
+            class="songInput"
+            placeholder="Search"
+          >
+          <div
+            v-if="$route.path.split('/')[1] == 'library'"
+            id="submitLibrarySearch"
+            style="display: none;"
+          ></div>
           <svg
+            v-if="$route.path.split('/')[1] == 'library'"
             width="18"
             height="18"
             viewBox="0 0 28 28"
@@ -134,7 +145,7 @@ function getTimestamp(time) {
 }
 
 function getSongInput() {
-  let url = document.getElementsByClassName("songInput")[0].value;
+  let url = document.getElementsByClassName("browseSearch")[0].value;
   return url;
 }
 
@@ -318,6 +329,9 @@ export default {
     document.getElementsByClassName("songInput")[0].preventDefault();
   },
   methods: {
+    getCategory() {
+      return this.$router.path.split("/")[0];
+    },
     sidebar_toggle() {
       if (this.$data.state == "closed") {
         this.$data.state = "open";
@@ -328,9 +342,12 @@ export default {
     setSong(video) {
       fetchSource(video);
     },
-    customSong() {
+    browseSearch() {
       fetchSource(parseYTURL(getSongInput()));
-      document.getElementsByClassName("songInput")[0].value = "";
+      document.getElementsByClassName("browseSearch")[0].value = "";
+    },
+    print(content) {
+      console.log(content);
     }
   }
 };

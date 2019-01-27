@@ -13,7 +13,7 @@
         </desk-row>
       </desk>
     </div>
-    <div style="overflow: scroll; height: 62vh;">
+    <div class="songContainer">
       <desk>
         <desk-row v-for="song in library.songs" v-bind:key="song" class="song">
           <div class="divTableCell">
@@ -109,6 +109,11 @@ export default {
 .divTableFoot {
   display: table-footer-group;
   font-weight: bold;
+}
+
+.songContainer {
+  overflow: scroll;
+  height: 61vh;
 }
 </style>
 

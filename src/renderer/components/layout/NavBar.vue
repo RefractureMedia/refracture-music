@@ -1,8 +1,16 @@
 <template>
   <div class="nav-bar">
     <center>
-      <p style="display:inline;" v-for="page in $parent.pages" v-bind:key="page" v-on:click="$parent.currentPage = page">
-        <router-link v-bind:class="['page', { active: $parent.currentPage === page }]" v-bind:to="page">{{ page + ' ' }}</router-link>
+      <p
+        style="display:inline;"
+        v-for="page in $parent.pages"
+        v-bind:key="page"
+        v-on:click="$parent.currentPage = page"
+      >
+        <router-link
+          v-bind:class="'page ' + ($route.name == page) ? '' : 'currentPage'"
+          v-bind:to="page"
+        >{{ page + ' ' }}</router-link>
       </p>
     </center>
   </div>
@@ -10,8 +18,17 @@
 
 <script>
 export default {
-  name: "nav-bar"
-}
+  name: "nav-bar",
+  methods: {
+    active(input) {
+      if (this.$route.name == input) {
+        return "currentCategory";
+      } else {
+        return "";
+      }
+    }
+  }
+};
 </script>
 
 <style lang="less">
@@ -28,6 +45,9 @@ export default {
     }
   }
   & .router-link-active {
+    color: @accent-primary;
+  }
+  & .currentCategory {
     color: @accent-primary;
   }
 }
