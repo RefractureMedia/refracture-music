@@ -33,9 +33,7 @@
               ft.
               <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
                 <a>{{ feature }}</a>
-                <span
-                  v-if="song.featuring.length > 1 && index != song.featuring.length-1"
-                >&amp;{{ ' ' }}</span>
+                <span v-if="song.featuring.length > 1 && index != song.featuring.length-1">&amp;{{ ' ' }}</span>
               </span>
             </span>
           </div>
@@ -58,9 +56,9 @@
 </template>
 
 <script>
-import Desk from "../../components/desk/Desk.vue";
-import DeskRow from "../../components/desk/Row.vue";
-import ControlButton from "./../../components/layout/MediaBar/ControlButton.vue";
+import Desk from "../../components/desk/Desk.vue"
+import DeskRow from "../../components/desk/Row.vue"
+import ControlButton from "./../../components/layout/MediaBar/ControlButton.vue"
 export default {
   components: {
     Desk,
@@ -69,22 +67,22 @@ export default {
   },
   props: ["library", "currentSong", "player"],
   data() {
-    return {};
+    return {}
   },
   methods: {
     togglePlayingState: function(event) {
       if (this.$parent.$data.player.paused) {
-        this.$parent.$data.player.play();
+        this.$parent.$data.player.play()
       } else {
-        this.$parent.$data.player.pause();
+        this.$parent.$data.player.pause()
       }
     },
     toggleSavedState: function() {
-      console.log("a");
+      console.log("a")
     }
   },
   mounted() {}
-};
+}
 </script>
 
 <style lang="less">

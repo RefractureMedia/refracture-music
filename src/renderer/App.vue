@@ -1,17 +1,7 @@
 <template>
   <div id="app">
-    <webview
-      v-if="false"
-      :src="webviewURL"
-      :preload="preload"
-      webpreferences="allowRunningInsecureContent"
-      nodeintegration
-      disablewebsecurity
-    ></webview>
-    <window-control-bar
-      v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`"
-      v-bind:state="state"
-    ></window-control-bar>
+    <webview v-if="false" :src="webviewURL" :preload="preload" webpreferences="allowRunningInsecureContent" nodeintegration disablewebsecurity></webview>
+    <window-control-bar v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`" v-bind:state="state"></window-control-bar>
     <div class="whole">
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
@@ -44,7 +34,9 @@
               fill="currentColor"
             ></path>
           </svg>
-          <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
+          <div v-if="library.artists.length > 0">
+            <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
+          </div>
         </div>
       </div>
       <media-bar :song="currentSong" :state="state"></media-bar>
@@ -53,100 +45,79 @@
 </template>
 
 <script>
-import MediaBar from "./components/layout/MediaBar/MediaBar.vue";
-import Sidebar from "./components/layout/Sidebar.vue";
-import WindowControlBar from "./components/layout/WindowControlBar.vue";
-import NavBar from "./components/layout/NavBar.vue";
-import router from "vue-router";
-import path from "path";
-import DiscordRPC from "discord-rpc";
-import chalk from "chalk";
+import MediaBar from "./components/layout/MediaBar/MediaBar.vue"
+import Sidebar from "./components/layout/Sidebar.vue"
+import WindowControlBar from "./components/layout/WindowControlBar.vue"
+import NavBar from "./components/layout/NavBar.vue"
+import router from "vue-router"
+import { getTimesFromMs, getTimestamp } from "./utilities/timeManagement.js"
+import path from "path"
+import request from "request"
 
 Array.prototype.shuffle = function() {
-  var input = this;
+  var input = this
 
   for (var i = input.length - 1; i >= 0; i--) {
-    var randomIndex = Math.floor(Math.random() * (i + 1));
-    var itemAtIndex = input[randomIndex];
+    var randomIndex = Math.floor(Math.random() * (i + 1))
+    var itemAtIndex = input[randomIndex]
 
-    input[randomIndex] = input[i];
-    input[i] = itemAtIndex;
+    input[randomIndex] = input[i]
+    input[i] = itemAtIndex
   }
-  return input;
-};
+  return input
+}
+let sourceObtained = new CustomEvent("sourceObtained")
+let source
 
+function returnSource() {
+  return source
+}
+
+function fetchSource(vidID) {
+  let audioLoader = document.createElement("webview")
+  audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`)
+  audioLoader.setAttribute(
+    "preload",
+    `file:\\${require("path").resolve(__dirname, "./inject.js")}`
+  )
+  audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent")
+  audioLoader.setAttribute("nodeintegration", "")
+  audioLoader.setAttribute("disablewebsecurity", "")
+  setTimeout(
+    () => document.getElementsByTagName("webview")[0].setAudioMuted(true),
+    30
+  )
+
+  document.body.appendChild(audioLoader)
+  audioLoader.addEventListener("ipc-message", event => {
+    source = event.channel[0].url
+    document.body.dispatchEvent(sourceObtained)
+    audioLoader = null
+    document
+      .getElementsByTagName("webview")[0]
+      .parentNode.removeChild(document.getElementsByTagName("webview")[0])
+  })
+}
 function parseYTURL(input) {
   if (
     input &&
     input.length == 11 &&
     (input.indexOf("youtube") == -1) | (input.indexOf("youtu.be") == -1)
   ) {
-    return input;
+    return input
   } else {
-    var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
-    var match = input.match(regExp);
+    var regExp = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/
+    var match = input.match(regExp)
     if (match && match[5].length == 11) {
-      return match[5];
+      return match[5]
     } else {
-      alert("Could not extract video ID.");
+      alert("Could not extract video ID.")
     }
   }
 }
-
-let sourceObtained = new CustomEvent("sourceObtained");
-
-let source;
-
-function returnSource() {
-  return source;
-}
-
-function fetchSource(vidID) {
-  let audioLoader = document.createElement("webview");
-  audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`);
-  audioLoader.setAttribute(
-    "preload",
-    `file:\\${require("path").resolve(__dirname, "./inject.js")}`
-  );
-  audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent");
-  audioLoader.setAttribute("nodeintegration", "");
-  audioLoader.setAttribute("disablewebsecurity", "");
-  setTimeout(
-    () => document.getElementsByTagName("webview")[0].setAudioMuted(true),
-    30
-  );
-
-  document.body.appendChild(audioLoader);
-  audioLoader.addEventListener("ipc-message", event => {
-    source = event.channel[0].url;
-    document.body.dispatchEvent(sourceObtained);
-    audioLoader = null;
-    document
-      .getElementsByTagName("webview")[0]
-      .parentNode.removeChild(document.getElementsByTagName("webview")[0]);
-  });
-}
-
-function getTimesFromMs(ms) {
-  const p60 = x => Math.floor(x % 60);
-  let sec = p60(ms) < 10 ? "0" + p60(ms) : p60(ms),
-    min = p60(ms / 60) <= 0 ? 0 : p60(ms / 60),
-    hrs = p60(ms / 60 / 60);
-  return {
-    hrs: hrs,
-    sec: sec,
-    min: min
-  };
-}
-
-function getTimestamp(time) {
-  let { sec, min, hrs } = getTimesFromMs(time);
-  return hrs > 0 ? hrs + ":" + min + ":" + sec : min + ":" + sec;
-}
-
 function getSongInput() {
-  let url = document.getElementsByClassName("browseSearch")[0].value;
-  return url;
+  let url = document.getElementsByClassName("browseSearch")[0].value
+  return url
 }
 
 export default {
@@ -176,80 +147,35 @@ export default {
             cachedLink: ""
           },
           {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
+            artists: ["Noisestorm"],
+            title: "Crab Rave",
             featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            album: "Crab Rave - Single",
+            albumArt:
+              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
             cachedLink: ""
           },
           {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
+            artists: ["Noisestorm"],
+            title: "Crab Rave",
             featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            album: "Crab Rave - Single",
+            albumArt:
+              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
             cachedLink: ""
           },
           {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
+            artists: ["Journey"],
+            title: "Dont Stop",
             featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Madeon", "Porter Robinson"],
-            title: "Shelter",
-            featuring: [""],
-            album: "Shelter - Single",
-            albumArt: "http://i.imgur.com/06Obgip.jpg",
+            album: "Journy",
+            albumArt:
+              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
             cachedLink: ""
           }
         ],
-        artists: [],
-        albums: []
+        albums: [],
+        artists: []
       },
       currentSong: {
         meta: {
@@ -267,90 +193,88 @@ export default {
       player: new Audio(""),
       webviewURL: "https://www.youtube.com/watch?v=LDU_Txk06tM",
       preload: `file:\\${require("path").resolve(__dirname, "./inject.js")}`
-    };
+    }
   },
   mounted() {
-    let artistsTemp = [];
-    let albumsTemp = [];
-    for (let song of this.$data.library.songs) {
-      for (let artist of song.artists) {
-        if (!artistsTemp.includes(artist)) {
-          artistsTemp.push(artist);
-          this.$data.library.artists.push({
-            name: artist
-          });
-        }
+    let songs = this.$data.library.songs
+
+    for (let s in songs) {
+      for (let a in songs[s].artists) {
+        let artist = songs[s].artists[a]
+        request(
+          "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
+            artist +
+            "&api_key=b76f2bad9a76f532d06b2a31f1205409&format=json",
+          (err, res, dat) => {
+            let data = JSON.parse(dat).artist
+            if (err) console.error(err)
+            else if (
+              data !== undefined &&
+              !this.$data.library.artists.includes(JSON.stringify(data))
+            )
+              this.$data.library.artists.push(JSON.stringify(data))
+          }
+        )
       }
-      if (!albumsTemp.includes(song.album)) {
+      if (this.$data.library.albums.indexOf(songs[s].album == -1)) {
         this.$data.library.albums.push({
-          name: song.album,
-          art: [song.albumArt]
-        });
-        albumsTemp.push(song.album);
+          name: songs[s].album,
+          art: [songs[s].albumArt]
+        })
       } else {
         for (let album of this.$data.library.albums) {
           if (album.name == song.album && !album.art.includes(song.albumArt)) {
-            album.art.push(song.albumArt);
+            album.art.push(song.albumArt)
           }
         }
       }
     }
-    console.log(this.$data.library);
-    this.$data.player.ontimeupdate = () => {
-      this.$data.currentSong.currentTime = getTimestamp(
+    this.$data.player.ontimeupdate = () =>
+      (this.$data.currentSong.currentTime = getTimestamp(
         this.$data.player.currentTime
-      );
-    };
-    this.$data.player.ondurationchange = () => {
-      console.log(this.$data.player.duration);
-      this.$data.currentSong.duration = getTimestamp(
+      ))
+
+    this.$data.player.ondurationchange = () =>
+      (this.$data.currentSong.duration = getTimestamp(
         this.$data.player.duration
-      );
-    };
-    setTimeout(() => {
-      fetchSource("LDU_Txk06tM");
-    }, 30);
+      ))
+    setTimeout(() => fetchSource("LDU_Txk06tM"), 30)
     document.body.addEventListener(
       "sourceObtained",
-      () => {
-        this.$data.player.src = returnSource();
-      },
+      () => (this.$data.player.src = returnSource()),
       false
-    );
+    )
     document
       .getElementsByClassName("songInput")[0]
-      .addEventListener("keyup", function(event) {
-        if (event.keyCode === 13) {
-          document.getElementById("submitSong").click();
-          event.preventDefault();
-          return false;
+      .addEventListener("keyup", function(e) {
+        if (e.keyCode === 13) {
+          document.getElementById("submitSong").click()
+          e.preventDefault()
+          return false
         }
-      });
-    document.getElementsByClassName("songInput")[0].preventDefault();
+      })
+    document.getElementsByClassName("songInput")[0].preventDefault()
   },
   methods: {
     getCategory() {
-      return this.$router.path.split("/")[0];
+      return this.$router.path.split("/")[0]
     },
     sidebar_toggle() {
-      if (this.$data.state == "closed") {
-        this.$data.state = "open";
-      } else {
-        this.$data.state = "closed";
-      }
+      if (this.$data.state == "closed") this.$data.state = "open"
+      else this.$data.state = "closed"
     },
     setSong(video) {
-      fetchSource(video);
+      fetchSource(video)
     },
     browseSearch() {
-      fetchSource(parseYTURL(getSongInput()));
-      document.getElementsByClassName("browseSearch")[0].value = "";
+      fetchSource(parseYTURL(getSongInput()))
+      document.getElementsByClassName("browseSearch")[0].value = ""
     },
     print(content) {
-      console.log(content);
+      console.log(content)
     }
   }
-};
+}
 </script>
 
 <style lang="less">
