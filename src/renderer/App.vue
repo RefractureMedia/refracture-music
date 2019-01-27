@@ -19,19 +19,19 @@
           <a v-if="state == 'closed'" class="sidebar_toggle" v-on:click="sidebar_toggle">≡</a>
           <nav-bar></nav-bar>
           <input
-            v-if="$route.path.split('/')[1] == 'library'"
+            v-if="$route.path.split('/')[1] == 'library' || $route.path.split('/')[1] == 'Library'"
             type="url"
             name="youtubeURL"
             class="songInput"
             placeholder="Search"
           >
           <div
-            v-if="$route.path.split('/')[1] == 'library'"
+            v-if="$route.path.split('/')[1] == 'library' || $route.path.split('/')[1] == 'Library'"
             id="submitLibrarySearch"
             style="display: none;"
           ></div>
           <svg
-            v-if="$route.path.split('/')[1] == 'library'"
+            v-if="$route.path.split('/')[1] == 'library' || $route.path.split('/')[1] == 'Library'"
             width="18"
             height="18"
             viewBox="0 0 28 28"

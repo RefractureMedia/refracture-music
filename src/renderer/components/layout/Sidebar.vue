@@ -24,7 +24,7 @@
         <div class="bottom-items-content">
           <div class="left">
             <p>
-              <a>Settings</a>
+              <a v-on:click="$parent.print($route.path)">Settings</a>
             </p>
           </div>
           <div class="right">
