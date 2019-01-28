@@ -151,8 +151,8 @@ window.notify = function(x) {
     .substring(7)
   toast.id = rid
   toast.innerHTML = `
-<div class="toast on jam" style="z-index:100000;" aria-hidden="true">
-  <span class="close" onclick=".classList.remove('on')" aria-role="button" tabindex="0">&times;</span>
+<div class="toast jam" style="z-index:100000;" aria-hidden="true">
+  <span class="close" onclick="document.getElementsByClassName('toast')[0].classList.remove('on')" aria-role="button" tabindex="0">&times;</span>
   ${x}
 </div>`
   document.body.appendChild(toast)
