@@ -89,12 +89,8 @@ export default {
 
     player.ondurationchange = () =>
       (this.$data.currentSong.duration = getTimestamp(player.duration))
-    setTimeout(() => fetchSource("LDU_Txk06tM"), 30)
-    document.body.addEventListener(
-      "sourceObtained",
-      () => (this.$data.player.src = returnSource()),
-      false
-    )
+    setTimeout(() => this.setSong("LDU_Txk06tM"), 30)
+
     document
       .getElementsByClassName("songInput")[0]
       .addEventListener("keyup", e => {
@@ -114,11 +110,32 @@ export default {
       if (this.$data.state == "closed") this.$data.state = "open"
       else this.$data.state = "closed"
     },
-    setSong(video) {
-      fetchSource(video)
+    setSong(vidID) {
+      let audioLoader = document.createElement("webview")
+      audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`)
+      audioLoader.setAttribute(
+        "preload",
+        `file:\\${require("path").resolve(__dirname, "./utilities/inject.js")}`
+      )
+      audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent")
+      audioLoader.setAttribute("nodeintegration", "")
+      audioLoader.setAttribute("disablewebsecurity", "")
+      setTimeout(
+        () => document.getElementsByTagName("webview")[0].setAudioMuted(true),
+        30
+      )
+
+      document.body.appendChild(audioLoader)
+      audioLoader.addEventListener("ipc-message", event => {
+        this.$data.player.src = event.channel[0].url
+        audioLoader = null
+        document
+          .getElementsByTagName("webview")[0]
+          .parentNode.removeChild(document.getElementsByTagName("webview")[0])
+      })
     },
     browseSearch() {
-      fetchSource(parseYTURL(getSongInput()))
+      this.setSong(parseYTURL(getSongInput()))
       document.getElementsByClassName("browseSearch")[0].value = ""
     },
     print(content) {
@@ -138,38 +155,7 @@ Array.prototype.shuffle = function() {
   }
   return input
 }
-let sourceObtained = new CustomEvent("sourceObtained"),
-  source
 
-function returnSource() {
-  return source
-}
-
-function fetchSource(vidID) {
-  let audioLoader = document.createElement("webview")
-  audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`)
-  audioLoader.setAttribute(
-    "preload",
-    `file:\\${require("path").resolve(__dirname, "./utilities/inject.js")}`
-  )
-  audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent")
-  audioLoader.setAttribute("nodeintegration", "")
-  audioLoader.setAttribute("disablewebsecurity", "")
-  setTimeout(
-    () => document.getElementsByTagName("webview")[0].setAudioMuted(true),
-    30
-  )
-
-  document.body.appendChild(audioLoader)
-  audioLoader.addEventListener("ipc-message", event => {
-    source = event.channel[0].url
-    document.body.dispatchEvent(sourceObtained)
-    audioLoader = null
-    document
-      .getElementsByTagName("webview")[0]
-      .parentNode.removeChild(document.getElementsByTagName("webview")[0])
-  })
-}
 function parseYTURL(input) {
   if (
     input &&
