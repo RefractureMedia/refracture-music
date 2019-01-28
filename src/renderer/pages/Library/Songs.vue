@@ -9,7 +9,6 @@
           <div class="divTableCell">Artist</div>
           <div class="divTableCell">Title</div>
           <div class="divTableCell">Album</div>
-          <div class="divTableCell"></div>
         </desk-row>
       </desk>
     </div>
@@ -38,7 +37,7 @@
             </span>
           </div>
           <div class="divTableCell detail">{{ song.album }}</div>
-          <div class="divTableCell">
+          <div class="divTableCell" style="display:fixed;">
             <div v-if="currentSong != song" v-on:click="player.src=song.cachedLink">
               <control-button icon="play"></control-button>
             </div>
@@ -47,6 +46,9 @@
             </div>
             <div v-if="currentSong == song && isPaused" v-on:click="togglePlayingState();">
               <control-button icon="play"></control-button>
+            </div>
+            <div v-on:click="toggleSavedState();">
+              <control-button icon="save"></control-button>
             </div>
           </div>
         </desk-row>
@@ -78,7 +80,7 @@ export default {
       }
     },
     toggleSavedState: function() {
-      console.log("a")
+      notify("Saved Song!")
     }
   },
   mounted() {}

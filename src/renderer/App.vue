@@ -34,6 +34,7 @@ import { getTimesFromMs, getTimestamp } from "./utilities/timeManagement.js"
 import AppData from "./appData.js"
 import path from "path"
 import request from "request"
+import { setTimeout } from "timers"
 
 export default {
   name: "refracture-music",
@@ -143,7 +144,19 @@ export default {
     }
   }
 }
-
+window.notify = function(x) {
+  var toast = document.createElement("div")
+  const rid = Math.random()
+    .toString(36)
+    .substring(7)
+  toast.id = rid
+  toast.innerHTML = `
+<div class="toast on jam" style="z-index:100000;" aria-hidden="true">
+  <span class="close" onclick=".classList.remove('on')" aria-role="button" tabindex="0">&times;</span>
+  ${x}
+</div>`
+  document.body.appendChild(toast)
+}
 Array.prototype.shuffle = function() {
   var input = this
   for (var i = input.length - 1; i >= 0; i--) {
@@ -169,7 +182,7 @@ function parseYTURL(input) {
     if (match && match[5].length == 11) {
       return match[5]
     } else {
-      alert("Could not extract video ID.")
+      notify("Could not extract video ID.")
     }
   }
 }
@@ -374,5 +387,34 @@ div.sidebar_toggle_x {
   margin-top: -3.1rem;
   margin-right: 0.5rem;
   pointer-events: none;
+} /* toast */
+.toast {
+  color: #000;
+  line-height: 1.5;
+  margin-bottom: 1em;
+  padding: 1.25em;
+  position: absolute;
+  right: -365px;
+  top: 1em;
+  transition: 0.15s ease-in-out;
+  width: 325px;
+}
+
+.toast.on {
+  transform: translateX(-365px);
+}
+
+.close {
+  cursor: pointer;
+  float: right;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-left: 1em;
+  opacity: 0.8;
+}
+
+.jam {
+  background-color: #99004d;
+  color: #fff;
 }
 </style>
