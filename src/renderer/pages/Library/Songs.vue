@@ -37,7 +37,7 @@
             </span>
           </div>
           <div class="divTableCell detail">{{ song.album }}</div>
-          <div class="divTableCell" style="display:fixed;">
+          <div class="divTableCell" style="display: flex; vertical-align: top; margin-top: auto;">
             <div v-if="currentSong != song" v-on:click="player.src=song.cachedLink">
               <control-button icon="play"></control-button>
             </div>
@@ -47,8 +47,8 @@
             <div v-if="currentSong == song && isPaused" v-on:click="togglePlayingState();">
               <control-button icon="play"></control-button>
             </div>
-            <div v-on:click="toggleSavedState();">
-              <control-button icon="save"></control-button>
+            <div v-on:click="more();">
+              <control-button icon="more"></control-button>
             </div>
           </div>
         </desk-row>
@@ -78,42 +78,14 @@ export default {
       } else {
         this.$parent.$data.player.pause()
       }
-    },
-    toggleSavedState: function() {
-      notify("Saved Song!")
     }
   },
   mounted() {}
 }
 </script>
-
-<style lang="less">
-@import "./../../variables.less";
-
-.header {
-  height: 1.5rem;
-}
-.divTableCell,
-.divTableHead {
-  display: table-cell;
-}
-.divTableHeading {
-  display: table-header-group;
-  font-weight: bold;
-}
-.detail {
-  vertical-align: top;
-  padding-top: 1.6rem;
-  //border-left: 0.8rem dashed @accent-secondary;
-}
-.divTableFoot {
-  display: table-footer-group;
-  font-weight: bold;
-}
-
+<style lang="less" scoped>
 .songContainer {
   overflow: scroll;
   height: 61vh;
 }
 </style>
-

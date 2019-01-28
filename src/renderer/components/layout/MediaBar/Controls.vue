@@ -35,7 +35,7 @@ export default {
       }
     },
     toggleSavedState: function() {
-      console.log("a")
+      notify('Song')
     }
   },
   mounted() {}

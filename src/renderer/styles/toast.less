@@ -1,0 +1,28 @@
+.toast {
+  color: #000;
+  line-height: 1.5;
+  
+  background-color: darken(@background-tertiary, 1); // the actual term
+  color: #fff;
+  margin-bottom: 1em;
+  padding: 1.25em;
+  position: absolute;
+  right: -400px;
+  bottom: 8.5rem;
+  z-index:100000;
+  transition: 0.15s ease-in-out;
+  width: 325px;
+}
+
+.toast.on {
+  transform: translateX(-400px);
+}
+
+.close {
+  cursor: pointer;
+  float: right;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-left: 1em;
+  opacity: 0.8;
+}
