@@ -24,7 +24,8 @@
       "dist/electron/**/*"
     ],
     "dmg": {
-      "contents": [{
+      "contents": [
+        {
           "x": 410,
           "y": 150,
           "type": "link",
@@ -48,6 +49,8 @@
     }
   },
   "dependencies": {
+    "@capacitor/cli": "^1.0.0-beta.17",
+    "@capacitor/core": "^1.0.0-beta.17",
     "axios": "^0.18.0",
     "discord-rpc": "^3.0.1",
     "googleapis": "^36.0.0",

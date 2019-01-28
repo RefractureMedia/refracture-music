@@ -13,7 +13,7 @@
           <svg v-if="$route.path.split('/')[1] == 'library'" width="18" height="18" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="search_icon">
             <path d="M20.01 17.61H18.75L18.3 17.178C19.87 15.353 20.8101 12.983 20.8101 10.406C20.8101 4.659 16.1499 0 10.4099 0C4.65991 0 0 4.659 0 10.406C0 16.153 4.65991 20.812 10.4099 20.812C12.9799 20.812 15.3499 19.867 17.1799 18.298L17.6101 18.747V20.011L25.6101 28L28 25.615L20.01 17.61ZM10.4099 17.61C6.41991 17.61 3.19995 14.392 3.19995 10.406C3.19995 6.42 6.41991 3.202 10.4099 3.202C14.3899 3.202 17.6101 6.42 17.6101 10.406C17.6101 14.392 14.3899 17.61 10.4099 17.61Z" fill="currentColor"></path>
           </svg>
-          <div v-if="library.artists.length > 0">
+          <div v-if="isDone">
             <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
           </div>
         </div>
@@ -30,8 +30,99 @@ import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import NavBar from "./components/layout/NavBar.vue"
 import router from "vue-router"
 import { getTimesFromMs, getTimestamp } from "./utilities/timeManagement.js"
+import AppData from "./appData.js"
 import path from "path"
 import request from "request"
+
+export default {
+  name: "refracture-music",
+  components: {
+    WindowControlBar,
+    MediaBar,
+    Sidebar,
+    NavBar
+  },
+  data() {
+    return AppData
+  },
+  mounted() {
+    const library = this.$data.library,
+      player = this.$data.player
+    let songs = library.songs,
+      albumsTemp = []
+
+    for (let song of songs) {
+      for (let artist of song.artists) {
+        request(
+          "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
+            artist +
+            "&api_key=&format=json",
+          (err, res, dat) => {
+            let data = JSON.parse(dat).artist
+            console.log(data)
+            if (err) console.error(err)
+            else if (
+              data !== undefined &&
+              !library.artists.includes(JSON.stringify(data))
+            )
+              library.artists.push(JSON.stringify(data))
+          }
+        )
+      }
+      if (!albumsTemp.includes(song.album))
+        library.albums.push({
+          name: song.album,
+          art: [song.albumArt]
+        })
+      else
+        for (let album of library.albums)
+          if (album.name == song.album && !album.art.includes(song.albumArt))
+            album.art.push(song.albumArt)
+      this.$data.isDone = true
+    }
+
+    player.ontimeupdate = () =>
+      (this.$data.currentSong.currentTime = getTimestamp(player.currentTime))
+
+    player.ondurationchange = () =>
+      (this.$data.currentSong.duration = getTimestamp(player.duration))
+    setTimeout(() => fetchSource("LDU_Txk06tM"), 30)
+    document.body.addEventListener(
+      "sourceObtained",
+      () => (this.$data.player.src = returnSource()),
+      false
+    )
+    document
+      .getElementsByClassName("songInput")[0]
+      .addEventListener("keyup", e => {
+        if (e.keyCode === 13) {
+          document.getElementById("submitSong").click()
+          e.preventDefault()
+          return false
+        }
+      })
+    document.getElementsByClassName("songInput")[0].preventDefault()
+  },
+  methods: {
+    getCategory() {
+      return this.$router.path.split("/")[0]
+    },
+    sidebar_toggle() {
+      if (this.$data.state == "closed") this.$data.state = "open"
+      else this.$data.state = "closed"
+    },
+    setSong(video) {
+      fetchSource(video)
+    },
+    browseSearch() {
+      fetchSource(parseYTURL(getSongInput()))
+      document.getElementsByClassName("browseSearch")[0].value = ""
+    },
+    print(content) {
+      console.log(content)
+    }
+  }
+}
 
 Array.prototype.shuffle = function() {
   var input = this
@@ -44,8 +135,8 @@ Array.prototype.shuffle = function() {
   }
   return input
 }
-let sourceObtained = new CustomEvent("sourceObtained")
-let source
+let sourceObtained = new CustomEvent("sourceObtained"),
+  source
 
 function returnSource() {
   return source
@@ -56,7 +147,7 @@ function fetchSource(vidID) {
   audioLoader.setAttribute("src", `https://youtube.com/watch?v=${vidID}`)
   audioLoader.setAttribute(
     "preload",
-    `file:\\${require("path").resolve(__dirname, "./inject.js")}`
+    `file:\\${require("path").resolve(__dirname, "./utilities/inject.js")}`
   )
   audioLoader.setAttribute("webpreferences", "allowRunningInsecureContent")
   audioLoader.setAttribute("nodeintegration", "")
@@ -96,162 +187,6 @@ function parseYTURL(input) {
 function getSongInput() {
   let url = document.getElementsByClassName("browseSearch")[0].value
   return url
-}
-
-export default {
-  name: "refracture-music",
-  components: {
-    WindowControlBar,
-    MediaBar,
-    Sidebar,
-    NavBar
-  },
-  data() {
-    return {
-      state: "open",
-      currentCatagory: "Library",
-      categories: ["Browse", "Library", "Visualize"],
-      currentPage: "Songs",
-      pages: ["Songs", "Artists", "Albums", "Playlists"],
-      library: {
-        songs: [
-          {
-            artists: ["Noisestorm"],
-            title: "Crab Rave",
-            featuring: [""],
-            album: "Crab Rave - Single",
-            albumArt:
-              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Noisestorm"],
-            title: "Crab Rave",
-            featuring: [""],
-            album: "Crab Rave - Single",
-            albumArt:
-              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Noisestorm"],
-            title: "Crab Rave",
-            featuring: [""],
-            album: "Crab Rave - Single",
-            albumArt:
-              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-            cachedLink: ""
-          },
-          {
-            artists: ["Journey"],
-            title: "Dont Stop",
-            featuring: [""],
-            album: "Journy",
-            albumArt:
-              "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-            cachedLink: ""
-          }
-        ],
-        albums: [],
-        artists: []
-      },
-      currentSong: {
-        meta: {
-          artists: ["Noisestorm"],
-          title: "Crab Rave",
-          featuring: [""],
-          album: "Crab Rave - Single",
-          albumArt:
-            "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-          cachedLink: ""
-        },
-        currentTime: "0:00",
-        duration: "0:00"
-      },
-      player: new Audio(""),
-      webviewURL: "https://www.youtube.com/watch?v=LDU_Txk06tM",
-      preload: `file:\\${require("path").resolve(__dirname, "./inject.js")}`
-    }
-  },
-  mounted() {
-    let songs = this.$data.library.songs
-
-    for (let s in songs) {
-      for (let a in songs[s].artists) {
-        let artist = songs[s].artists[a]
-        request(
-          "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
-            artist +
-            "&api_key=b76f2bad9a76f532d06b2a31f1205409&format=json",
-          (err, res, dat) => {
-            let data = JSON.parse(dat).artist
-            if (err) console.error(err)
-            else if (
-              data !== undefined &&
-              !this.$data.library.artists.includes(JSON.stringify(data))
-            )
-              this.$data.library.artists.push(JSON.stringify(data))
-          }
-        )
-      }
-      if (this.$data.library.albums.indexOf(songs[s].album == -1)) {
-        this.$data.library.albums.push({
-          name: songs[s].album,
-          art: [songs[s].albumArt]
-        })
-      } else {
-        for (let album of this.$data.library.albums) {
-          if (album.name == song.album && !album.art.includes(song.albumArt)) {
-            album.art.push(song.albumArt)
-          }
-        }
-      }
-    }
-    this.$data.player.ontimeupdate = () =>
-      (this.$data.currentSong.currentTime = getTimestamp(
-        this.$data.player.currentTime
-      ))
-
-    this.$data.player.ondurationchange = () =>
-      (this.$data.currentSong.duration = getTimestamp(
-        this.$data.player.duration
-      ))
-    setTimeout(() => fetchSource("LDU_Txk06tM"), 30)
-    document.body.addEventListener(
-      "sourceObtained",
-      () => (this.$data.player.src = returnSource()),
-      false
-    )
-    document
-      .getElementsByClassName("songInput")[0]
-      .addEventListener("keyup", function(e) {
-        if (e.keyCode === 13) {
-          document.getElementById("submitSong").click()
-          e.preventDefault()
-          return false
-        }
-      })
-    document.getElementsByClassName("songInput")[0].preventDefault()
-  },
-  methods: {
-    getCategory() {
-      return this.$router.path.split("/")[0]
-    },
-    sidebar_toggle() {
-      if (this.$data.state == "closed") this.$data.state = "open"
-      else this.$data.state = "closed"
-    },
-    setSong(video) {
-      fetchSource(video)
-    },
-    browseSearch() {
-      fetchSource(parseYTURL(getSongInput()))
-      document.getElementsByClassName("browseSearch")[0].value = ""
-    },
-    print(content) {
-      console.log(content)
-    }
-  }
 }
 </script>
 
