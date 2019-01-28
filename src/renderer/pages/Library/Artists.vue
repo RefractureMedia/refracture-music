@@ -23,17 +23,12 @@ export default {
     }
   },
   mounted() {
+    const artistData = JSON.parse(this.$props.library.artists[i])
     console.log(this.$props.library.artists)
     for (let i in this.$props.library.artists) {
-      this.$data.artists.push(JSON.parse(this.$props.library.artists[i]))
+      this.$data.artists.push(artistData)
     }
-
-    console.log(this.$data.artists)
-  },
-  updated() {
-    console.log(this.$data.artists)
-  },
-  methods: {}
+  }
 }
 </script>
 

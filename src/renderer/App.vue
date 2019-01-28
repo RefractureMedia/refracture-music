@@ -63,7 +63,6 @@ export default {
             "&format=json",
           (err, res, dat) => {
             let data = JSON.parse(dat).artist
-            console.log(data)
             if (err) console.error(err)
             else if (
               data !== undefined &&
@@ -73,18 +72,18 @@ export default {
           }
         )
       }
-      if (!albumsTemp.includes(song.album))
+      if (!albumsTemp.includes(song.album)) {
         library.albums.push({
           name: song.album,
           art: [song.albumArt]
         })
-      else
+        albumsTemp.push(song.album)
+      } else
         for (let album of library.albums)
           if (album.name == song.album && !album.art.includes(song.albumArt))
             album.art.push(song.albumArt)
       this.$data.isDone = true
     }
-
     player.ontimeupdate = () =>
       (this.$data.currentSong.currentTime = getTimestamp(player.currentTime))
 

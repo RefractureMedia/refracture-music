@@ -86,6 +86,6 @@ export default {
 <style lang="less" scoped>
 .songContainer {
   overflow: scroll;
-  height: 61vh;
+  height: 65vh;
 }
 </style>
