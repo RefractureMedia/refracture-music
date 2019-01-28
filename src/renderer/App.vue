@@ -28,6 +28,7 @@ import MediaBar from "./components/layout/MediaBar/MediaBar.vue"
 import Sidebar from "./components/layout/Sidebar.vue"
 import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import NavBar from "./components/layout/NavBar.vue"
+import keys from "./keys.js"
 import router from "vue-router"
 import { getTimesFromMs, getTimestamp } from "./utilities/timeManagement.js"
 import AppData from "./appData.js"
@@ -56,7 +57,9 @@ export default {
         request(
           "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
             artist +
-            "&api_key=&format=json",
+            "&api_key=" +
+            keys.lastfm +
+            "&format=json",
           (err, res, dat) => {
             let data = JSON.parse(dat).artist
             console.log(data)

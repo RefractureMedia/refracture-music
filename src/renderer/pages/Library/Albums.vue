@@ -1,7 +1,7 @@
 <template>
   <center class="albums_container">
     <div class="album_table">
-      <div v-for="album of library.albums" v-bind:key="album" style class="album">
+      <div v-for="album of library.albums" v-bind:key="album" class="album">
         <img :src="album.art[album.art.length - 1]" class="art">
         <div class="description">
           <span class="title">{{ album.name }}</span>
@@ -41,7 +41,6 @@ export default {
         margin-top: -1.5rem;
         color: transparent;
         transition: margin-top 40ms;
-        background: #9198e5;
         width: fit-content;
       }
       &:hover {
