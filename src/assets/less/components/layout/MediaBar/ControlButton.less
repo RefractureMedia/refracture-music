@@ -1,0 +1,31 @@
+
+  
+  .media-controls {
+    cursor: pointer;
+    color: @accent-secondary;
+    height: 2.8rem;
+    width: 2.8rem;
+    margin: 0.5rem;
+    &:hover {
+      color: @accent-primary;
+    }
+    & div {
+      & svg {
+        height: 2.8rem;
+        width: 2.8rem;
+      }
+      &.saved {
+        display: none;
+      }
+    }
+    &.back div svg {
+      transform: rotate(180deg);
+    }
+  }
+  
+  .button {
+    cursor: pointer;
+    & * {
+      cursor: pointer;
+    }
+  }

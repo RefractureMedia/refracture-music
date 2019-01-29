@@ -1,0 +1,31 @@
+.albums_container {
+  overflow: scroll;
+  height: 65.5vh;
+  .album_table {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 12rem));
+    justify-content: center;
+    .album {
+      width: 12rem;
+      height: 12rem;
+      margin-top: 0.5rem;
+      .art {
+        width: 100%;
+        height: 100%;
+      }
+      .description {
+        margin-top: -1.5rem;
+        color: transparent;
+        transition: margin-top 40ms;
+        width: fit-content;
+      }
+      &:hover {
+        .description {
+          margin-top: -2.5rem;
+          color: currentColor;
+          transition: margin-top 40ms;
+        }
+      }
+    }
+  }
+}

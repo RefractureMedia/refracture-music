@@ -1,0 +1,134 @@
+
+
+
+.sidebar_content {
+  display: block;
+  margin-top: 2vh;
+  margin-left: 1vw;
+
+  & div p {
+    padding-left: 1rem;
+    margin-top: 0.5vw;
+    margin-bottom: 0.5vw;
+    font-size: 1.3rem;
+    transition: padding-left 0.1s;
+    color: @accent-secondary;
+    transition: color 0.05s;
+
+    &:hover {
+      padding-left: 1.6rem;
+      transition: margin-left 0.1s;
+      color: @accent-primary;
+      transition: color 0.05s;
+    }
+
+    & a {
+      color: @accent-secondary;
+      transition: color 0.05s;
+
+      &:hover {
+        text-decoration: none;
+        color: @accent-primary;
+        transition: color 0.05s;
+      }
+    }
+
+    .router-link-active {
+      color: @accent-primary;
+
+      &:hover {
+        &::before {
+          padding-left: 1rem;
+        }
+      }
+    }
+  }
+
+  .bottom-items {
+    display: flex;
+    align-items: center;
+    height: -webkit-fill-available;
+
+     .bottom-items-content {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    & .left {
+      float: left;
+    }
+
+    & .right {
+      width: 3vw;
+      height: 3vw;
+      background: @background-primary;
+      border-radius: 1vw;
+      padding: 0.3rem;
+      float: right;
+      margin-left: auto;
+      margin-right: 1vw;
+      color: @accent-secondary;
+      cursor: pointer;
+      transition: border-radius 0.05s;
+
+      &:hover {
+        color: @accent-primary;
+        border-radius: 0.5vw;
+        transition: border-radius 0.05s;
+      }
+    }
+  }
+}
+
+.sidebar {
+  @top-bottom-height: 2rem;
+  background: @background-secondary !important;
+  &-top {
+    height: 2rem;
+    width: 0px;
+    &.sidebar_closed {
+      width: 0px !important;
+      transition: width 0.15s;
+    }
+  }
+  &-bottom {
+    display: inline-block;
+    height: 20vh;
+    width: 20vw;
+    &.sidebar_closed {
+      width: 0px !important;
+      transition: width 0.15s;
+    }
+  }
+  &_closed {
+
+    .sidebar_content {
+      display: none !important;
+      transition: display 0.15s;
+    }
+  
+    div.sidebar_toggle_x {
+      margin-top: -10rem !important;
+      transition: margin-top 0.15s;
+    }
+  }
+}
+
+
+.sidebar_main.sidebar_closed {
+  width: 0px !important;
+  transition: width 0.15s;
+}
+
+
+.sidebar_title {
+  float: left;
+  margin-right: 2vw;
+
+  &>img {
+    min-width: 100px;
+    width: 100%;
+  }
+}
+

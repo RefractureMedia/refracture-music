@@ -1,0 +1,6 @@
+{
+  "appId": "com.refracturemedia.music",
+  "appName": "refracture-music",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}

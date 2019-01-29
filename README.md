@@ -1,21 +1,21 @@
-# refrcture-music
+# refracture-music
 
-> A Modern Music Streaming App that uses YouTube and LastFM to provide a user friendly experience.
+> A Vue.js project
 
-#### Build Setup
+## Build Setup
 
 ``` bash
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:9080
+# serve with hot reload at localhost:8080
 npm run dev
 
-# build electron application for production
+# build for production with minification
 npm run build
 
+# build for production and view the bundle analyzer report
+npm run build --report
 ```
 
----
-
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

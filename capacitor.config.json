@@ -1,6 +1,11 @@
 {
-  "appId": "app.refracturemedia.music",
-  "appName": "Refracture Music",
+  "appId": "com.refracturemedia.music",
+  "appName": "refracture-music",
   "bundledWebRuntime": false,
-  "webDir": "dist/web"
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 10
+    }
+  }
 }

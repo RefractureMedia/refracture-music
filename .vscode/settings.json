@@ -1,6 +1,3 @@
 {
-  "files.exclude": {
-    "__error": "Not found"
-  },
-  "vscode.tsc.compiler.alertTSConfigChanges": "never"
+  "files.exclude": {}
 }
