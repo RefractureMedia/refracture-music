@@ -7,6 +7,7 @@ yarn-error.log*
 /android/
 /electron/
 /instant-run/
+/www/
 # Editor directories and files
 .idea
 .vscode
