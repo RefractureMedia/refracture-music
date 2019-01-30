@@ -4,7 +4,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+/android/
+/electron/
+/instant-run/
 # Editor directories and files
 .idea
 .vscode
