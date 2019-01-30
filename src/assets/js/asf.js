@@ -1,4 +1,4 @@
-var request = require("http");
+var request = require("http").request;
 
 export default function fetch(id) {
   request({
