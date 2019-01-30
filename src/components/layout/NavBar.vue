@@ -1,9 +1,9 @@
 <template>
   <div class="nav-bar">
     <center>
-      <p style="display:inline;" v-for="page in $parent.pages" v-bind:key="page" v-on:click="$parent.currentPage = page">
+      <span style="display:inline;" v-for="page in $parent.pages" v-bind:key="page" v-on:click="$parent.currentPage = page">
         <router-link v-bind:class="'page ' + ($route.name == page) ? '' : 'currentPage'" v-bind:to="page">{{ page + ' ' }}</router-link>
-      </p>
+      </span>
     </center>
   </div>
 </template>

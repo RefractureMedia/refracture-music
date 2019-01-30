@@ -2,17 +2,43 @@
     font-size: 2rem;
     font-weight: bolder;
     margin-bottom: 1rem;
+    & center {
+        overflow: scroll;
+        white-space: nowrap;
+        &::-webkit-scrollbar {
+            width: 0rem;
+            height: 0rem;
+        }
+        &::-webkit-scrollbar-track {
+            background: transparent !important;
+            border: none;
+            &:hover {
+                background: transparent !important;
+                border-radius: 0rem;
+            }
+        }
+        &::-webkit-scrollbar-thumb {
+            background: transparent !important;
+            border-radius: 0rem;
+            &:hover {
+                background: transparent !important;
+            }
+        }
+    }
     & a {
-      color: @accent-secondary;
-      &:hover {
-        text-decoration: none;
-        color: @accent-primary;
-      }
+        color: @accent-secondary;
+        overflow: scroll;
+        text-orientation: sideways;
+        white-space: nowrap;
+        &:hover {
+            text-decoration: none;
+            color: @accent-primary;
+        }
     }
     & .router-link-active {
-      color: @accent-primary;
+        color: @accent-primary;
     }
     & .currentCategory {
-      color: @accent-primary;
+        color: @accent-primary;
     }
-  }
+}
