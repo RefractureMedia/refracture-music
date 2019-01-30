@@ -1,31 +1,26 @@
-import * as request from "request";
-export default async function main(ytId) {
-  try {
-    request.get(`https://www.youtube.com/get_video_info?video_id=${ytId}&el=detailpage`, (e, r, b) => createLinks(parseData(b)))
-  } catch (e) {
-    console.error(e)
-  }
-}
+var request = require("http");
 
-function parseData(data) {
-  console.log(data)
-  const captured = /(?:player_response=)(.*?)(?:&|$)/i.exec(data)[1];
-  const json = JSON.parse(decodeURIComponent(captured));
-  console.log(json)
-  return json;
-}
-
-function createLinks(json) {
-  const adaptive = json.streamingData.adaptiveFormats,
-    adaptiveAudio = [];
-  let i = 0;
-  for (; i < adaptive.length; i++) {
-    if (adaptive[i].mimeType.split(';')[0].split('/')[0] === 'audio') {
-      adaptiveAudio.push(adaptive[i]);
+export default function fetch(id) {
+  request({
+    "method": "GET",
+    "hostname": "www.youtube.com",
+    "port": null,
+    path: "/get_video_info?html5=1&video_id=" + id,
+    "headers": {
+      "content-length": "0",
+      "x-frame-options": "SAMEORIGIN"
     }
-  }
-  adaptiveAudio.sort((a, b) => {
-    return parseInt(b.contentLength) - parseInt(a.contentLength);
-  });
-  console.log(adaptiveAudio)
+  }, res => {
+    var chunks = [];
+    res.on("data", chunk => chunks.push(chunk));
+    res.on("end", () => {
+      const ad = JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(Buffer.concat(chunks).toString())[1])),
+        aa = [];
+      for (let i = 0; i < ad.length; i++)
+        if (ad[i].mimeType.split(';')[0].split('/')[0] === 'audio') aa.push(ad[i]);
+      console.log(aa);
+    })
+  }).end();
 }
+
+fetch('NLaLsNkaEq8')
