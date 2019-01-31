@@ -19,6 +19,7 @@
     "@capacitor/core": "^1.0.0-beta.17",
     "cordova-plugin-advanced-http": "^2.0.4",
     "cordova-plugin-file": "^6.0.1",
+    "mobile-detect": "^1.4.3",
     "request": "^2.88.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"

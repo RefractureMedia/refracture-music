@@ -36,6 +36,12 @@
           <div class="timestamp total">{{ song.duration }}</div>
         </div>
       </center>
+      <div v-if="!isPaused" v-on:click="togglePlayingState();">
+        <control-button icon="pause"></control-button>
+      </div>
+      <div v-if="isPaused" v-on:click="togglePlayingState();">
+        <control-button icon="play"></control-button>
+      </div>
     </div>
   </footer>
 </template>

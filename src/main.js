@@ -10,6 +10,12 @@ SplashScreen.hide();
 
 Vue.config.productionTip = false
 
+Vue.component('v-style', {
+  render: function (createElement) {
+    return createElement('style', this.$slots.default)
+  }
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

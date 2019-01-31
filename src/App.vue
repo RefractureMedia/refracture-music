@@ -1,6 +1,34 @@
 <template>
   <div id="app">
-    <webview v-if="false" :src="webviewURL" :preload="preload" webpreferences="allowRunningInsecureContent" nodeintegration disablewebsecurity></webview>
+    <v-style v-if="md().os() == 'AndroidOS' || md().os() == 'iOS'" lang="less">
+      .sidebar {
+        position: absolute !important;
+      }
+      div.media-controls.repeat,div.media-controls.back,div.media-controls.save,div.media-controls.skip,div.media-controls.shuffle,div.media-controls.more,div.trackbar,.divTableCell div.play {
+        display: none;
+        width: 0px;
+      }
+      div.media-controls.play,div.media-controls.pause {
+        float: right;
+        position: absolute;
+      }
+      center#controls {
+        display: none;
+      }
+      .songs_art {
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+      }
+      .wrap {
+        width: 91% !important;
+      }
+      .detail {
+        padding-top: .5rem !important;
+      }
+      .sidebar_toggle {
+        margin-top: 2rem !important;
+      }
+    </v-style>
     <!--<window-control-bar v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`" v-bind:state="state"></window-control-bar>-->
     <div class="whole">
       <div class="content clear">
@@ -36,6 +64,7 @@ import path from "path"
 import AdaptiveSourceFetcher from "./assets/js/asf.js"
 import request from "request"
 import { setTimeout } from "timers"
+import MobileDetect from 'mobile-detect'
 
 export default {
   name: "refracture-music",
@@ -121,6 +150,9 @@ export default {
     },
     print(content) {
       console.log(content)
+    },
+    md() {
+      return new MobileDetect(window.navigator.userAgent)
     }
   }
 }

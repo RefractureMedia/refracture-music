@@ -16,7 +16,7 @@
       <desk>
         <desk-row v-for="song in library.songs" v-bind:key="song" class="song">
           <div class="divTableCell">
-            <div style="width: 4.5rem; height: 4.5rem;">
+            <div style="width: 4.5rem; height: 4.5rem;" class="songs_art">
               <img v-bind:src="song.albumArt" width="100%" height="100%">
             </div>
           </div>
