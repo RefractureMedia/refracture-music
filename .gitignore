@@ -8,6 +8,7 @@ yarn-error.log*
 /electron/
 /instant-run/
 /www/
+/src/keys.js
 # Editor directories and files
 .idea
 .vscode
