@@ -4,6 +4,29 @@
       .sidebar {
         position: absolute !important;
       }
+      .sidebar_open {
+        width: 60vw !important;
+      }
+      .sidebar_title > svg {
+        width: 380% !important;
+      }
+      .sidebar_content .bottom-items .right {
+        width: 10vw;
+        height: 10vw;
+        border-radius: 2vw;
+      }
+      .album {
+        width: 5rem !important;
+        height: 5rem !important;
+      }
+      .album_table {
+        grid-template-columns: repeat(auto-fill, minmax(5.5rem, 5rem)) !important;
+      }
+      center.albums_container {
+        padding-top: 6vh;
+        height: 60vh !important;
+        overflow: hidden !important;
+      }
       div.media-controls.repeat,div.media-controls.back,div.media-controls.save,div.media-controls.skip,div.media-controls.shuffle,div.media-controls.more,div.trackbar,.divTableCell div.play {
         display: none;
         width: 0px;
@@ -27,6 +50,9 @@
       }
       .sidebar_toggle {
         margin-top: 2rem !important;
+      }
+      .browseSearch {
+        width: 80% !important;
       }
     </v-style>
     <!--<window-control-bar v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`" v-bind:state="state"></window-control-bar>-->

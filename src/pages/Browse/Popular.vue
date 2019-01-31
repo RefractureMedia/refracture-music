@@ -1,5 +1,5 @@
 <template>
-  <p>Popular</p>
+  <center>Popular</center>
 </template>
 
 <script>

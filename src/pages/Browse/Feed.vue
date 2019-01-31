@@ -1,5 +1,5 @@
 <template>
-  <p>Feed</p>
+  <center>Feed</center>
 </template>
 
 <script>
