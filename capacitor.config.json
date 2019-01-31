@@ -5,7 +5,7 @@
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 10
+      "launchAutoHide": true
     }
   }
 }

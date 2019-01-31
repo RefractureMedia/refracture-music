@@ -3,6 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import { Plugins } from '@capacitor/core';
+const { SplashScreen } = Plugins;
+
+SplashScreen.hide();
 
 Vue.config.productionTip = false
 
