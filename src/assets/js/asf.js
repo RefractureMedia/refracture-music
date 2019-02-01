@@ -14,6 +14,7 @@ export default (id) => {
       }
     }, res => {
       var chunks = [];
+    });
   } else cordova.plugin.http.sendRequest("http://www.youtube.com/get_video_info?html5=1&video_id=ojCkgU5XGdg", {
     method: 'get'
   }, (response) => {
