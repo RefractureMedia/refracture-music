@@ -21,3 +21,22 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+@import "../../assets/less/variables.less";
+.browseSearch {
+  background: @background-secondary;
+  border: none;
+  height: 3rem;
+  width: 35rem;
+  border-radius: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: @accent-primary;
+  outline-color: transparent !important;
+  cursor: text;
+  &::placeholder {
+    color: @accent-secondary;
+  }
+}
+</style>
