@@ -1,26 +1,26 @@
-var request = require("http").request;
-
-export default function fetch(id) {
-  request({
-    "method": "GET",
-    "hostname": "www.youtube.com",
-    "port": null,
-    path: "/get_video_info?html5=1&video_id=" + id,
-    "headers": {
-      "content-length": "0",
-      "x-frame-options": "SAMEORIGIN"
-    }
-  }, res => {
-    var chunks = [];
-    res.on("data", chunk => chunks.push(chunk));
-    res.on("end", () => {
-      const ad = JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(Buffer.concat(chunks).toString())[1])),
-        aa = [];
-      for (let i = 0; i < ad.length; i++)
-        if (ad[i].mimeType.split(';')[0].split('/')[0] === 'audio') aa.push(ad[i]);
-      console.log(aa);
-    })
-  }).end();
+export default () => {
+  cordova.plugin.http.sendRequest("http://www.youtube.com/get_video_info?html5=1&video_id=ojCkgU5XGdg", {
+    method: 'get'
+  }, (response) => {
+    const json = /(?:player_response=)(.*?)(?:&|$)/i.exec(response.data)[1]
+    return createLinks(JSON.parse(decodeURIComponent(json)));
+  }, (response) => {
+    console.error(response.error);
+  });
 }
 
-fetch('NLaLsNkaEq8')
+function createLinks(json) {
+  const adaptive = json.streamingData.adaptiveFormats,
+    adaptiveAudio = [];
+  let i = 0;
+  for (; i < adaptive.length; i++) {
+    if (adaptive[i].mimeType.split(';')[0].split('/')[0] === 'audio') {
+      adaptiveAudio.push(adaptive[i]);
+    }
+  }
+  adaptiveAudio.sort((a, b) => {
+    return parseInt(b.contentLength) - parseInt(a.contentLength);
+  });
+  console.log(adaptiveAudio)
+  return adaptiveAudio;
+}
