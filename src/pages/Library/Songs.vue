@@ -13,7 +13,10 @@
           </desk-row>
         </desk>
       </div>
-      <div v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'" class="songContainer">
+      <div
+        v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'"
+        class="songContainer"
+      >
         <desk>
           <desk-row v-for="song in library.songs" v-bind:key="song" class="song">
             <div class="divTableCell">
@@ -24,7 +27,9 @@
             <div class="divTableCell detail">
               <span v-for="(artist, index) of song.artists" v-bind:key="artist">
                 <a>{{ artist }}</a>
-                <span v-if="song.artists.length > 1 && index != song.artists.length-1">&amp;{{ ' ' }}</span>
+                <span
+                  v-if="song.artists.length > 1 && index != song.artists.length-1"
+                >&amp;{{ ' ' }}</span>
               </span>
             </div>
             <div class="divTableCell detail">
@@ -33,7 +38,9 @@
                 ft.
                 <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
                   <a>{{ feature }}</a>
-                  <span v-if="song.featuring.length > 1 && index != song.featuring.length-1">&amp;{{ ' ' }}</span>
+                  <span
+                    v-if="song.featuring.length > 1 && index != song.featuring.length-1"
+                  >&amp;{{ ' ' }}</span>
                 </span>
               </span>
             </div>
@@ -56,39 +63,47 @@
         </desk>
       </div>
     </center>
-    <div v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'" class="songContainer">
-        <desk>
-          <desk-row v-for="song in library.songs" v-bind:key="song" class="song">
-            <div class="divTableCell">
-              <div style="width: 4.5rem; height: 4.5rem;" class="songs_art">
-                <img v-bind:src="song.albumArt" width="100%" height="100%">
-              </div>
+    <div
+      v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'"
+      class="songContainer"
+    >
+      <desk>
+        <desk-row v-for="song in library.songs" v-bind:key="song" class="song">
+          <div class="divTableCell">
+            <div style="width: 4.5rem; height: 4.5rem;" class="songs_art">
+              <img v-bind:src="song.albumArt" width="100%" height="100%">
             </div>
-            <div class="divTableCell detail">
-              {{ song.title }}
-              <span v-if="song.featuring[0] != ''">
-                ft.
-                <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
-                  <a>{{ feature }}</a>
-                  <span v-if="song.featuring.length > 1 && index != song.featuring.length-1">&amp;{{ ' ' }}</span>
-                </span>
+          </div>
+          <div class="divTableCell detail">
+            {{ song.title }}
+            <span v-if="song.featuring[0] != ''">
+              ft.
+              <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
+                <a>{{ feature }}</a>
+                <span
+                  v-if="song.featuring.length > 1 && index != song.featuring.length-1"
+                >&amp;{{ ' ' }}</span>
               </span>
-              <br>
-              <span v-for="(artist, index) of song.artists" v-bind:key="artist">
-                <a class="songArtist">{{ artist }}</a>
-                <span v-if="song.artists.length > 1 && index != song.artists.length-1" class="songArtist">&amp;{{ ' ' }}</span>
-              </span>
-            </div>
-          </desk-row>
-        </desk>
-      </div>
+            </span>
+            <br>
+            <span v-for="(artist, index) of song.artists" v-bind:key="artist">
+              <a class="songArtist">{{ artist }}</a>
+              <span
+                v-if="song.artists.length > 1 && index != song.artists.length-1"
+                class="songArtist"
+              >&amp;{{ ' ' }}</span>
+            </span>
+          </div>
+        </desk-row>
+      </desk>
+    </div>
   </div>
 </template>
 
 <script>
-import Desk from "../../components/desk/Desk.vue"
-import DeskRow from "../../components/desk/Row.vue"
-import ControlButton from "./../../components/layout/MediaBar/ControlButton.vue"
+import Desk from "../../components/desk/Desk.vue";
+import DeskRow from "../../components/desk/Row.vue";
+import ControlButton from "./../../components/layout/MediaBar/ControlButton.vue";
 export default {
   components: {
     Desk,
@@ -97,24 +112,28 @@ export default {
   },
   props: ["library", "currentSong", "player"],
   data() {
-    return {}
+    return {};
   },
   methods: {
     togglePlayingState: function(event) {
       if (this.$parent.$data.player.paused) {
-        this.$parent.$data.player.play()
+        this.$parent.$data.player.play();
       } else {
-        this.$parent.$data.player.pause()
+        this.$parent.$data.player.pause();
       }
     }
   },
   mounted() {}
-}
+};
 </script>
 
 <style lang="less">
 @import "./../../assets/less/variables.less";
 .songArtist {
   color: @accent-secondary !important;
+}
+.songContainer {
+  overflow: scroll;
+  height: 65vh;
 }
 </style>
