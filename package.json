@@ -8,8 +8,8 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js",
-    "build:android": "npm run build && npx cap copy android && npx cap build android ",
-    "build:electron": "npm run build && npx cap copy electron && npx cap build electron ",
+    "build:android": "npm run build && npx cap sync android && npx cap build android ",
+    "build:electron": "npm run build && npx cap sync electron && npx cap build electron ",
     "compile:android": "cd android && gradlew.bat",
     "run:electron": "cd electron && npx electron ./"
   },
