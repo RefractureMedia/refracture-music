@@ -134,6 +134,6 @@ export default {
 }
 .songContainer {
   overflow: scroll;
-  height: 60vh;
+  height: 58vh;
 }
 </style>
