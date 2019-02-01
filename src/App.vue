@@ -1,9 +1,6 @@
 <template>
   <div id="app">
     <!--<window-control-bar v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`" v-bind:state="state"></window-control-bar>-->
-    <div v-if="md().os() == 'AndroidOS' || md().os() == 'iOS'">
-      <v-style>{{ mobileStyles() }}</v-style>
-    </div>
     <div class="whole">
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
@@ -128,14 +125,6 @@ export default {
     },
     md() {
       return new MobileDetect(window.navigator.userAgent);
-    },
-    mobileStyles() {
-      const detect = new MobileDetect(window.navigator.userAgent);
-      if (detect.os() == "AndroidOS" || detect.os() == "iOS") {
-        return MobileStyles;
-      } else {
-        return "foo";
-      }
     }
   }
 };

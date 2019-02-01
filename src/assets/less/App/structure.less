@@ -22,6 +22,7 @@ body {
 a {
   color: @accent-primary;
   text-decoration: none;
+
   &:hover {
     cursor: pointer;
     text-decoration: underline;
@@ -41,7 +42,7 @@ p {
 
 .content {
   display: flex;
-  height: 80vh;
+  height: 85vh;
   width: 100%;
 }
 
@@ -72,6 +73,7 @@ p {
   text-decoration: none !important;
   transition: margin-left 0.15s;
   position: absolute;
+
   &.sidebar_open {
     margin-left: -10rem !important;
     transition: margin-left 0.15s;
@@ -101,10 +103,12 @@ div.sidebar_toggle_x {
   width: 20vw;
   transition: width 0.15s;
   background: @background-secondary;
+
   &-top {
     height: 2rem;
     width: 0px;
   }
+
   &-bottom {
     display: inline-block;
     height: 20vh;
@@ -131,13 +135,16 @@ div.sidebar_toggle_x {
   position: relative;
   transition: width 40ms;
   cursor: text;
+
   &::placeholder {
     color: transparent;
   }
+
   &:hover {
     color: @accent-primary;
     width: 15rem;
     transition: width 40ms;
+
     &::placeholder {
       color: @accent-secondary;
     }
