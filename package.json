@@ -9,11 +9,13 @@
     "start": "npm run dev",
     "prestart": "npm i",
     "build": "node build/build.js",
-    "build:android": "npm run build && npx cap sync android && npx cap open android",
-    "build:electron": "npm run build && npx cap sync electron && npx cap build electron",
+    "build:android": "node build/build.js run build && npx cap copy android && npx cap update android && npx cap open android",
+    "build:electron": "node build/build.js && npx cap copy electron && npx cap update electron",
+    "build:ios": "node build/build.js && npx cap copy ios && npx cap update ios && npx cap open ios",
     "build:all": "npm run build:android && npm run build:electron",
     "compile:android": "cd android && gradlew.bat",
-    "run:electron": "cd electron && npx electron ./"
+    "run:electron": "cd electron && npx electron ./",
+    "init": "npm i && npx cap add android && npx cap add electron && npx cap add ios"
   },
   "dependencies": {
     "@capacitor/android": "^1.0.0-beta.17",
@@ -21,6 +23,7 @@
     "@capacitor/core": "^1.0.0-beta.17",
     "cordova-plugin-advanced-http": "^2.0.4",
     "cordova-plugin-file": "^6.0.1",
+    "cordova-plugin-media": "^5.0.2",
     "mobile-detect": "^1.4.3",
     "request": "^2.88.0",
     "vue": "^2.5.2",

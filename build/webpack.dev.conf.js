@@ -17,7 +17,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.dev.cssSourceMap,
-      usePostCSS: true
+      usePostCSS: false
     })
   },
   // cheap-module-eval-source-map is faster for development
@@ -34,16 +34,14 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
     hot: true,
     contentBase: false, // since we use CopyWebpackPlugin.
-    compress: true,
+    compress: false,
     host: HOST || config.dev.host,
     port: PORT || config.dev.port,
     open: config.dev.autoOpenBrowser,
-    overlay: config.dev.errorOverlay ?
-      {
-        warnings: false,
-        errors: true
-      } :
-      false,
+    overlay: config.dev.errorOverlay ? {
+      warnings: false,
+      errors: true
+    } : false,
     publicPath: config.dev.assetsPublicPath,
     proxy: config.dev.proxyTable,
     quiet: true, // necessary for FriendlyErrorsPlugin
@@ -67,8 +65,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     // copy custom static assets
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '../static'),
-      to: config.dev.assetsSubDirectory,
-      ignore: ['.*']
+      to: config.dev.assetsSubDirectory
     }])
   ]
 })
@@ -90,8 +87,7 @@ module.exports = new Promise((resolve, reject) => {
           messages: [`RF Music is running here: http://${devWebpackConfig.devServer.host}:${port}`],
         },
         onErrors: config.dev.notifyOnErrors ?
-          utils.createNotifierCallback() :
-          undefined
+          utils.createNotifierCallback() : undefined
       }))
 
       resolve(devWebpackConfig)

@@ -1,3 +1,4 @@
+let player = new Audio("/static/empty.mp3");
 export default {
   state: "closed",
   currentCatagory: "Library",
@@ -6,14 +7,12 @@ export default {
   pages: ["Songs", "Artists", "Albums", "Playlists"],
   isDone: false,
   library: {
-    songs: [
-      {
+    songs: [{
         artists: ["Journey"],
         title: "Don't Stop Believin'",
         featuring: [""],
         album: "Escape",
-        albumArt:
-          "https://is2-ssl.mzstatic.com/image/thumb/Music/v4/57/9b/c3/579bc37b-cffd-f97e-f663-c52b3b3c97a0/source/1000x1000bb.jpg",
+        albumArt: "https://is2-ssl.mzstatic.com/image/thumb/Music/v4/57/9b/c3/579bc37b-cffd-f97e-f663-c52b3b3c97a0/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -21,8 +20,7 @@ export default {
         title: "Crab Rave",
         featuring: [""],
         album: "Crab Rave - Single",
-        albumArt:
-          "https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg",
+        albumArt: "https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -30,8 +28,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -39,8 +36,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -48,8 +44,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -57,8 +52,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -66,8 +60,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -75,8 +68,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -84,8 +76,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -93,8 +84,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -102,8 +92,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -111,8 +100,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -120,8 +108,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -129,8 +116,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -138,8 +124,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       },
       {
@@ -147,8 +132,7 @@ export default {
         title: "Shelter",
         featuring: [""],
         album: "Shelter - Single",
-        albumArt:
-          "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
+        albumArt: "https://is3-ssl.mzstatic.com/image/thumb/Music18/v4/be/2f/ac/be2fac38-995d-adda-2fcc-286cbb444fb5/source/1000x1000bb.jpg",
         cachedLink: ""
       }
     ],
@@ -161,14 +145,13 @@ export default {
       title: "Crab Rave",
       featuring: [""],
       album: "Crab Rave - Single",
-      albumArt:
-        "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
+      albumArt: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
       cachedLink: ""
     },
     currentTime: "0:00",
     duration: "0:00"
   },
-  player: new Audio(""),
+  player: player,
   webviewURL: "https://www.youtube.com/watch?v=LDU_Txk06tM",
   preload: `file:\\${require("path").resolve(
     __dirname,

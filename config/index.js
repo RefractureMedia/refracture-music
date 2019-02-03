@@ -16,8 +16,8 @@ module.exports = {
     host: "localhost", // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
-    errorOverlay: true,
-    notifyOnErrors: true,
+    errorOverlay: false,
+    notifyOnErrors: false,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
 
@@ -33,7 +33,7 @@ module.exports = {
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true
+    cssSourceMap: false
   },
 
   build: {
@@ -44,12 +44,12 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../www'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-
+    minify: false,
     /**
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

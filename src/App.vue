@@ -86,7 +86,14 @@ export default {
     }
     player.ontimeupdate = () =>
       (this.$data.currentSong.currentTime = getTimestamp(player.currentTime))
-
+    player.onerror = e => {
+      throw Error(
+        `Error: ${player.error.code}; details: ${player.error.message}`
+      )
+    }
+    playser.onchange = () => {
+      if (player.canPlayType == false) throw Error("Cannot Play This File Type")
+    }
     player.ondurationchange = () =>
       (this.$data.currentSong.duration = getTimestamp(player.duration))
 
@@ -104,9 +111,6 @@ export default {
     document.getElementsByClassName("songInput")[0].preventDefault()
 
     const detect = new MobileDetect(window.navigator.userAgent)
-            this.$data.player.onerror = (e) => {
-              alert(e)
-            }
   },
   methods: {
     getCategory() {
@@ -118,7 +122,8 @@ export default {
     },
     setSong(vidId) {
       AdaptiveSourceFetcher(vidId, res => {
-        this.$data.player.src = res.url
+        this.$data.player.src = res[0].url
+        alert(res)
         this.$data.player.play()
         console.log(res)
       })
