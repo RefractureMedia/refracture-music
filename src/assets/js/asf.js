@@ -21,7 +21,7 @@ export default (id, callback) => {
         callback(link(JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(body)[1])))[0].streamingData.adaptiveFormats)
       });
     } else */
-  cordova.plugin.http.sendRequest("http://www.youtube.com/get_video_info?html5=1&video_id=ojCkgU5XGdg", {
+  cordova.plugin.http.sendRequest(`http://www.youtube.com/get_video_info?html5=1&video_id=${id}`, {
     method: 'get'
   }, r => {
     console.log(JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(r.data)[1])))
