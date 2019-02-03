@@ -104,6 +104,9 @@ export default {
     document.getElementsByClassName("songInput")[0].preventDefault()
 
     const detect = new MobileDetect(window.navigator.userAgent)
+            this.$data.player.onerror = (e) => {
+              alert(e)
+            }
   },
   methods: {
     getCategory() {

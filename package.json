@@ -11,6 +11,7 @@
     "build": "node build/build.js",
     "build:android": "npm run build && npx cap sync android && npx cap open android",
     "build:electron": "npm run build && npx cap sync electron && npx cap build electron",
+    "build:all": "npm run build:android && npm run build:electron",
     "compile:android": "cd android && gradlew.bat",
     "run:electron": "cd electron && npx electron ./"
   },
