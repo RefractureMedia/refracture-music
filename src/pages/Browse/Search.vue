@@ -2,6 +2,7 @@
   <center>
     <input type="url" name="youtubeURL" class="browseSearch" placeholder="Search">
     <div id="submitBrowseSearch" v-on:click="$parent.browseSearch" style="display: none;"></div>
+    <h1>Recently Searched</h1>
   </center>
 </template>
 

@@ -4,6 +4,7 @@
 /instant-run/
 /www/
 /dist/
+app-debug.apk
 
 # Private Files
 /src/keys.js

@@ -123,18 +123,12 @@ export default {
     setSong(vidId) {
       AdaptiveSourceFetcher(vidId, res => {
         this.$data.player.src = res[0].url
-        alert(res)
         this.$data.player.play()
-        console.log(res)
       })
-      console.log(this.$data.player)
     },
     browseSearch() {
       this.setSong(parseYTURL(getSongInput()))
       document.getElementsByClassName("browseSearch")[0].value = ""
-    },
-    print(content) {
-      console.log(content)
     },
     md() {
       return new MobileDetect(window.navigator.userAgent)
@@ -146,17 +140,16 @@ window.notify = function(x) {
     .toString(36)
     .substring(7)
 
-  const toast = document.createElement("div")
-  const span = document.createElement("span")
-  span.classList.add("close")
-  span.onclick = () =>
-    document.getElementById(`s-${rid}`).classList.remove("on")
-  span.innerHTML = "&times;"
-  toast.classList.add("toast")
-  toast.classList.add("on")
-  toast.id = `s-${rid}`
-  toast.innerHTML = x
-  toast.appendChild(span)
+  const t = document.createElement("div"),
+    s = document.createElement("span")
+  s.classList.add("close")
+  s.onclick = () => document.getElementById(`s-${rid}`).classList.remove("on")
+  s.innerHTML = "&times;"
+  t.classList.add("toast")
+  t.classList.add("on")
+  t.id = `s-${rid}`
+  t.innerHTML = x
+  t.appendChild(span)
 
   document.body.appendChild(toast)
 }
