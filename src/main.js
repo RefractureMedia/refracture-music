@@ -1,10 +1,17 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
-import router from './router'
-import { Plugins } from '@capacitor/core';
-const { SplashScreen } = Plugins;
+import {
+  Plugins
+} from '@capacitor/core';
+import Vue from 'vue';
+import App from './App';
+import ShareDialog from "./assets/js/Share.js";
+import router from './router';
+
+const {
+  SplashScreen
+} = Plugins;
+document.addEventListener('deviceready', ShareDialog, false);
 
 SplashScreen.hide();
 
@@ -20,6 +27,8 @@ Vue.component('v-style', {
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: {
+    App
+  },
   template: '<App/>'
 })
