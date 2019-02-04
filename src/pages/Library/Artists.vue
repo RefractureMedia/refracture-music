@@ -16,6 +16,7 @@ import Desk from "../../components/desk/Desk.vue"
 import DeskRow from "../../components/desk/Row.vue"
 
 export default {
+  name: "artists",
   props: ["library"],
   data() {
     return {

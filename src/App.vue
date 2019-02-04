@@ -9,7 +9,7 @@
           <nav-bar />
           <library-search />
           <div v-if="isDone">
-            <router-view :library="library" :currentSong="currentSong.meta" :player="player"></router-view>
+            <router-view :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults"></router-view>
           </div>
         </div>
       </div>

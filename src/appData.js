@@ -6,6 +6,12 @@ export default {
   currentPage: "Songs",
   pages: ["Songs", "Artists", "Albums", "Playlists"],
   isDone: false,
+  searchResults: {
+    songs: [],
+    artists: [],
+    albums: [],
+    youtube: []
+  },
   library: {
     songs: [{
         artists: ["Journey"],

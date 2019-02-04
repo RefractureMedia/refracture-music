@@ -9,6 +9,7 @@ import Desk from "../../components/desk/Desk.vue"
 import DeskRow from "../../components/desk/Row.vue"
 import ControlButton from "./../../components/layout/MediaBar/ControlButton.vue"
 export default {
+  name: "playlists",
   components: {
     Desk,
     DeskRow,
