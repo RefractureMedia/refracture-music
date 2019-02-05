@@ -145,7 +145,7 @@ export default {
           .getElementsByClassName("browseSearch")[0]
           .value.includes("http:")
       ) {
-        Search(
+        this.$data.searchResults = Search(
           document.getElementsByClassName("browseSearch")[0].value,
           true,
           ""

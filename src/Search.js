@@ -1,13 +1,15 @@
+import request from "request";
+
 export default function (input, outgoing, page) {
-  console.clear()
-  this.$data.searchResults = {
+  let output = {
     songs: [],
     artists: [],
     albums: [],
     playlists: [],
     youtube: [],
     soundcloud: []
-  };
+  }
+  console.clear();
   if (outgoing) {
     let songsTemp = [];
     request(
@@ -21,26 +23,30 @@ export default function (input, outgoing, page) {
             "https://itunes.apple.com/lookup?id=" + track.collectionId,
             (err, res, dat) => {
               if (err) console.log(err);
-              else collectionArtist = JSON.parse(dat).results[0].artistName;
+              else { collectionArtist = JSON.parse(dat).results[0].artistName;
+              console.log(collectionArtist)
+              parsed_songs.push({
+                artists: track.artistName.split(" & "),
+                title: track.trackName,
+                tracknum: track.trackNumber,
+                album: {
+                  artists: collectionArtist.split(" & "),
+                  title: track.collectionName,
+                  art: [(
+                      track.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
+                    ) /* Makes the artwork request be 1000px rather than 100*/
+                    .toString()
+                  ]
+                }
+              });
+              songsTemp.push(track.trackName);
+            }
             }
           );
-          parsed_songs.push({
-            artists: track.artistName.split(" & "),
-            title: track.trackName,
-            tracknum: track.trackNumber,
-            album: {
-              artists: collectionArtist.split(" & "),
-              title: track.collectionName,
-              art: toString(
-                track.artworkUrl100.split("x100bb.")[0] + "0x1000bb.jpg" // Makes the artwork request be 1000px rather than 100
-              )
-            }
-          });
-          songsTemp.push(track.trackName);
         }
         console.log(parsed_songs);
         if (err) console.error(err);
-        else this.$data.searchResults.songs = parsed_songs;
+        else output.songs = parsed_songs;
       }
     );
 
@@ -73,7 +79,7 @@ export default function (input, outgoing, page) {
               }
               console.log(parsed_artists);
               if (err) console.error(err);
-              else this.$data.searchResults.artists = parsed_artists;
+              else output.artists = parsed_artists;
             }
           );
       }
@@ -97,30 +103,31 @@ export default function (input, outgoing, page) {
         }
         console.log(parsed_albums);
         if (err) console.error(err);
-        else this.$data.searchResults.albums = parsed_albums;
+        else output.albums = parsed_albums;
       }
     );
+    return output;
     // do youtube result requesting & filter out `songsTemp.includes(parsed_result.title)` (same thing for soundcloud when we get around to doing soundcloud)
-  } else {
+  } /*else {
     if (page == "Songs")
       for (let song of this.$data.library.songs) {
         if (song.title.includes(input))
-          this.$data.searchResults.songs.push(song);
+          output.songs.push(song);
       }
     if (page == "Artists")
       for (let artist of this.$data.library.artists) {
         if (artist.name.includes(input))
-          this.$data.searchResults.artists.push(artist);
+          output.artists.push(artist);
       }
     if (page == "Albums")
       for (let album of this.$data.library.albums) {
         if (album.title.includes(input))
-          this.$data.searchResults.albums.push(album);
+          output.albums.push(album);
       }
     if (page == "Playlists")
       for (let playlist of this.$data.library.playlist) {
         if (playlist.name.includes(input))
-          this.$data.searchResults.playlists.push(playlist);
+          output.playlists.push(playlist);
       }
-  }
+  }*/
 }

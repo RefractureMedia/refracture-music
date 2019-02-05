@@ -4,19 +4,28 @@
     <div id="submitBrowseSearch" v-on:click="$parent.browseSearch" style="display: none;"></div>
     <div v-if="results.songs.length == 0 && results.artists.length == 0 && results.albums.length == 0 && results.youtube.length == 0">
       <h2>Recently Browsed</h2>
-      <songs :library="recentlyBrowsed" />
+      <songs :songs="recentlyBrowsed.songs" :currentSong="currentSong" :player="player"/>
+    </div>
+    <div v-if="results.songs.length > 0">
+      <h2>Songs</h2>
+      <songs :songs="results.songs" :currentSong="currentSong" :player="player"/>
     </div>
 
   </center>
 </template>
 
 <script>
-import Songs from "./../Library/Songs.vue"
-import Artists from "./../Library/Artists.vue"
-import Albums from "./../Library/Albums.vue"
+import Songs from "./../../components/Songs.vue"
+import Artists from "./../../components/Artists.vue"
+import Albums from "./../../components/Albums.vue"
 
 export default {
-  props: ['results'],
+  props: ['currentSong','player','results'],
+  components: {
+    Songs,
+    Artists,
+    Albums
+  },
   data() {
     return {
       recentlyBrowsed: {
@@ -25,8 +34,11 @@ export default {
             artists: ["Noisestorm"],
             title: "Crab Rave",
             featuring: [""],
-            album: "Crab Rave - Single",
-            art: "https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg",
+            album: {
+              artists: ["Noisestorm"],
+              title: "Crab Rave - Single",
+              art: ["https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg"],
+            },
             cachedLink: ""
           }
         ]
