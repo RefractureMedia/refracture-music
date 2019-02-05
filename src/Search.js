@@ -1,4 +1,5 @@
 import request from "request";
+import keys from "./keys.js";
 
 export default function (input, outgoing, page) {
   let output = {
@@ -18,12 +19,13 @@ export default function (input, outgoing, page) {
         let tracks = JSON.parse(dat).results;
         let parsed_songs = [];
         for (let track of tracks) {
-          let collectionArtist;
           request(
             "https://itunes.apple.com/lookup?id=" + track.collectionId,
             (err, res, dat) => {
               if (err) console.log(err);
-              else { collectionArtist = JSON.parse(dat).results[0].artistName;
+              else { 
+                let collectionArtist = JSON.parse(dat).results[0].artistName;
+                console.log(JSON.parse(dat).results);
               console.log(collectionArtist)
               parsed_songs.push({
                 artists: track.artistName.split(" & "),

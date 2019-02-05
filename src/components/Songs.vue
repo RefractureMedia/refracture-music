@@ -29,7 +29,7 @@
               </div>
             </div>
             <div class="divTableCell detail">
-              <span v-for="(artist, index) of song.artists" v-bind:key="artist">
+              <span v-for="(artist, index) in song.artists" v-bind:key="artist">
                 <a>{{ artist }}</a>
                 <span
                   v-if="song.artists.length > 1 && index != song.artists.length-1"
@@ -40,7 +40,7 @@
               {{ song.title }}
               <span v-if="song.featuring[0] != ''">
                 ft.
-                <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
+                <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
                   <a>{{ feature }}</a>
                   <span
                     v-if="song.featuring.length > 1 && index != song.featuring.length-1"
@@ -86,7 +86,7 @@
             {{ song.title }}
             <span v-if="song.featuring[0] != ''">
               ft.
-              <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
+              <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
                 <a>{{ feature }}</a>
                 <span
                   v-if="song.featuring.length > 1 && index != song.featuring.length-1"
@@ -94,7 +94,7 @@
               </span>
             </span>
             <br>
-            <span v-for="(artist, index) of song.artists" v-bind:key="artist">
+            <span v-for="(artist, index) in song.artists" v-bind:key="artist">
               <a class="songArtist">{{ artist }}</a>
               <span
                 v-if="song.artists.length > 1 && index != song.artists.length-1"

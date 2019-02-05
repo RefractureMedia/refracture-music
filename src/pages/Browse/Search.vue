@@ -10,6 +10,7 @@
       <h2>Songs</h2>
       <songs :songs="results.songs" :currentSong="currentSong" :player="player"/>
     </div>
+    <a v-on:click="log_results">GTSFDFASDFS</a>
 
   </center>
 </template>
@@ -56,6 +57,11 @@ export default {
         }
       })
     document.getElementsByClassName("browseSearch")[0].preventDefault()
+  },
+  methods: {
+    log_results() {
+      console.log(this.$props.results)
+    }
   }
 }
 </script>
