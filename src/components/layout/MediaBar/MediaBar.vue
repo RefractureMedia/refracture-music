@@ -7,7 +7,7 @@
     </div>
     <div class="now_playing">
       <div class="album-art">
-        <img id="album-art" :src="song.meta.albumArt">
+        <img id="album-art" :src="song.meta.art">
       </div>
       <div id="song-info" class="song-info">
         <p class="song">
