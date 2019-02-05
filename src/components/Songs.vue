@@ -109,9 +109,18 @@
 </template>
 
 <script>
+import Desk from "./desk/Desk.vue";
+import DeskRow from "./desk/Row.vue";
+import ControlButton from "./layout/MediaBar/ControlButton.vue";
+
 export default {
   name: "artists",
   props: ["songs", "currentSong", "player"],
+  components: {
+    Desk,
+    DeskRow,
+    ControlButton
+  },
   methods: {
     togglePlayingState: function(event) {
       if (this.$parent.$parent.$data.player.paused) {
@@ -124,5 +133,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+@import "./../assets/less/variables.less";
+.songArtist {
+  color: @accent-secondary !important;
+}
+.songContainer {
+  overflow: scroll;
+  height: 58vh;
+}
 </style>
