@@ -50,17 +50,8 @@
             </div>
             <div class="divTableCell detail">{{ song.album.title }}</div>
             <div class="divTableCell" style="display: flex; vertical-align: top; margin-top: auto;">
-              <div v-if="currentSong != song" v-on:click="player.src=song.cachedLink">
+              <div v-on:click="setSong(song)">
                 <control-button icon="play"></control-button>
-              </div>
-              <div v-if="currentSong == song && !player.paused" v-on:click="togglePlayingState();">
-                <control-button icon="pause"></control-button>
-              </div>
-              <div v-if="currentSong == song && isPaused" v-on:click="togglePlayingState();">
-                <control-button icon="play"></control-button>
-              </div>
-              <div v-on:click="more();">
-                <control-button icon="more"></control-button>
               </div>
             </div>
           </desk-row>
@@ -74,7 +65,11 @@
       <desk>
         <desk-row v-for="song in songs" v-bind:key="song" class="song">
           <div class="divTableCell">
-            <div style="width: 4.5rem; height: 4.5rem;" class="songs_art">
+            <div
+              style="width: 4.5rem; height: 4.5rem;"
+              v-on:click="setSong(song)"
+              class="songs_art"
+            >
               <img
                 v-bind:src="song.album.art[song.album.art.length - 1]"
                 width="100%"
@@ -122,12 +117,8 @@ export default {
     ControlButton
   },
   methods: {
-    togglePlayingState: function(event) {
-      if (this.$parent.$parent.$data.player.paused) {
-        this.$parent.$parent.$data.player.play();
-      } else {
-        this.$parent.$parent.$data.player.pause();
-      }
+    setSong(song) {
+      this.$parent.$parent.setCurrentSong(song);
     }
   }
 };

@@ -7,32 +7,42 @@
     </div>
     <div class="now_playing">
       <div class="album-art">
-        <img id="album-art" :src="song.meta.art">
+        <img id="album-art" :src="song.album.art[song.album.art.length-1]">
       </div>
       <div id="song-info" class="song-info">
         <p class="song">
-          {{ song.meta.title }}
-          <span v-if="song.meta.featuring[0] != ''">
+          {{ song.title }}
+          <span v-if="song.featuring[0] != ''">
             ft.
-            <span v-for="(feature, index) of song.meta.featuring" v-bind:key="feature">
+            <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
               <a>{{ feature }}</a>
-              <span v-if="song.meta.featuring.length > 1 && index != song.meta.featuring.length-1">&amp;</span>
+              <span v-if="song.featuring.length > 1 && index != song.featuring.length-1">&amp;</span>
             </span>
           </span>
         </p>
         <p class="artist">
-          <span v-for="(artist, index) of song.meta.artists" v-bind:key="artist">
+          <span v-for="(artist, index) of song.artists" v-bind:key="artist">
             <a>{{ artist }}</a>
-            <span v-if="song.meta.artists.length > 1 && index != song.meta.artists.length-1">&amp;</span>
+            <span v-if="song.artists.length > 1 && index != song.artists.length-1">{{ '&amp; '}}</span>
           </span>
         </p>
       </div>
-      <center v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'" class="controls" id="controls">
-        <controls />
+      <center
+        v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'"
+        class="controls"
+        id="controls"
+      >
+        <controls/>
         <div class="trackbar">
           <div class="timestamp through">{{ song.currentTime }}</div>
           <div class="trackbar-center" style="margin-top: -.25rem;">
-            <input type="range" min="0" :max="$parent.player.duration" v-model="$parent.player.currentTime" class="bar">
+            <input
+              type="range"
+              min="0"
+              :max="$parent.player.duration"
+              v-model="$parent.player.currentTime"
+              class="bar"
+            >
           </div>
           <div class="timestamp total">{{ song.duration }}</div>
         </div>
@@ -50,8 +60,8 @@
 </template>
 
 <script>
-import Controls from "./Controls.vue"
-import ControlButton from "./ControlButton.vue"
+import Controls from "./Controls.vue";
+import ControlButton from "./ControlButton.vue";
 export default {
   name: "media-bar",
   props: ["song", "state"],
@@ -60,36 +70,36 @@ export default {
     return {
       version: "0.0.1",
       isPaused: true
-    }
+    };
   },
   mounted() {
     this.$nextTick(function() {
       document.getElementById("controls").style.marginLeft = String(
         "-" + document.getElementById("song-info").clientWidth + "px"
-      )
-    }, 100)
+      );
+    }, 100);
   },
   updated() {
     document.getElementById("controls").style.marginLeft = String(
       "-" + document.getElementById("song-info").clientWidth + "px"
-    )
+    );
   },
   methods: {
     onChg() {
-      this.tmpVal = $.target.value
+      this.tmpVal = $.target.value;
     },
     toggleRepeatState() {
       if ($parent.currentSong.player.loop)
-        $parent.currentSong.player.loop = false
-      else $parent.currentSong.player.loop = true
+        $parent.currentSong.player.loop = false;
+      else $parent.currentSong.player.loop = true;
     },
     togglePlayingState() {
       if (this.$parent.$data.player.paused) {
-        this.$data.isPaused = false
-        this.$parent.$data.player.play()
+        this.$data.isPaused = false;
+        this.$parent.$data.player.play();
       } else {
-        this.$parent.$data.player.pause()
-        this.$data.isPaused = true
+        this.$parent.$data.player.pause();
+        this.$data.isPaused = true;
       }
     },
     toggleShuffleState() {
@@ -97,13 +107,13 @@ export default {
       // else $parent.queue.shuffle = true
     },
     toggleSavedState() {
-      notify("Song")
+      notify("Song");
     },
     previousSong() {},
     nextSong() {
       $parent.currentSong.player.currentSrc =
-        $parent.songQueue[$parent.currentSong.numberInQueue].src
+        $parent.songQueue[$parent.currentSong.numberInQueue].src;
     }
   }
-}
+};
 </script>

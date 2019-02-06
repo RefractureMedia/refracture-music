@@ -28,12 +28,12 @@ export default function (input, outgoing, page) {
                 console.log(JSON.parse(dat).results);
                 console.log(collectionArtist)
                 parsed_songs.push({
-                  artists: track.artistName.split(" & "),
+                  artists: track.artistName.split(/ *[&X,] *| *x +| +x */),
                   title: track.trackName,
                   featuring: [''],
                   tracknum: track.trackNumber,
                   album: {
-                    artists: collectionArtist.split(" & "),
+                    artists: collectionArtist.split(/ *[&X,] *| *x +| +x */),
                     title: track.collectionName,
                     art: [(
                       track.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
@@ -92,7 +92,7 @@ export default function (input, outgoing, page) {
         let parsed_albums = [];
         for (let album of albums) {
           parsed_albums.push({
-            artists: album.artistName.split(" & " | ", " | " x " | " X "),
+            artists: album.artistName.split(/ *[&X,] *| *x +| +x */),
             title: album.collectionName,
             art: [(
               album.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")

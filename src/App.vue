@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!--<window-control-bar v-bind:title="`RF Music | ${currentSong.meta.title} by ${currentSong.meta.artists[0]}`" v-bind:state="state"></window-control-bar>-->
     <div class="whole">
       <div class="content clear">
         <sidebar ref="sidebar" :state="state"></sidebar>
@@ -26,7 +25,6 @@
 <script>
 import MediaBar from "./components/layout/MediaBar/MediaBar.vue";
 import Sidebar from "./components/layout/Sidebar.vue";
-//import WindowControlBar from "./components/layout/WindowControlBar.vue"
 import NavBar from "./components/layout/NavBar.vue";
 import MobileStyles from "./MobileStyles.css";
 import LibrarySearch from "./components/layout/LibrarySearch";
@@ -40,11 +38,12 @@ import request from "request";
 import { setTimeout } from "timers";
 import MobileDetect from "mobile-detect";
 import Search from "./Search.js";
+import ytsr from "ytsr";
+import htmlToJson from "html-to-json";
 
 export default {
   name: "refracture-music",
   components: {
-    //   WindowControlBar,
     MediaBar,
     Sidebar,
     NavBar,
@@ -141,13 +140,8 @@ export default {
     },
     browseSearch() {
       let input = document.getElementsByClassName("browseSearch")[0].value;
-      const notSearch =
-        "http:" | "https:" | "www." | "youtube" | "youtu.be" | "soundcloud";
-
       if (
-        !document
-          .getElementsByClassName("browseSearch")[0]
-          .value.includes("http:")
+        !document.getElementsByClassName("browseSearch")[0].value.match(/:\/\//)
       ) {
         this.$data.searchResults = Search(
           document.getElementsByClassName("browseSearch")[0].value,
@@ -158,6 +152,26 @@ export default {
         this.setSong(parseYTURL(getSongInput()));
       }
       document.getElementsByClassName("browseSearch")[0].value = "";
+    },
+    setCurrentSong(song) {
+      this.$data.currentSong = song;
+      this.updateSong(song);
+    },
+    updateSong() {
+      const song = this.$data.currentSong;
+      let song_string = song.artists + " " + song.title;
+      console.log(song_string);
+
+      ytsr(song_string, function(err, result) {
+        if (err) console.log(err);
+        else {
+          console.log(result.items[0].link);
+          AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
+            this.$data.player.src = res[0].url;
+            this.$data.player.play();
+          });
+        }
+      });
     },
     md() {
       return new MobileDetect(window.navigator.userAgent);

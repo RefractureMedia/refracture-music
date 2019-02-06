@@ -1,6 +1,5 @@
 # Build Related Folders
 /android/
-/electron/
 /instant-run/
 /www/
 /dist/
@@ -22,6 +21,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 node_modules/
+electron/node_modules/
 
 # OS Files
 .DS_Store

@@ -174,14 +174,15 @@ export default {
     artists: []
   },
   currentSong: {
-    meta: {
-      artists: ["Noisestorm"],
-      title: "Crab Rave",
-      featuring: [""],
-      album: "Crab Rave - Single",
-      art: "https://assets.monstercat.com/releases/covers/Noisestorm%20-%20Crab%20Rave%20(Art).jpg",
-      cachedLink: ""
+    artists: [""],
+    title: "",
+    featuring: [""],
+    album: {
+      artists: [""],
+      title: "",
+      art: ["https://i.imgur.com/HIcLTbc.png"]
     },
+    cachedLink: "",
     currentTime: "0:00",
     duration: "0:00"
   },
