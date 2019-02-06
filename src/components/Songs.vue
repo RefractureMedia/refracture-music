@@ -63,11 +63,11 @@
       v-bind:class="songContainer"
     >
       <desk>
-        <desk-row v-for="song in songs" v-bind:key="song" class="song">
+        <desk-row v-for="song in songs" v-on:click="setSong(song)" v-bind:key="song" class="song">
           <div class="divTableCell">
             <div
               style="width: 4.5rem; height: 4.5rem;"
-              v-on:click="setSong(song)"
+
               class="songs_art"
             >
               <img
