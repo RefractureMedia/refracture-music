@@ -32,7 +32,8 @@
     "request": "^2.88.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "ytsr": "^0.1.8"
+    "ytsr": "^0.1.8",
+    "ytsr-cordova": "git+https://git@github.com/RefractureMedia/ytsr-cordova.git"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

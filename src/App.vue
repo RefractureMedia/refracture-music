@@ -34,6 +34,7 @@ import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
 import ytsr from "ytsr"
+import ytsrCordova from "ytsr-cordova"
 import htmlToJson from "html-to-json"
 
 export default {
@@ -151,7 +152,7 @@ export default {
       const song = this.$data.currentSong,
         player = this.$data.player
       let song_string = song.artists + " " + song.title
-      ytsr(song_string, (err, result) => {
+      ytsrCordova(song_string, (err, result) => {
         if (err) console.log(err)
         else {
           console.log(result.items[0].link)
