@@ -1,5 +1,15 @@
 # Build Related Folders
-/android/
+!android/
+android/*
+!android/app
+android/app/*
+!android/app/src/
+android/app/src/*
+!android/app/src/main
+android/app/src/main/*
+!android/app/src/main/res
+electron
+
 /instant-run/
 /www/
 /dist/
@@ -25,3 +35,5 @@ electron/node_modules/
 
 # OS Files
 .DS_Store
+
+
