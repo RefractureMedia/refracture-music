@@ -39,7 +39,7 @@ import AdaptiveSourceFetcher from "./assets/js/asf.js";
 import request from "request";
 import { setTimeout } from "timers";
 import MobileDetect from "mobile-detect";
-import Search from './Search.js';
+import Search from "./Search.js";
 
 export default {
   name: "refracture-music",
@@ -57,7 +57,8 @@ export default {
     const library = this.$data.library,
       player = this.$data.player;
     let songs = library.songs,
-      albumsTemp = [];
+      albumsTemp = [],
+      artistsTemp = [];
 
     for (let song of songs) {
       for (let artist of song.artists) {
@@ -70,12 +71,15 @@ export default {
           (err, res, dat) => {
             let artist = JSON.parse(dat).artist;
             if (err) console.error(err);
-            else
-              library.artists = {
-                name: artist.name,
-                art: artist.image,
-                description: artist.summary
-              };
+            else {
+              if (!artistsTemp.includes(artist.name))
+                library.artists.push({
+                  name: artist.name,
+                  art: artist.image,
+                  description: artist.summary
+                });
+              artistsTemp.push(artist.name);
+            }
           }
         );
       }

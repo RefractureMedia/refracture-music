@@ -1,6 +1,5 @@
 <template>
   <dyler>
-    <p>tests</p>
     <dyle
       v-for="artist of artists"
       v-bind:key="artist"

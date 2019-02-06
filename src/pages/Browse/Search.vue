@@ -2,26 +2,55 @@
   <center>
     <input type="url" name="youtubeURL" class="browseSearch" placeholder="Search">
     <div id="submitBrowseSearch" v-on:click="$parent.browseSearch" style="display: none;"></div>
-    <div v-if="results.songs.length == 0 && results.artists.length == 0 && results.albums.length == 0 && results.youtube.length == 0">
+    <div
+      v-if="results.songs.length == 0 && results.artists.length == 0 && results.albums.length == 0 && results.youtube.length == 0"
+    >
       <h2>Recently Browsed</h2>
       <songs :songs="recentlyBrowsed.songs" :currentSong="currentSong" :player="player"/>
     </div>
-    <div v-if="results.songs.length > 0">
-      <h2>Songs</h2>
-      <songs :songs="results.songs" :currentSong="currentSong" :player="player"/>
+    <div class="searchResults">
+      <div v-if="results.songs.length > 0">
+        <h2>Songs</h2>
+        <a v-if="songsLimit==50" v-on:click="songsLimit=4">Hide Results</a>
+        <songs
+          :songs="results.songs.slice(0,songsLimit)"
+          :currentSong="currentSong"
+          :player="player"
+        />
+        <a v-if="songsLimit!=50 && results.songs.length > 4" v-on:click="songsLimit=50">More Results</a>
+        <a v-if="songsLimit==50" v-on:click="songsLimit=4">Hide Results</a>
+      </div>
+      <div v-if="results.albums.length > 0">
+        <h2>Albums</h2>
+        <a v-if="albumsLimit==50" v-on:click="albumsLimit=4">Hide Results</a>
+        <albums :albums="results.albums.slice(0,albumsLimit)"/>
+        <a
+          v-if="albumsLimit!=50 && results.albums.length > 4"
+          v-on:click="albumsLimit=50"
+        >More Results</a>
+        <a v-if="albumsLimit==50" v-on:click="albumsLimit=4">Hide Results</a>
+      </div>
+      <div v-if="results.artists.length > 0">
+        <h2>Artists</h2>
+        <a v-if="artistsLimit==50" v-on:click="artistsLimit=4">Hide Results</a>
+        <artists :artists="results.artists.slice(0,artistsLimit)" :limit="artistsLimit"/>
+        <a
+          v-if="artistsLimit!=50 && results.artists.length > 4"
+          v-on:click="artistsLimit=50"
+        >More Results</a>
+        <a v-if="artistsLimit==50" v-on:click="artistsLimit=4">Hide Results</a>
+      </div>
     </div>
-    <a v-on:click="log_results">GTSFDFASDFS</a>
-
   </center>
 </template>
 
 <script>
-import Songs from "./../../components/Songs.vue"
-import Artists from "./../../components/Artists.vue"
-import Albums from "./../../components/Albums.vue"
+import Songs from "./../../components/Songs.vue";
+import Artists from "./../../components/Artists.vue";
+import Albums from "./../../components/Albums.vue";
 
 export default {
-  props: ['currentSong','player','results'],
+  props: ["currentSong", "player", "results"],
   components: {
     Songs,
     Artists,
@@ -38,32 +67,37 @@ export default {
             album: {
               artists: ["Noisestorm"],
               title: "Crab Rave - Single",
-              art: ["https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg"],
+              art: [
+                "https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg"
+              ]
             },
             cachedLink: ""
           }
         ]
-      }
-    }
+      },
+      songsLimit: 4,
+      albumsLimit: 4,
+      artistsLimit: 4
+    };
   },
   mounted() {
     document
       .getElementsByClassName("browseSearch")[0]
       .addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
-          document.getElementById("submitBrowseSearch").click()
-          event.preventDefault()
-          return false
+          document.getElementById("submitBrowseSearch").click();
+          event.preventDefault();
+          return false;
         }
-      })
-    document.getElementsByClassName("browseSearch")[0].preventDefault()
+      });
+    document.getElementsByClassName("browseSearch")[0].preventDefault();
   },
   methods: {
     log_results() {
-      console.log(this.$props.results)
+      console.log(this.$props.results);
     }
   }
-}
+};
 </script>
 
 <style lang="less">
@@ -82,5 +116,10 @@ export default {
   &::placeholder {
     color: @accent-secondary;
   }
+}
+
+.searchResults {
+  overflow: scroll;
+  height: 65vh;
 }
 </style>

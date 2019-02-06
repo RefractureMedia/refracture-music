@@ -1,9 +1,15 @@
 <template>
-  <songs :songs="library.songs" :currentSong="currentSong" :player="player"/>
+  <songs
+    :songs="library.songs"
+    :currentSong="currentSong"
+    :player="player"
+    displayHeader="true"
+    songContainer="songContainer"
+  />
 </template>
 
 <script>
-import Songs from "./../../components/Songs.vue"
+import Songs from "./../../components/Songs.vue";
 
 export default {
   components: {

@@ -23,26 +23,27 @@ export default function (input, outgoing, page) {
             "https://itunes.apple.com/lookup?id=" + track.collectionId,
             (err, res, dat) => {
               if (err) console.log(err);
-              else { 
+              else {
                 let collectionArtist = JSON.parse(dat).results[0].artistName;
                 console.log(JSON.parse(dat).results);
-              console.log(collectionArtist)
-              parsed_songs.push({
-                artists: track.artistName.split(" & "),
-                title: track.trackName,
-                tracknum: track.trackNumber,
-                album: {
-                  artists: collectionArtist.split(" & "),
-                  title: track.collectionName,
-                  art: [(
+                console.log(collectionArtist)
+                parsed_songs.push({
+                  artists: track.artistName.split(" & "),
+                  title: track.trackName,
+                  featuring: [''],
+                  tracknum: track.trackNumber,
+                  album: {
+                    artists: collectionArtist.split(" & "),
+                    title: track.collectionName,
+                    art: [(
                       track.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
                     ) /* Makes the artwork request be 1000px rather than 100*/
-                    .toString()
-                  ]
-                }
-              });
-              songsTemp.push(track.trackName);
-            }
+                      .toString()
+                    ]
+                  }
+                });
+                songsTemp.push(track.trackName);
+              }
             }
           );
         }
@@ -56,13 +57,9 @@ export default function (input, outgoing, page) {
       "https://itunes.apple.com/search?&entity=musicArtist&term=" + input,
       (err, res, dat) => {
         let raw_artists = JSON.parse(dat).results;
-        let artist_names = [];
 
-        for (let artist of raw_artists) {
-          artist_names.push(artist.artistName);
-        }
-
-        for (let artist of artist_names)
+        if (err) console.log(err)
+        else for (let artist of raw_artists) if (artistsTemp.includes(artist.name)) {
           request(
             "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
             artist +
@@ -84,6 +81,7 @@ export default function (input, outgoing, page) {
               else output.artists = parsed_artists;
             }
           );
+        }
       }
     );
 
@@ -97,8 +95,8 @@ export default function (input, outgoing, page) {
             artists: album.artistName.split(" & " | ", " | " x " | " X "),
             title: album.collectionName,
             art: [(
-                album.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
-              ) /* Makes the artwork request be 1000px rather than 100*/
+              album.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
+            ) /* Makes the artwork request be 1000px rather than 100*/
               .toString()
             ]
           });

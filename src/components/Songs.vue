@@ -1,7 +1,7 @@
 <template>
   <div>
     <center>
-      <div>
+      <div v-if="displayHeader">
         <desk>
           <desk-row class="header">
             <div class="divTableCell">
@@ -15,7 +15,7 @@
       </div>
       <div
         v-if="$parent.$parent.md().os() != 'AndroidOS' && $parent.$parent.md().os() != 'iOS'"
-        class="songContainer"
+        v-bind:class="songContainer"
       >
         <desk>
           <desk-row v-for="song in songs" v-bind:key="song" class="song">
@@ -38,7 +38,7 @@
             </div>
             <div class="divTableCell detail">
               {{ song.title }}
-              <span v-if="song.featuring[0] != ''">
+              <span v-if="song.featuring[0]">
                 ft.
                 <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
                   <a>{{ feature }}</a>
@@ -69,7 +69,7 @@
     </center>
     <div
       v-if="$parent.$parent.md().os() == 'AndroidOS' || $parent.$parent.md().os() == 'iOS'"
-      class="songContainer"
+      v-bind:class="songContainer"
     >
       <desk>
         <desk-row v-for="song in songs" v-bind:key="song" class="song">
@@ -115,7 +115,7 @@ import ControlButton from "./layout/MediaBar/ControlButton.vue";
 
 export default {
   name: "artists",
-  props: ["songs", "currentSong", "player"],
+  props: ["songs", "currentSong", "player", "displayHeader", "songContainer"],
   components: {
     Desk,
     DeskRow,
