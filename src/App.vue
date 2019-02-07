@@ -152,19 +152,37 @@ export default {
       const song = this.$data.currentSong,
         player = this.$data.player
       let song_string = song.artists + " " + song.title
-      ytsrCordova(song_string, (err, result) => {
-        if (err) console.log(err)
-        else {
-          console.log(result.items[0].link)
-          alert(
-            result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
-          )
-          AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
-            player.src = res[0].url
-            player.play()
-          })
-        }
-      })
+      if(this.md().os() != "AndroidOS" && this.md().os() != "iOS") {
+        ytsr(song_string, (err, result) => {
+          if (err) console.log(err)
+          else {
+            console.log(result.items[0].link)
+            console.log(result.items[0].link.split("v=")[1])
+            alert(
+              result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
+            )
+            AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
+              player.src = res[0].url
+              player.play()
+            })
+          }
+        })
+      } else {
+        ytsrCordova(song_string, (err, result) => {
+          if (err) console.log(err)
+          else {
+            console.log(result.items[0].link)
+            console.log(result.items[0].link.split("v=")[1])
+            alert(
+              result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
+            )
+            AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
+              player.src = res[0].url
+              player.play()
+            })
+          }
+        })
+      }
     },
     md() {
       return new MobileDetect(window.navigator.userAgent)
