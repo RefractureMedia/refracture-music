@@ -1,7 +1,7 @@
 const URL = require('url');
 const UTIL = require('./util.js');
 const QS = require('querystring');
-export default (searchString, options, callback) => { // eslint-disable-line consistent-return
+const main = (searchString, options, callback) => { // eslint-disable-line consistent-return
   // Check wether options wether no options were provided
   if (typeof options === 'function') {
     callback = options;
@@ -124,3 +124,5 @@ const getFilters = main.getFilters = (searchString, callback) => { // eslint-dis
     }
   });
 };
+
+export default main;
