@@ -34,7 +34,7 @@ import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
 import ytsr from "ytsr"
-import ytsrCordova from "ytsr-cordova"
+import ytsrCordova from "./ytsr-cordova/lib/main.js"
 import htmlToJson from "html-to-json"
 
 export default {
@@ -156,6 +156,9 @@ export default {
         if (err) console.log(err)
         else {
           console.log(result.items[0].link)
+          alert(
+            result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
+          )
           AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
             player.src = res[0].url
             player.play()

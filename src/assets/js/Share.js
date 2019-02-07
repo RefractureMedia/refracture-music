@@ -7,18 +7,18 @@ export default function () {
   cordova.openwith.init(initSuccess, initError);
 
   function initSuccess() {
-    alert('init success!');
+    // alert('init success!');
   }
 
   function initError(err) {
-    alert('init failed: ' + err);
+    console.error('init failed: ' + err);
   }
 
   // Define your file handler
   cordova.openwith.addHandler(myHandler);
 
   function myHandler(intent) {
-    alert('intent received');
+    console.info('intent received');
     for (var i = 0; i < intent.items.length; ++i) {
       var item = intent.items[i];
       console.log(item)
