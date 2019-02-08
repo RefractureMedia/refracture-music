@@ -22,7 +22,7 @@ export default function (input, outgoing, page) {
           request(
             "https://itunes.apple.com/lookup?id=" + track.collectionId,
             (err, res, dat) => {
-              if (err) console.error(err);
+              if (err) throw new Error(err);
               else {
                 let collectionArtist = JSON.parse(dat).results[0].artistName;
                 console.log(JSON.parse(dat).results);
@@ -48,7 +48,7 @@ export default function (input, outgoing, page) {
           );
         }
         console.log(parsed_songs);
-        if (err) console.error(err);
+        if (err) throw new Error(err);
         else output.songs = parsed_songs;
       }
     );
@@ -58,7 +58,7 @@ export default function (input, outgoing, page) {
       (err, res, dat) => {
         let raw_artists = JSON.parse(dat).results;
 
-        if (err) console.error(err)
+        if (err) throw new Error(err)
         else
           for (let artist of raw_artists)
             if (artistsTemp.includes(artist.name)) {
@@ -79,7 +79,7 @@ export default function (input, outgoing, page) {
                     });
                   }
                   console.log(parsed_artists);
-                  if (err) console.error(err);
+                  if (err) throw new Error(err);
                   else output.artists = parsed_artists;
                 }
               );
@@ -104,7 +104,7 @@ export default function (input, outgoing, page) {
           });
         }
         console.log(parsed_albums);
-        if (err) console.error(err);
+        if (err) throw new Error(err);
         else output.albums = parsed_albums;
       }
     );

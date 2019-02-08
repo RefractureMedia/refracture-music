@@ -11,7 +11,7 @@ export default (id, callback) => {
       const l = link(JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(r.data)[1])).streamingData.adaptiveFormats)
       callback(l);
     }, (r) => {
-      console.error(r.error);
+      throw new Error(r.error);
     });
   } catch (e) {
     request({

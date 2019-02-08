@@ -65,7 +65,7 @@ export default {
             "&format=json",
           (err, res, dat) => {
             let artist = JSON.parse(dat).artist
-            if (err) console.error(err)
+            if (err) throw new Error(err)
             else {
               if (!artistsTemp.includes(artist.name))
                 library.artists.push({

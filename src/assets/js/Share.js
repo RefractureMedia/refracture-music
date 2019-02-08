@@ -11,7 +11,7 @@ export default function () {
   }
 
   function initError(err) {
-    console.error('init failed: ' + err);
+    throw new Error('init failed: ' + err);
   }
 
   // Define your file handler
