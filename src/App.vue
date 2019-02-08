@@ -152,7 +152,7 @@ export default {
       const song = this.$data.currentSong,
         player = this.$data.player
       let song_string = song.artists + " " + song.title
-      if(this.md().os() != "AndroidOS" && this.md().os() != "iOS") {
+      if (this.md().os() != "AndroidOS" && this.md().os() != "iOS") {
         ytsr(song_string, (err, result) => {
           if (err) console.log(err)
           else {

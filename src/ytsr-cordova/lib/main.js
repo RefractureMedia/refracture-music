@@ -1,7 +1,7 @@
 const URL = require('url');
-const UTIL = require('./util.js');
+import UTIL from './util.js';
 const QS = require('querystring');
-const main = (searchString, options, callback) => { // eslint-disable-line consistent-return
+const main = (searchString, options, callback) => {
   // Check wether options wether no options were provided
   if (typeof options === 'function') {
     callback = options;
@@ -12,7 +12,7 @@ const main = (searchString, options, callback) => { // eslint-disable-line consi
   // Return a promise when no callback is provided
   if (!callback) {
     return new Promise((resolve, reject) => {
-      main(searchString, options, (err, info) => { // eslint-disable-line consistent-return
+      main(searchString, options, (err, info) => {
         if (err) return reject(err);
         resolve(info);
       });
@@ -26,12 +26,13 @@ const main = (searchString, options, callback) => { // eslint-disable-line consi
 
   // Save provided nextpageRef and do the request
   const currentRef = options.nextpageRef;
-  UTIL.getPage(currentRef ? UTIL.buildFromNextpage(currentRef) : UTIL.buildLink(searchString), (err, body) => { // eslint-disable-line consistent-return, max-len
+  UTIL.getPage(currentRef ? UTIL.buildFromNextpage(currentRef) : UTIL.buildLink(searchString), (err, body) => {
     if (err) return callback(err);
     let content;
     try {
       const parsed = JSON.parse(body);
       content = parsed[parsed.length - 1].body.content;
+      alert(content)
     } catch (e) {
       return callback(e);
     }
@@ -80,7 +81,7 @@ const main = (searchString, options, callback) => { // eslint-disable-line consi
     }
 
     options.nextpageRef = nextpageRef;
-    main(searchString, options, (e, data) => { // eslint-disable-line consistent-return, max-len
+    main(searchString, options, (e, data) => {
       if (e) return callback(e);
       items.push(...data.items);
       callback(null, {
@@ -95,11 +96,11 @@ const main = (searchString, options, callback) => { // eslint-disable-line consi
   });
 };
 
-const getFilters = main.getFilters = (searchString, callback) => { // eslint-disable-line consistent-return
+const getFilters = main.getFilters = (searchString, callback) => {
   // Return a promise when no callback is provided
   if (!callback) {
     return new Promise((resolve, reject) => {
-      getFilters(searchString, (err, info) => { // eslint-disable-line consistent-return
+      getFilters(searchString, (err, info) => {
         if (err) return reject(err);
         resolve(info);
       });
@@ -112,13 +113,13 @@ const getFilters = main.getFilters = (searchString, callback) => { // eslint-dis
   if (parsedQuery.query.sp && parsedQuery.query.search_query) queryString = UTIL.buildFromNextpage(searchString);
   else queryString = UTIL.buildLink(searchString);
 
-  UTIL.getPage(queryString, (err, body) => { // eslint-disable-line consistent-return
+  UTIL.getPage(queryString, (err, body) => {
     if (err) return callback(err);
     let content;
     try {
       const parsed = JSON.parse(body);
       content = parsed[parsed.length - 1].body.content;
-      callback(null, UTIL.parseFilters(content)); // eslint-disable-line callback-return
+      callback(null, UTIL.parseFilters(content));
     } catch (e) {
       return callback(e);
     }

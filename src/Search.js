@@ -16,8 +16,8 @@ export default function (input, outgoing, page) {
     request(
       "https://itunes.apple.com/search?&entity=musicTrack&term=" + input,
       (err, res, dat) => {
-        let tracks = JSON.parse(dat).results;
-        let parsed_songs = [];
+        let tracks = JSON.parse(dat).results,
+          parsed_songs = [];
         for (let track of tracks) {
           request(
             "https://itunes.apple.com/lookup?id=" + track.collectionId,
