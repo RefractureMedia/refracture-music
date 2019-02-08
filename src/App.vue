@@ -33,9 +33,9 @@ import request from "request"
 import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
-import ytsr from "ytsr"
-import ytsrCordova from "./ytsr-cordova/lib/main.js"
 import htmlToJson from "html-to-json"
+import crawl from "youtube-crawl"
+import crawlCordova from "./assets/js/yt-crawl-cordova.js"
 
 export default {
   name: "refracture-music",
@@ -151,36 +151,19 @@ export default {
     updateSong() {
       const song = this.$data.currentSong,
         player = this.$data.player
-      let song_string = song.artists + " " + song.title
       if (this.md().os() != "AndroidOS" && this.md().os() != "iOS") {
-        ytsr(song_string, (err, result) => {
-          if (err) console.log(err)
-          else {
-            console.log(result.items[0].link)
-            console.log(result.items[0].link.split("v=")[1])
-            alert(
-              result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
-            )
-            AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
-              player.src = res[0].url
-              player.play()
-            })
-          }
+        crawl(`${song.artists} ${song.title}`).then(function(results) {
+          AdaptiveSourceFetcher(results[0].uri.split("v=")[1], res => {
+            player.src = res[0].url
+            player.play()
+          })
         })
       } else {
-        ytsrCordova(song_string, (err, result) => {
-          if (err) console.log(err)
-          else {
-            console.log(result.items[0].link)
-            console.log(result.items[0].link.split("v=")[1])
-            alert(
-              result.items[0].link + "\n" + result.items[0].link.split("v=")[1]
-            )
-            AdaptiveSourceFetcher(result.items[0].link.split("v=")[1], res => {
-              player.src = res[0].url
-              player.play()
-            })
-          }
+        crawlCordova(`${song.artists} ${song.title}`).then(function(results) {
+          AdaptiveSourceFetcher(results[0].uri.split("v=")[1], res => {
+            player.src = res[0].url
+            player.play()
+          })
         })
       }
     },
