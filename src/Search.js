@@ -8,21 +8,11 @@ export default function (input, outgoing, page) {
     albums: [],
     playlists: [],
     youtube: [],
-    soundcloud: [],
-    pending: {
-      songs: false,
-      artists: undefined,
-      albums: undefined
-    },
-    no_results: {
-      songs: false,
-      artists: false,
-      albums: false
-    }
+    soundcloud: []
   }
+  console.clear();
   if (outgoing) {
     let songsTemp = [];
-    output.pending.songs = true;
     request(
       "https://itunes.apple.com/search?&entity=musicTrack&term=" + input,
       (err, res, dat) => {
@@ -59,15 +49,7 @@ export default function (input, outgoing, page) {
         }
         console.log(parsed_songs);
         if (err) throw new Error(err);
-        else {
-          if (parsed_songs.length > 0) {
-            output.pending.songs = false;
-          } else {
-            output.pending.songs = false;
-            output.no_results.songs = true;
-          }
-          output.songs = parsed_songs;
-        }
+        else output.songs = parsed_songs;
       }
     );
 
@@ -126,8 +108,6 @@ export default function (input, outgoing, page) {
         else output.albums = parsed_albums;
       }
     );
-    console.log(input);
-    console.log(output);
     return output;
     // do youtube result requesting & filter out `songsTemp.includes(parsed_result.title)` (same thing for soundcloud when we get around to doing soundcloud)
   }
