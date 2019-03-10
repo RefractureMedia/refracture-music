@@ -191,5 +191,6 @@ export default {
   preload: `file:\\${require("path").resolve(
     __dirname,
     "./utilities/inject.js"
-  )}`
+  )}`,
+  search: ""
 };

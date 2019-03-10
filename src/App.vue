@@ -8,7 +8,7 @@
           <nav-bar />
           <library-search />
           <div v-if="isDone">
-            <router-view :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults"></router-view>
+            <router-view :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
           </div>
         </div>
       </div>
@@ -135,12 +135,10 @@ export default {
       })
     },
     browseSearch() {
-      const search = document.getElementsByClassName("browseSearch")[0]
-      let input = document.getElementsByClassName("browseSearch")[0].value
-      if (!search.value.match(/:\/\//))
-        this.$data.searchResults = Search(!search.value, true, "")
-      else {
-        this.setSong(parseYTURL(getSongInput()))
+      if (!this.$data.search.match(/:\/\//)) {
+        this.$data.searchResults = Search(this.$data.search, true, "");
+      } else {
+        this.setSong(parseYTURL(this.$data.search))
       }
       search.value = ""
     },

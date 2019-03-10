@@ -1,6 +1,6 @@
 <template>
   <center>
-    <input type="url" name="youtubeURL" class="browseSearch" placeholder="Search">
+    <input type="url" name="youtubeURL" class="browseSearch" v-model="$parent.search" placeholder="Search">
     <div id="submitBrowseSearch" v-on:click="$parent.browseSearch" style="display: none;"></div>
     <div
       v-if="results.songs.length == 0 && results.artists.length == 0 && results.albums.length == 0 && results.youtube.length == 0"
@@ -120,6 +120,6 @@ export default {
 
 .searchResults {
   overflow: scroll;
-  height: 65vh;
+  height: 67.2vh;
 }
 </style>
