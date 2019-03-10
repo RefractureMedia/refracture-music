@@ -31,8 +31,10 @@
         v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'"
         class="controls"
         id="controls"
+        style="width: 100%;"
       >
         <controls/>
+        <br>
         <div class="trackbar">
           <div class="timestamp through">{{ song.currentTime }}</div>
           <div class="trackbar-center" style="margin-top: -.25rem;">
