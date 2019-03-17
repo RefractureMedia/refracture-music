@@ -1,5 +1,7 @@
 # refracture-music
 
+Music Playing App that utilizes YouTube & Google Drive, syncing between all devices.
+
 > A Vue.js project
 
 ## Build Setup
