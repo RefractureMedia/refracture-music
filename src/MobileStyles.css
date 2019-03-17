@@ -1,7 +1,4 @@
 @media (pointer: coarse) {
-  .whole {
-    display: block !important;
-  }
   .container {
     width: 100vw !important;
   }
@@ -94,5 +91,11 @@
   .nav-bar {
     padding-left: .5rem;
     padding-right: .5rem;
+  }
+  .shadow {
+    display: none;
+  }
+  .sidebar_main.sidebar_closed {
+    transform: translate(-30vw, 0) !important;
   }
 }

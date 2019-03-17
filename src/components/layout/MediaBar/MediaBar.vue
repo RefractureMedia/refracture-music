@@ -22,10 +22,10 @@
           </span>
         </p>
       </div>
-      <div id="song-info" class="song-info" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
-        <marquee class="song">
-          {{ song.title }}
-          <span v-if="song.featuring[0] != ''">
+      <div id="song-info" style="display: grid;" class="song-info" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
+        <marquee class="song" style="width: 39vw;">
+          {{ song.song.title }}
+          <span v-if="song.song.featuring[0] != ''">
             ft.
             <span v-for="(feature, index) of song.song.featuring" v-bind:key="feature">
               <a>{{ feature }}</a>
@@ -33,7 +33,7 @@
             </span>
           </span>
         </marquee>
-        <marquee class="artist">
+        <marquee class="artist" style="width: 39vw;">
           <span v-for="(artist, index) of song.song.artists" v-bind:key="artist">
             <a>{{ artist }}</a>
             <span v-if="song.song.artists.length > 1 && index != song.song.artists.length-1">{{ '&amp; '}}</span>

@@ -1,18 +1,20 @@
 {
-  "name": "capacitor-app",
+  "name": "refracture-music",
+  "productName": "Refracture Music",
   "version": "1.0.0",
-  "description": "An Amazing Capacitor App",
+  "description": "Music Playing App that utilizes YouTube & Google Drive, syncing between all devices.",
   "main": "index.js",
   "scripts": {
     "electron:start": "electron ./"
   },
   "dependencies": {
     "@capacitor/electron": "^1.0.0-alpha.28",
-    "electron": "^2.0.18",
     "electron-is-dev": "^0.3.0",
     "iohook": "^0.4.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "electron": "^2.0.18"
+  },
   "keywords": [
     "capacitor",
     "electron"

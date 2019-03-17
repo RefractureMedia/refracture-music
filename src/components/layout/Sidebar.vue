@@ -78,7 +78,7 @@ export default {
     },
     clickedCategory() {
       this.refreshCatagory();
-      this.$parent.md().includes('AndroidOS') || this.$parent.md().includes('iPhone') || this.$parent.md().includes('iPad') ? sidebar_toggle() : console.log('');
+      if(this.$parent.md().os() == 'AndroidOS' || this.$parent.md().os() == 'iOS') this.sidebar_toggle(); else console.log('');
     }
   }
 }
