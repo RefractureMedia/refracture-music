@@ -3,10 +3,10 @@
     <control-button icon="save"></control-button>
     <control-button icon="repeat"></control-button>
     <control-button icon="back"></control-button>
-    <div v-if="!isPaused" v-on:click="togglePlayingState();">
+    <div class="update_pause" style="display: none;" ref="pause_test" v-on:click="$parent.$parent.$data.player.paused ? $parent.$parent.$data.player.play() : $parent.$parent.$data.player.pause()">
       <control-button icon="pause"></control-button>
     </div>
-    <div v-if="isPaused" v-on:click="togglePlayingState();">
+    <div class="update_play" style="display: initial;" ref="play_test" v-on:click="$parent.$parent.$data.player.paused ? $parent.$parent.$data.player.play() : $parent.$parent.$data.player.pause()">
       <control-button icon="play"></control-button>
     </div>
     <control-button icon="skip"></control-button>
@@ -38,7 +38,9 @@ export default {
       notify("Song")
     }
   },
-  mounted() {}
+  mounted() {
+    
+  }
 }
 
 //v-bind:class="'active' ? $parent.$parent.currentSong.player.loop"

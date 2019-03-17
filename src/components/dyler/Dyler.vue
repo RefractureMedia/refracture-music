@@ -13,7 +13,8 @@ export default {
 <style lang="less">
 .tile_table {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 12rem));
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 12rem));
   justify-content: center;
+  padding: .5rem;
 }
 </style>

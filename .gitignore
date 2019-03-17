@@ -8,7 +8,7 @@ android/app/src/*
 !android/app/src/main
 android/app/src/main/*
 !android/app/src/main/res
-electron
+/electron
 
 /instant-run/
 /www/

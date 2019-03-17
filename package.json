@@ -24,7 +24,7 @@
     "build": "node build/build.js",
     "build:android": "npm run build && npm run compile:android",
     "alt": "npm run build:android && adb install app-debug.apk",
-    "build:electron": "npm run build && cp -R www electron/",
+    "build:electron": "rm -rf electron/static/* && rm -rf electron/index.html && npm run build && cp -R www/* electron/",
     "build:ios": "npm run build && npx cap copy ios && npx cap update ios && npx cap open ios",
     "build:all": "npm run build:android && npm run build:electron",
     "compile:android": "rm -rf *.apk && npx cap copy android && npx cap update android && cd android && gradlew assembleDebug && mv ./app/build/outputs/apk/debug/app-debug.apk ../",
@@ -46,6 +46,7 @@
     "querystring": "^0.2.0",
     "request": "^2.88.0",
     "vue": "^2.5.2",
+    "vue-keybindings": "^1.0.0",
     "vue-router": "^3.0.1",
     "youtube-crawl": "0.0.1",
     "ytsr": "^0.1.8"

@@ -1,31 +1,44 @@
 <template>
-  <footer class="clear">
-    <div v-bind:class="'sidebar sidebar-bottom sidebar_' + state">
-      <div class="version sidebar_content">
-        <p>Version {{ version }}</p>
-      </div>
-    </div>
+  <div class="control">
     <div class="now_playing">
       <div class="album-art">
-        <img id="album-art" :src="song.album.art[song.album.art.length-1]">
+        <img id="album-art" :src="song.song.album.art[song.song.album.art.length-1]">
       </div>
-      <div id="song-info" class="song-info">
+      <div id="song-info" class="song-info" v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'">
         <p class="song">
-          {{ song.title }}
-          <span v-if="song.featuring[0] != ''">
+          {{ song.song.title }}
+          <span v-if="song.song.featuring[0] != ''">
             ft.
-            <span v-for="(feature, index) of song.featuring" v-bind:key="feature">
+            <span v-for="(feature, index) of song.song.featuring" v-bind:key="feature">
               <a>{{ feature }}</a>
-              <span v-if="song.featuring.length > 1 && index != song.featuring.length-1">&amp;</span>
+              <span v-if="song.song.featuring.length > 1 && index != song.song.featuring.length-1">&amp;</span>
             </span>
           </span>
         </p>
         <p class="artist">
-          <span v-for="(artist, index) of song.artists" v-bind:key="artist">
+          <span v-for="(artist, index) of song.song.artists" v-bind:key="artist">
             <a>{{ artist }}</a>
-            <span v-if="song.artists.length > 1 && index != song.artists.length-1">{{ '&amp; '}}</span>
+            <span v-if="song.song.artists.length > 1 && index != song.song.artists.length-1">{{ '&amp; '}}</span>
           </span>
         </p>
+      </div>
+      <div id="song-info" class="song-info" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
+        <marquee class="song">
+          {{ song.title }}
+          <span v-if="song.featuring[0] != ''">
+            ft.
+            <span v-for="(feature, index) of song.song.featuring" v-bind:key="feature">
+              <a>{{ feature }}</a>
+              <span v-if="song.song.featuring.length > 1 && index != song.song.featuring.length-1">&amp;</span>
+            </span>
+          </span>
+        </marquee>
+        <marquee class="artist">
+          <span v-for="(artist, index) of song.song.artists" v-bind:key="artist">
+            <a>{{ artist }}</a>
+            <span v-if="song.song.artists.length > 1 && index != song.song.artists.length-1">{{ '&amp; '}}</span>
+          </span>
+        </marquee>
       </div>
       <center
         v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'"
@@ -44,21 +57,19 @@
               :max="$parent.player.duration"
               v-model="$parent.player.currentTime"
               class="bar"
+              onclick="this.blur();"
             >
           </div>
           <div class="timestamp total">{{ song.duration }}</div>
         </div>
       </center>
       <div v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
-        <div v-if="!isPaused" v-on:click="togglePlayingState()">
-          <control-button icon="pause"></control-button>
-        </div>
-        <div v-if="isPaused" v-on:click="togglePlayingState()">
-          <control-button icon="play"></control-button>
+        <div style="display: grid; align-self: center; justify-self: center;" v-on:click="state ? play() : pause()">
+          <control-button :icon="isPaused ? 'pause' : 'play'" :key="isPaused"></control-button>
         </div>
       </div>
     </div>
-  </footer>
+  </div>
 </template>
 
 <script>
@@ -75,6 +86,7 @@ export default {
     };
   },
   mounted() {
+    console.log(this.$props.song.song)
     this.$nextTick(function() {
       document.getElementById("controls").style.marginLeft = String(
         "-" + document.getElementById("song-info").clientWidth + "px"
@@ -97,11 +109,9 @@ export default {
     },
     togglePlayingState() {
       if (this.$parent.$data.player.paused) {
-        this.$data.isPaused = false;
         this.$parent.$data.player.play();
       } else {
         this.$parent.$data.player.pause();
-        this.$data.isPaused = true;
       }
     },
     toggleShuffleState() {
@@ -115,6 +125,14 @@ export default {
     nextSong() {
       $parent.currentSong.player.currentSrc =
         $parent.songQueue[$parent.currentSong.numberInQueue].src;
+    },
+    play() {
+      this.$parent.player.play();
+      this.$data.isPaused = false;
+    },
+    pause() {
+      this.$data.player.pause();
+      this.$data.isPaused = true;
     }
   }
 };

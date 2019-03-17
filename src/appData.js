@@ -174,15 +174,17 @@ export default {
     artists: []
   },
   currentSong: {
-    artists: [""],
-    title: "",
-    featuring: [""],
-    album: {
+    song: {
       artists: [""],
       title: "",
-      art: ["https://i.imgur.com/HIcLTbc.png"]
+      featuring: [""],
+      album: {
+        artists: [""],
+        title: "",
+        art: ["https://i.imgur.com/HIcLTbc.png"]
+      },
+      cachedLink: "",
     },
-    cachedLink: "",
     currentTime: "0:00",
     duration: "0:00"
   },
@@ -192,5 +194,10 @@ export default {
     __dirname,
     "./utilities/inject.js"
   )}`,
-  search: ""
+  search: "",
+  modal: {
+    active: false,
+    type: "",
+    content: {}
+  }
 };

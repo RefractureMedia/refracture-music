@@ -1,14 +1,15 @@
 <template>
   <center>
-    <input type="url" name="youtubeURL" class="browseSearch" v-model="$parent.search" placeholder="Search">
+    <input type="url" :name="getTime" class="browseSearch" v-model="$parent.search" placeholder="Search">
     <div id="submitBrowseSearch" v-on:click="$parent.browseSearch" style="display: none;"></div>
     <div
       v-if="results.songs.length == 0 && results.artists.length == 0 && results.albums.length == 0 && results.youtube.length == 0"
+      style="padding-top: 3.5rem;"
     >
       <h2>Recently Browsed</h2>
-      <songs :songs="recentlyBrowsed.songs" :currentSong="currentSong" :player="player"/>
+      <songs :songs="recentlyBrowsed.songs" :currentSong="currentSong" :player="player" style="margin-left: .5rem;"/>
     </div>
-    <div class="searchResults">
+    <div class="searchResults" style="padding-top: 3.5rem;">
       <div v-if="results.songs.length > 0">
         <h2>Songs</h2>
         <a v-if="songsLimit==50" v-on:click="songsLimit=4">Hide Results</a>
@@ -16,6 +17,7 @@
           :songs="results.songs.slice(0,songsLimit)"
           :currentSong="currentSong"
           :player="player"
+          style="margin-left: .5rem;"
         />
         <a v-if="songsLimit!=50 && results.songs.length > 4" v-on:click="songsLimit=50">More Results</a>
         <a v-if="songsLimit==50" v-on:click="songsLimit=4">Hide Results</a>
@@ -85,6 +87,7 @@ export default {
       .getElementsByClassName("browseSearch")[0]
       .addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
+          escape_input()
           document.getElementById("submitBrowseSearch").click();
           event.preventDefault();
           return false;
@@ -95,9 +98,16 @@ export default {
   methods: {
     log_results() {
       console.log(this.$props.results);
+    },
+    getTime() {
+      return Date.getTime();
     }
   }
 };
+
+function escape_input() {
+  document.activeElement.blur();
+}
 </script>
 
 <style lang="less">
@@ -112,14 +122,12 @@ export default {
   padding-right: 1rem;
   color: @accent-primary;
   outline-color: transparent !important;
+  position: fixed;
+  transform: translate(-50%,0);
+  margin-top: .5rem;
   cursor: text;
   &::placeholder {
     color: @accent-secondary;
   }
-}
-
-.searchResults {
-  overflow: scroll;
-  height: 67.2vh;
 }
 </style>

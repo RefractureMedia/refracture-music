@@ -16,9 +16,9 @@ export default {
 
 <style lang="less">
 .tile {
-  width: 12rem;
-  height: 12rem;
-  margin-top: 0.5rem;
+  width: 11.5rem;
+  height: 11.5rem;
+  margin: .25rem;
   .art {
     width: 100%;
     height: 100%;
@@ -30,6 +30,17 @@ export default {
     width: fit-content;
   }
   &:hover {
+    &::after {
+      box-shadow: inset 0rem -6rem linear-gradient(180deg, rgba(0,0,0,.4) 0%, transparent 100%);
+      content: ''; 
+      display: block;
+      position: relative;
+      top: 0;
+      margin-top: -12rem;
+      width: 12rem;
+      height: 12rem;
+      z-index: 1000;
+    }
     .description {
       margin-top: -2.5rem;
       color: currentColor;

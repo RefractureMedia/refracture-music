@@ -25,8 +25,6 @@ export default function (input, outgoing, page) {
               if (err) throw new Error(err);
               else {
                 let collectionArtist = JSON.parse(dat).results[0].artistName;
-                console.log(JSON.parse(dat).results);
-                console.log(collectionArtist)
                 parsed_songs.push({
                   artists: track.artistName.split(/ *[&X,] *| *x +| +x */),
                   title: track.trackName,
@@ -53,34 +51,32 @@ export default function (input, outgoing, page) {
       }
     );
 
+    let artistsTemp = [];
+    let parsed_artists = [];
     request(
       "https://itunes.apple.com/search?&entity=musicArtist&term=" + input,
       (err, res, dat) => {
         let raw_artists = JSON.parse(dat).results;
-
+        console.log(raw_artists);
         if (err) throw new Error(err)
         else
           for (let artist of raw_artists)
-            if (artistsTemp.includes(artist.name)) {
+            if (!artistsTemp.includes(artist.artistName)) {
               request(
-                "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
-                artist +
-                "&api_key=" +
-                keys.lastfm +
-                "&format=json",
+                `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.artistName}&api_key=${keys.lastfm}&format=json`,
                 (err, res, dat) => {
-                  let artists = JSON.parse(dat).artist;
-                  let parsed_artists = [];
-                  for (let artist of artists) {
-                    parsed_artists.push({
-                      name: artist.name,
-                      art: artist.image,
-                      description: artist.summary
-                    });
-                  }
-                  console.log(parsed_artists);
+                  let artist_ = JSON.parse(dat).artist;
+                  console.log(artist_);
+                  let images = [];
+                  for (let image of artist_.image) images.push(image["#text"])
+                  parsed_artists.push({
+                    name: artist_.name,
+                    art: images,
+                    description: artist_.summary
+                  });
                   if (err) throw new Error(err);
                   else output.artists = parsed_artists;
+                  console.log(parsed_artists);
                 }
               );
             }

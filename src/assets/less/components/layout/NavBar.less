@@ -2,9 +2,18 @@
     font-size: 2rem;
     font-weight: bolder;
     margin-bottom: 1rem;
-    & center {
+    display: grid;
+    grid-template-columns: 5rem auto;
+    height: 8vh;
+    -webkit-app-region: drag;
+    center {
         overflow: scroll;
         white-space: nowrap;
+        -webkit-app-region: drag;
+        align-self: center;
+        * {
+            -webkit-app-region: no-drag;
+        }
         &::-webkit-scrollbar {
             width: 0rem;
             height: 0rem;
@@ -24,21 +33,21 @@
                 background: transparent !important;
             }
         }
-    }
-    & a {
-        color: @accent-secondary;
-        overflow: scroll;
-        text-orientation: sideways;
-        white-space: nowrap;
-        &:hover {
-            text-decoration: none;
+        & a {
+            color: @accent-secondary;
+            overflow: scroll;
+            text-orientation: sideways;
+            white-space: nowrap;
+            &:hover {
+                text-decoration: none;
+                color: @accent-primary;
+            }
+        }
+        & .router-link-active {
             color: @accent-primary;
         }
-    }
-    & .router-link-active {
-        color: @accent-primary;
-    }
-    & .currentCategory {
-        color: @accent-primary;
+        & .currentCategory {
+            color: @accent-primary;
+        }
     }
 }

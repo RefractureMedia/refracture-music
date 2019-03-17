@@ -7,6 +7,7 @@ import Vue from 'vue';
 import App from './App';
 import ShareDialog from "./assets/js/Share.js";
 import router from './router';
+import VueKeybindings from 'vue-keybindings'
 
 const {
   SplashScreen
@@ -17,14 +18,23 @@ SplashScreen.hide();
 
 Vue.config.productionTip = false
 
+Vue.prototype.window_portal = window;
+
 Vue.component('v-style', {
   render: function (createElement) {
     return createElement('style', this.$slots.default)
   }
 });
 
+Vue.use(VueKeybindings, {
+  alias: {
+      space: 'space',
+      escape: 'esc'
+  }
+})
+
 /* eslint-disable no-new */
-new Vue({
+window._VueInstance = new Vue({
   el: '#app',
   router,
   components: {

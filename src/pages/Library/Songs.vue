@@ -5,6 +5,7 @@
     :player="player"
     displayHeader="true"
     songContainer="songContainer"
+    style="margin-left: .5rem; margin-top: 1rem;"
   />
 </template>
 
@@ -18,4 +19,3 @@ export default {
   props: ["library", "currentSong", "player"]
 };
 </script>
-

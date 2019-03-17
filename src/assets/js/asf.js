@@ -1,4 +1,4 @@
-const request = require("http").request;
+const request = require("request");
 
 export default (id, callback) => {
   try {
@@ -14,22 +14,10 @@ export default (id, callback) => {
       throw new Error(r.error);
     });
   } catch (e) {
-    request({
-      "method": "GET",
-      "hostname": "www.youtube.com",
-      "port": null,
-      path: "/get_video_info?html5=1&video_id=" + id,
-      "headers": {
-        "content-length": "0",
-        "x-frame-options": "SAMEORIGIN"
-      }
-    }, res => {
-      var chunks = [];
-      res.on("data", chunk => chunks.push(chunk));
-      res.on("end", () => {
-        callback(link(JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(body)[1])))[0].streamingData.adaptiveFormats)
-      })
-    }).end();
+    request(`http://www.youtube.com/get_video_info?html5=1&video_id=${id}&el=detailpage`, function (error, response, body) {
+      console.warn(error)
+      callback(link(JSON.parse(decodeURIComponent(/(?:player_response=)(.*?)(?:&|$)/i.exec(body)[1])).streamingData.adaptiveFormats))
+    });
   }
 
 }

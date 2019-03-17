@@ -1,7 +1,16 @@
 @media (pointer: coarse) {
+  .whole {
+    display: block !important;
+  }
+  .container {
+    width: 100vw !important;
+  }
+  
   .sidebar {
     position: absolute !important;
     display: block;
+    height: 100%;
+    z-index: 1000;
   }
 
   .sidebar_open {
@@ -73,5 +82,17 @@
   .search_icon {
     margin-top: -0.8rem !important;
     margin-right: -1.7rem !important;
+  }
+
+  .now_playing {
+    height: 15.8vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 15vh auto 4rem;
+  }
+
+  .nav-bar {
+    padding-left: .5rem;
+    padding-right: .5rem;
   }
 }

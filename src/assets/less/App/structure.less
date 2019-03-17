@@ -35,15 +35,120 @@ p {
 }
 
 .whole {
-  height: 100%;
-  margin-top: -0.1rem;
-  background: @background-primary;
+  display: grid;
+  grid-template-areas: "left right";
+  height: 100vh;
+  transition: all 0.15s;
+  grid-template-columns: auto auto;
+  &.animate_ {
+    &open {
+      .sidebar {
+        width: 20vw;
+        transition: width 0.15s;
+      }
+      .container {
+        width: 80vw;
+        transition: width 0.15s;
+      }
+    }
+    &closed {
+      .sidebar {
+        width: 0vw;
+        transition: width 0.15s;
+      }
+      .container {
+        width: 100vw;
+        transition: width 0.15s;
+      }
+    }
+  }
+}
+
+.sidebar {
+  display: grid;
+  grid-template-rows: max-content max-content auto max-content;
+  .header {
+    margin: .5rem;
+    height: 3.5rem;
+    .sidebar_toggle_x {
+      margin-left: -.5rem;
+    }
+  }
+  p {
+    padding-left: 1rem;
+    margin-top: 0.5vw;
+    margin-bottom: 0.5vw;
+    font-size: 1.3rem;
+    transition: padding-left 0.1s;
+    color: @accent-secondary;
+    transition: color 0.05s;
+
+    &:hover {
+      padding-left: 1.6rem;
+      transition: margin-left 0.1s;
+      color: @accent-primary;
+      transition: color 0.05s;
+    }
+
+    a {
+      color: @accent-secondary;
+      transition: color 0.05s;
+
+      &:hover {
+        text-decoration: none;
+        color: @accent-primary;
+        transition: color 0.05s;
+      }
+    }
+
+    .router-link-active {
+      color: @accent-primary;
+
+      &:hover {
+        &::before {
+          padding-left: 1rem;
+        }
+      }
+    }
+  }
+  .settings {
+    align-self: center;
+
+    & .left {
+      float: left;
+    }
+
+    & .right {
+      width: 3vw;
+      height: 3vw;
+      background: @background-primary;
+      border-radius: 1vw;
+      padding: 0.3rem;
+      float: right;
+      margin-left: auto;
+      margin-right: 1vw;
+      color: @accent-secondary;
+      cursor: pointer;
+      transition: border-radius 0.05s;
+
+      &:hover {
+        color: @accent-primary;
+        border-radius: 0.5vw;
+        transition: border-radius 0.05s;
+      }
+    }
+  }
+}
+
+.container {
+  display: grid;
+  grid-template-rows: 8vh 76vh 16vh;
 }
 
 .content {
-  display: flex;
-  height: 85vh;
-  width: 100%;
+  max-height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 #hide {
@@ -72,8 +177,7 @@ p {
   font-size: 3rem;
   text-decoration: none !important;
   transition: margin-left 0.15s;
-  position: absolute;
-
+  line-height: 8vh;
   &.sidebar_open {
     margin-left: -10rem !important;
     transition: margin-left 0.15s;
