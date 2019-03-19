@@ -109,8 +109,10 @@ export default {
             album.art.push(song.album.art)
       this.$data.isDone = true
     }
-    player.ontimeupdate = () =>
-      (this.$data.currentSong.currentTime = getTimestamp(player.currentTime))
+    player.ontimeupdate = () => {
+      this.$data.currentSong.currentTime = getTimestamp(player.currentTime)
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+    }
     player.onerror = e => {
       throw Error(
         `Error: ${player.error.code}; details: ${player.error.message}`
@@ -118,33 +120,40 @@ export default {
     }
     player.onchange = () => {
       if (player.canPlayType == false) throw Error("Cannot Play This File Type")
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
-    player.ondurationchange = () =>
-      (this.$data.currentSong.duration = getTimestamp(player.duration))
+    player.ondurationchange = () => {
+      this.$data.currentSong.duration = getTimestamp(player.duration)
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+    }
 
     const detect = new MobileDetect(window.navigator.userAgent)
 
     let paused_prev = true;
     this.$data.player.onpause = () => {
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       if (!paused_prev) toggleVis("update_pause");
       if (!paused_prev) toggleVis("update_play");
       if (!paused_prev) paused_prev = true;
     }
     this.$data.player.onplay = () => {
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       if (paused_prev) toggleVis("update_pause");
       if (paused_prev) toggleVis("update_play");
       if (paused_prev) paused_prev = false;
     }
 
     no_scroll();
+
+    dispatch_presence(this.$data.currentSong.song, this.$data.player);
   },
   methods: {
     getCategory() {
       return this.$router.path.split("/")[0]
     },
     sidebar_toggle() {
-      if (this.$data.state == "closed") this.$data.state = "open"
-      else this.$data.state = "closed"
+      if (this.$data.state == "closed") this.$data.state = "open";
+      else this.$data.state = "closed";
     },
     setSong(vidId, clear = true) {
       const player = this.$data.player
@@ -159,6 +168,7 @@ export default {
         },
         cachedLink: "",
       };
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       AdaptiveSourceFetcher(vidId, res => {
         player.src = res[0].url
         player.play()
@@ -179,6 +189,7 @@ export default {
       this.$data.currentSong.song = song;
       this.$data.currentSong.duration = song.duration || "0:00";
       this.updateSong(song)
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
     },
     updateSong() {
       const song = this.$data.currentSong,
@@ -281,6 +292,45 @@ function spacebar() {
 
 function escape_input() {
   document.activeElement.blur();
+}
+function getDumbDiscordTimestamps(videoTime, videoDuration) {
+  var startTime = Date.now();
+  var endTime =
+    Math.floor(startTime / 1000) -
+    videoTime +
+    videoDuration;
+    return [Math.floor(startTime/1000), endTime]
+}
+
+function dispatch_presence(song, player) {
+  let discord_presence = new CustomEvent("discord_presence", player.paused ? {
+      detail: {
+        presence: {
+          state: song.album.title,
+          details: song.title + ' by ' + song.artists.join(" & "),
+          largeImageKey: "main_logo",
+          largeImageText: 'Version ' + '0.0.1',
+          smallImageKey: 'pause_',
+          smallImageText: 'Paused',
+          instance: true
+        }
+      }
+    } : {
+      detail: {
+        presence: {
+          state: song.album.title,
+          details: song.title + ' by ' + song.artists.join(" & "),
+          startTimestamp: getDumbDiscordTimestamps(player.currentTime, player.duration)[0],
+          endTimestamp: Math.floor(getDumbDiscordTimestamps(player.currentTime, player.duration)[1]),
+          largeImageKey: "main_logo",
+          largeImageText: 'Version ' + '0.0.1',
+          smallImageKey: 'play_',
+          smallImageText: 'Playing',
+          instance: true
+        }
+      }
+    })
+    document.dispatchEvent(discord_presence);
 }
 </script>
 

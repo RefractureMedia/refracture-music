@@ -39,13 +39,6 @@
     overflow: hidden !important;
   }
 
-  div.media-controls.play,
-  div.media-controls.pause {
-    float: right;
-    margin-right: -30vw;
-    margin-top: 3vh;
-  }
-
   center#controls {
     display: none;
   }
@@ -53,7 +46,6 @@
   .songs_art {
     width: 3.5rem !important;
     height: 3.5rem !important;
-    padding-bottom: 0.4rem;
   }
 
   .wrap {
@@ -65,7 +57,6 @@
   }
 
   .sidebar_toggle {
-    margin-top: 2rem !important;
   }
 
   .browseSearch {
@@ -73,29 +64,46 @@
   }
 
   .songInput {
-    margin-top: -1.2rem !important;
+    margin-top: .4rem !important;
+    position: fixed !important;
+    transform: translate(calc(98vw - 100%),0) !important;
   }
 
   .search_icon {
-    margin-top: -0.8rem !important;
-    margin-right: -1.7rem !important;
+    margin-top: .8rem !important;
+    position: fixed !important;
+    transform: translate(calc(96.2vw - 100%),0) !important;
   }
 
   .now_playing {
     height: 15.8vh;
     width: 100%;
-    display: grid;
-    grid-template-columns: 15vh auto 4rem;
+    display: grid !important;
+    grid-template-columns: min-content auto min-content;
   }
 
   .nav-bar {
     padding-left: .5rem;
     padding-right: .5rem;
+    grid-template-columns: min-content auto !important;
   }
-  .shadow {
-    display: none;
+  .nav-bar .sidebar_toggle {
+    margin-right: 1rem;
   }
   .sidebar_main.sidebar_closed {
     transform: translate(-30vw, 0) !important;
+  }
+
+  @keyframes marquee {
+    0% { left: 0; }
+    100% { left: -100%; }
+  }
+
+  .tile_table {
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 8rem)) !important;
+  }
+  .tile {
+    width: 7.5rem !important;
+    height: 7.5rem !important;
   }
 }

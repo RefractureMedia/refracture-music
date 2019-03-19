@@ -17,8 +17,4 @@ export default {
 
 <style lang="less" scoped>
 @import "./../../assets/less/variables.less";
-.artists_container {
-  overflow: scroll;
-  height: 65.5vh;
-}
 </style>

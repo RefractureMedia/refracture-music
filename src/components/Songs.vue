@@ -76,16 +76,11 @@
     <div
       v-if="$parent.$parent.md().os() == 'AndroidOS' || $parent.$parent.md().os() == 'iOS'"
       v-bind:class="songContainer"
-      style="margin-top: 3rem;"
     >
-      <desk>
-        <desk-row v-for="song in songs" v-bind:key="song" class="song">
-          <div class="divTableCell">
-            <div
-              style="width: 4.5rem; height: 4.5rem;"
-              v-on:click="setSong(song)"
-              class="songs_art"
-            >
+      <div class="grow-container">
+        <div class="grow song" style="grid-template-columns: 5rem auto 5%;grid-template-areas: 'left left right';height: 4rem;padding: .1rem .1rem .1rem .4rem;" v-for="song in songs" v-bind:key="song" v-on:click="setSong(song)" onclick="document.getElementsByClassName('browseSearch')[0].focus();">
+          <div class="grow-cell entry">
+            <div style="width: 4rem; height: 4rem;" class="songs_art">
               <img
                 v-bind:src="song.album.art[song.album.art.length - 1]"
                 width="100%"
@@ -93,9 +88,9 @@
               >
             </div>
           </div>
-          <div class="divTableCell detail">
+          <div class="grow-cell entry">
             {{ song.title }}
-            <span v-if="song.featuring[0] != ''">
+            <span v-if="song.featuring[0]">
               ft.
               <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
                 <a>{{ feature }}</a>
@@ -106,15 +101,14 @@
             </span>
             <br>
             <span v-for="(artist, index) in song.artists" v-bind:key="artist">
-              <a class="songArtist">{{ artist }}</a>
+              <a>{{ artist }}</a>
               <span
                 v-if="song.artists.length > 1 && index != song.artists.length-1"
-                class="songArtist"
               >&amp;{{ ' ' }}</span>
             </span>
           </div>
-        </desk-row>
-      </desk>
+        </div>
+      </div>
     </div>
   </div>
 </template>

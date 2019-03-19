@@ -34,7 +34,7 @@ export default function (input, outgoing, page) {
                     artists: collectionArtist.split(/ *[&X,] *| *x +| +x */),
                     title: track.collectionName,
                     art: [(
-                        track.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
+                        track.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")
                       ) /* Makes the artwork request be 1000px rather than 100*/
                       .toString()
                     ]
@@ -93,7 +93,7 @@ export default function (input, outgoing, page) {
             artists: album.artistName.split(/ *[&X,] *| *x +| +x */),
             title: album.collectionName,
             art: [(
-                album.artworkUrl100.replace("100x100bb.jpg", "1000x1000bb.jpg")
+                album.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")
               ) /* Makes the artwork request be 1000px rather than 100*/
               .toString()
             ]

@@ -22,8 +22,8 @@
           </span>
         </p>
       </div>
-      <div id="song-info" style="display: grid;" class="song-info" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
-        <marquee class="song" style="width: 39vw;">
+      <div id="song-info" style="overflow: hidden;" class="song-info" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
+        <p class="song" style="width: 100%;">
           {{ song.song.title }}
           <span v-if="song.song.featuring[0] != ''">
             ft.
@@ -32,13 +32,13 @@
               <span v-if="song.song.featuring.length > 1 && index != song.song.featuring.length-1">&amp;</span>
             </span>
           </span>
-        </marquee>
-        <marquee class="artist" style="width: 39vw;">
+        </p>
+        <p class="artist" style="width: 100%;">
           <span v-for="(artist, index) of song.song.artists" v-bind:key="artist">
             <a>{{ artist }}</a>
             <span v-if="song.song.artists.length > 1 && index != song.song.artists.length-1">{{ '&amp; '}}</span>
           </span>
-        </marquee>
+        </p>
       </div>
       <center
         v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'"
@@ -63,9 +63,12 @@
           <div class="timestamp total">{{ song.duration }}</div>
         </div>
       </center>
-      <div v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
-        <div style="display: grid; align-self: center; justify-self: center;" v-on:click="state ? play() : pause()">
-          <control-button :icon="isPaused ? 'pause' : 'play'" :key="isPaused"></control-button>
+      <div style="display: grid;align-content: center;height: 16vh;margin-left: 1rem;margin-right: 1rem;" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
+        <div class="update_pause" style="display: none;" ref="pause_test" v-on:click="$parent.$data.player.paused ? $parent.$data.player.play() : $parent.$data.player.pause()">
+          <control-button icon="pause"></control-button>
+        </div>
+        <div class="update_play" style="display: initial;" ref="play_test" v-on:click="$parent.$data.player.paused ? $parent.$data.player.play() : $parent.$data.player.pause()">
+          <control-button icon="play"></control-button>
         </div>
       </div>
     </div>

@@ -125,6 +125,7 @@ function escape_input() {
   position: fixed;
   transform: translate(-50%,0);
   margin-top: .5rem;
+  font-family: Roboto;
   cursor: text;
   &::placeholder {
     color: @accent-secondary;
