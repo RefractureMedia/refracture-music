@@ -172,8 +172,8 @@ app.on("window-all-closed", function () {
   if (process.platform !== "darwin") {
     app.quit();
   }
-  iohook.unload();
-  iohook.stop();
+  //iohook.unload();
+  //iohook.stop();
   app.removeAsDefaultProtocolClient('rfmusic')
 });
 

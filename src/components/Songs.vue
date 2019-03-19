@@ -78,7 +78,7 @@
       v-bind:class="songContainer"
     >
       <div class="grow-container">
-        <div class="grow song" style="grid-template-columns: 5rem auto 5%;grid-template-areas: 'left left right';height: 4rem;padding: .1rem .1rem .1rem .4rem;" v-for="song in songs" v-bind:key="song" v-on:click="setSong(song)" onclick="document.getElementsByClassName('browseSearch')[0].focus();">
+        <div class="grow song" style="grid-template-columns: 5rem auto 5%;grid-template-areas: 'left left right';height: 4rem;padding: .1rem .1rem .1rem .4rem;" v-for="song in songs" v-bind:key="song" v-on:click="setSong(song)">
           <div class="grow-cell entry">
             <div style="width: 4rem; height: 4rem;" class="songs_art">
               <img
