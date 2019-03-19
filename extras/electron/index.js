@@ -4,12 +4,17 @@ const {
   Menu,
   Tray
 } = require("electron");
+const client = require('discord-rich-presence')('557343550929371157');
+const ipc = require('electron').ipcMain;
+const protocol = require('electron').protocol;
 const isDevMode = require("electron-is-dev");
 const {
   injectCapacitor,
   CapacitorSplashScreen
 } = require("@capacitor/electron");
-const iohook = require("iohook");
+//const iohook = require("iohook");
+
+const gotTheLock = app.requestSingleInstanceLock()
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
@@ -87,14 +92,31 @@ async function createWindow() {
           window_controls.appendChild(styles);
           document.body.getElementsByClassName("nav-bar")[0].appendChild(window_controls);
         }
+        let drpc_listen = document.createElement("script");
+        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);}); console.log('hello foo!')";
+        document.body.appendChild(drpc_listen);
       `)
-      iohook.on("keyup", event => {
+      /*iohook.on("keyup", event => {
         if (event.rawcode == 179) {
             mainWindow.webContents.executeJavaScript("document.getElementsByClassName('pause')[0].click();")
         }
       })
       
-      iohook.start();
+      iohook.start();*/
+
+      client.updatePresence({
+        state: '...',
+        details: 'Starting Up',
+        largeImageKey: 'main_logo',
+        instance: true,
+      });
+
+      ipc.on('discord_presence', (event, response) => {
+        client.updatePresence(response.presence);
+      });
+
+      app.setAsDefaultProtocolClient('rfmusic')
+      protocol.registerHttpProtocol('rfmusic', (req, cb) => { mainWindow.webContents.executeJavaScript(alert(req));})
     });
     mainWindow.webContents.on("devtools-reload-page", () => {
       mainWindow.webContents.executeJavaScript(`
@@ -115,6 +137,9 @@ async function createWindow() {
           window_controls.appendChild(styles);
           document.body.getElementsByClassName("nav-bar")[0].appendChild(window_controls);
         }
+        let drpc_listen = document.createElement("script");
+        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);}); console.log('hello foo!')";
+        document.body.appendChild(drpc_listen);
       `)
     })
   }
@@ -123,7 +148,22 @@ async function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some Electron APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+if (!gotTheLock) {
+  
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+
+  // Create myWindow, load the rest of the app, etc...
+  app.on("ready", createWindow);
+}
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function () {
@@ -134,6 +174,7 @@ app.on("window-all-closed", function () {
   }
   iohook.unload();
   iohook.stop();
+  app.removeAsDefaultProtocolClient('rfmusic')
 });
 
 app.on("activate", function () {
@@ -143,5 +184,7 @@ app.on("activate", function () {
     createWindow();
   }
 });
+
+
 
 // Define any IPC or other custom functionality below here

@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@capacitor/electron": "^1.0.0-alpha.28",
-    "electron-is-dev": "^0.3.0",
-    "iohook": "^0.4.0"
+    "discord-rich-presence": "0.0.8",
+    "electron-is-dev": "^0.3.0"
   },
   "devDependencies": {
-    "electron": "^2.0.18"
+    "electron": "^4.1.0"
   },
   "keywords": [
     "capacitor",
@@ -21,22 +21,21 @@
   ],
   "author": "",
   "license": "ISC",
-  "cmake-js": {
-    "runtime": "electron",
-    "runtimeVersion": "2.0.18"
-  },
-  "iohook": {
-    "targets": [
-      "node-59",
-      "electron-57"
-    ],
-    "platforms": [
-      "win32",
-      "darwin"
-    ],
-    "arches": [
-      "x64",
-      "ia32"
-    ]
+  "build": {
+    "appId": "refracture.music",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
   }
 }
