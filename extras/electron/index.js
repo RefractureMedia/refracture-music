@@ -2,11 +2,11 @@ const {
   app,
   BrowserWindow,
   Menu,
-  Tray
+  Tray,
+  protocol
 } = require("electron");
 const client = require('discord-rich-presence')('557343550929371157');
 const ipc = require('electron').ipcMain;
-const protocol = require('electron').protocol;
 const isDevMode = require("electron-is-dev");
 const {
   injectCapacitor,
@@ -58,9 +58,9 @@ async function createWindow() {
     }
   });
 
-  if (isDevMode) {
+  if (true) {
     // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev));
+    //Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev));
     // If we are developers we might as well open the devtools by default.
     mainWindow.webContents.openDevTools();
   }
@@ -115,8 +115,24 @@ async function createWindow() {
         client.updatePresence(response.presence);
       });
 
-      app.setAsDefaultProtocolClient('rfmusic')
-      protocol.registerHttpProtocol('rfmusic', (req, cb) => { mainWindow.webContents.executeJavaScript(alert(req));})
+      protocol.registerHttpProtocol('rfmusic', (req, cb) => {
+        if (!gotTheLock) {
+          open_window = false;
+          app.quit()
+        } else {
+          if (mainWindow) {
+            mainWindow.webContents.executeJavaScript(`
+              alert(${req});
+              console.log(${req});
+              document.dispatchEvent(new CustomEvent("http_req", { detail: { request: ${req} } }));
+            `)
+            if (mainWindow.isMinimized()) mainWindow.restore()
+            mainWindow.focus()
+          } else {
+            
+          }
+        }
+      })
     });
     mainWindow.webContents.on("devtools-reload-page", () => {
       mainWindow.webContents.executeJavaScript(`
@@ -148,22 +164,17 @@ async function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some Electron APIs can only be used after this event occurs.
-if (!gotTheLock) {
-  
-  app.quit()
-} else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore()
-      mainWindow.focus()
-    }
-  })
 
-  // Create myWindow, load the rest of the app, etc...
-  app.on("ready", createWindow);
+let open_window = true;
+
+app.setAsDefaultProtocolClient('rfmusic')
+
+if(!gotTheLock) {
+  open_window = false;
+  app.quit()
 }
 
+if (open_window) app.on("ready", createWindow);
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function () {
