@@ -62,7 +62,9 @@ export default {
     return AppData
   },
   mounted() {
-    setTimeout(() => _VueInstance.window_portal.doWindowControls(), 450);
+    try {
+      setTimeout(() => _VueInstance.window_portal.doWindowControls(), 450);
+    } catch (e) {}
     const library = this.$data.library,
       player = this.$data.player;
     library.albums = [];
