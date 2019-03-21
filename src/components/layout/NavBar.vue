@@ -24,9 +24,6 @@ export default {
       } else {
         return ""
       }
-    },
-    test() {
-      console.log("foo b")
     }
   }
 }

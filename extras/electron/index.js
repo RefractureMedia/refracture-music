@@ -12,9 +12,9 @@ const {
   injectCapacitor,
   CapacitorSplashScreen
 } = require("@capacitor/electron");
-//const iohook = require("iohook");
+const iohook = require("iohook");
 
-const gotTheLock = app.requestSingleInstanceLock()
+//const gotTheLock = app.requestSingleInstanceLock()
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
@@ -76,7 +76,6 @@ async function createWindow() {
       mainWindow.show();
       mainWindow.webContents.executeJavaScript(`
         window.doWindowControls = function () {
-          setTimeout(() => console.log("Hello World!"), 200);
           let window_controls = document.createElement("div");
           let styles = document.createElement("style");
           styles.innerHTML = ".window_controls{height:2rem;display:flex;grid-area:right;justify-self:right}li{list-style:none}.nav-bar{-webkit-app-region:no-drag;grid-template-columns:max-content auto max-content;grid-template-areas:'left center right'}i.window-controls{height:-webkit-fill-available;padding:0;float:right}i:hover.window-controls{background:rgba(88,88,88,.63)}i.exit-btn.window-controls{padding-top:.33rem;font-size:1.2rem}i.exit-btn:hover.window-controls{background:rgba(255,0,0,.65);opacity:.65}i.exit-btn:hover.window-controls i::before{opacity:1}i.max-btn.window-controls{padding-top:.34rem;font-size:.75rem}i.min-btn.window-controls{padding-right:1rem;padding-left:1rem;padding-top:.23rem;font-size:1.2rem;user-select:none;font-family:Cambria}";
@@ -93,16 +92,16 @@ async function createWindow() {
           document.body.getElementsByClassName("nav-bar")[0].appendChild(window_controls);
         }
         let drpc_listen = document.createElement("script");
-        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);}); console.log('hello foo!')";
+        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);});";
         document.body.appendChild(drpc_listen);
       `)
-      /*iohook.on("keyup", event => {
+      iohook.on("keyup", event => {
         if (event.rawcode == 179) {
             mainWindow.webContents.executeJavaScript("document.getElementsByClassName('pause')[0].click();")
         }
       })
       
-      iohook.start();*/
+      iohook.start();
 
       client.updatePresence({
         state: '...',
@@ -115,7 +114,7 @@ async function createWindow() {
         client.updatePresence(response.presence);
       });
 
-      protocol.registerHttpProtocol('rfmusic', (req, cb) => {
+      /*protocol.registerHttpProtocol('rfmusic', (req, cb) => {
         if (!gotTheLock) {
           open_window = false;
           app.quit()
@@ -132,12 +131,11 @@ async function createWindow() {
             
           }
         }
-      })
+      })*/
     });
     mainWindow.webContents.on("devtools-reload-page", () => {
       mainWindow.webContents.executeJavaScript(`
         window.doWindowControls = function () {
-          setTimeout(() => console.log("Hello World!"), 200);
           let window_controls = document.createElement("div");
           let styles = document.createElement("style");
           styles.innerHTML = ".window_controls{height:2rem;display:flex;grid-area:right;justify-self:right}li{list-style:none}.nav-bar{-webkit-app-region:no-drag;grid-template-columns:auto max-content;grid-template-areas:'left right'}.nav-bar center{margin-left:2.5rem}i.window-controls{height:-webkit-fill-available;padding:0;float:right}i:hover.window-controls{background:rgba(88,88,88,.63)}i.exit-btn.window-controls{padding-top:.33rem;font-size:1.2rem}i.exit-btn:hover.window-controls{background:rgba(255,0,0,.65);opacity:.65}i.exit-btn:hover.window-controls i::before{opacity:1}i.max-btn.window-controls{padding-top:.34rem;font-size:.75rem}i.min-btn.window-controls{padding-right:1rem;padding-left:1rem;padding-top:.23rem;font-size:1.2rem;user-select:none;font-family:Cambria}";
@@ -154,7 +152,7 @@ async function createWindow() {
           document.body.getElementsByClassName("nav-bar")[0].appendChild(window_controls);
         }
         let drpc_listen = document.createElement("script");
-        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);}); console.log('hello foo!')";
+        drpc_listen.innerHTML = "var ipc = require('electron').ipcRenderer; document.addEventListener('discord_presence', (res) => { ipc.send('discord_presence', res.detail);});";
         document.body.appendChild(drpc_listen);
       `)
     })
@@ -169,10 +167,10 @@ let open_window = true;
 
 app.setAsDefaultProtocolClient('rfmusic')
 
-if(!gotTheLock) {
+/*if(!gotTheLock) {
   open_window = false;
   app.quit()
-}
+}*/
 
 if (open_window) app.on("ready", createWindow);
 
@@ -183,8 +181,8 @@ app.on("window-all-closed", function () {
   if (process.platform !== "darwin") {
     app.quit();
   }
-  //iohook.unload();
-  //iohook.stop();
+  iohook.unload();
+  iohook.stop();
   app.removeAsDefaultProtocolClient('rfmusic')
 });
 

@@ -10,15 +10,34 @@
   "dependencies": {
     "@capacitor/electron": "^1.0.0-alpha.28",
     "discord-rich-presence": "0.0.8",
-    "electron-is-dev": "^0.3.0"
+    "electron-is-dev": "^0.3.0",
+    "iohook": "^0.4.0"
   },
   "devDependencies": {
-    "electron": "^4.1.0"
+    "electron": "^2.0.18"
   },
   "keywords": [
     "capacitor",
     "electron"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "2.0.18"
+  },
+  "iohook": {
+    "targets": [
+      "node-59",
+      "electron-57"
+    ],
+    "platforms": [
+      "win32",
+      "darwin"
+    ],
+    "arches": [
+      "x64",
+      "ia32"
+    ]
+  }
 }

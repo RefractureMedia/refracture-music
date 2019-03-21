@@ -10,7 +10,6 @@ export default function (input, outgoing, page) {
     youtube: [],
     soundcloud: []
   }
-  console.clear();
   if (outgoing) {
     let songsTemp = [];
     request(
@@ -45,7 +44,6 @@ export default function (input, outgoing, page) {
             }
           );
         }
-        console.log(parsed_songs);
         if (err) throw new Error(err);
         else output.songs = parsed_songs;
       }
@@ -57,7 +55,6 @@ export default function (input, outgoing, page) {
       "https://itunes.apple.com/search?&entity=musicArtist&term=" + input,
       (err, res, dat) => {
         let raw_artists = JSON.parse(dat).results;
-        console.log(raw_artists);
         if (err) throw new Error(err)
         else
           for (let artist of raw_artists)
@@ -66,7 +63,6 @@ export default function (input, outgoing, page) {
                 `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.artistName}&api_key=${keys.lastfm}&format=json`,
                 (err, res, dat) => {
                   let artist_ = JSON.parse(dat).artist;
-                  console.log(artist_);
                   let images = [];
                   for (let image of artist_.image) images.push(image["#text"])
                   parsed_artists.push({
@@ -76,7 +72,6 @@ export default function (input, outgoing, page) {
                   });
                   if (err) throw new Error(err);
                   else output.artists = parsed_artists;
-                  console.log(parsed_artists);
                 }
               );
             }
@@ -99,7 +94,6 @@ export default function (input, outgoing, page) {
             ]
           });
         }
-        console.log(parsed_albums);
         if (err) throw new Error(err);
         else output.albums = parsed_albums;
       }

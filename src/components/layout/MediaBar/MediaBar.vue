@@ -89,7 +89,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$props.song.song)
     this.$nextTick(function() {
       document.getElementById("controls").style.marginLeft = String(
         "-" + document.getElementById("song-info").clientWidth + "px"

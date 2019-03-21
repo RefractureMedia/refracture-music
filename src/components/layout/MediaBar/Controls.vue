@@ -42,61 +42,6 @@ export default {
     
   }
 }
-
-//v-bind:class="'active' ? $parent.$parent.currentSong.player.loop"
-//
-//v-bind:class="'active' ? $parent.$parent.queue.shuffle"
-/*
-let audio = $parent.$parent.currentSong.player
-let trackbar = $parent.$parent.trackbar
-let through_display = $parent.$parent.through_display
-let duration_display = $parent.$parent.duration_display
-let time_set: boolean = false;
-function time_change() {
-    time_set=true;
-}
-
-function 
-
-function update_trackbar() {
-    let bar_value: number = trackbar.value;
-    //addStyleString('background-image: -webkit-gradient(linear, left top, right top, color-stop(' + bar_value + ', #2f466b), color-stop(' + bar_value + ', #d3d3db))');
-
-    audio.currentTime = (trackbar / 100000);
-    time_set = false;
-}
-
-function set_duration() {
-    trackbar.min = '0';
-    trackbar.max = (audio.duration * 100000).toString();
-
-    duration_display.textContent = time_stamp(audio.duration);
-}
-
-function update_timestamp() {
-    if (time_set) {
-        update_trackbar();
-    } else {
-        trackbar.value = (audio.currentTime * 100000).toString();
-
-        through_display.textContent = time_stamp(audio.currentTime);
-
-        if (audio.currentTime == audio.duration) {
-            if (!repeating) {
-                console.log('[Media] Song Ended')
-                addStyleString('.pause { display: none !important; } .play { display: block !important }');
-                playing = false;
-            } else {
-                console.log('[Media] Song Repeated')
-                play_pause();
-                play_pause();
-            }
-
-        }
-
-        set_duration();
-    }
-}*/
 </script>
 
 <style lang="less">

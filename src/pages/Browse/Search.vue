@@ -96,9 +96,6 @@ export default {
     document.getElementsByClassName("browseSearch")[0].preventDefault();
   },
   methods: {
-    log_results() {
-      console.log(this.$props.results);
-    },
     getTime() {
       return Date.getTime();
     }

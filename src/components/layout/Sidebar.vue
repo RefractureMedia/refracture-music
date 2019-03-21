@@ -69,7 +69,6 @@ export default {
     },
     refreshCatagory() {
       const currentCatagory = window.location.hash.split("/")[1]
-      console.log(currentCatagory)
       if (currentCatagory == "Library")
         this.$parent.pages = ["Songs", "Artists", "Albums", "Playlists"]
       else if (currentCatagory == "Browse")

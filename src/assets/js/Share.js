@@ -23,7 +23,6 @@ export default function () {
       var item = intent.items[i];
       console.log(item)
       alert('  type: ', item.type, item.text, item.name, item.utis, item.path, item.uri); // mime type
-      a
       // ...
       // Here, you probably want to do something useful with the data
       // ...

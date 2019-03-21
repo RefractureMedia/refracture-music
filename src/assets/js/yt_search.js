@@ -32,6 +32,5 @@ function getIDs(data) {
         let id = find_link[i].split('"')[0]; // split on '"' skips HTML between
         if (id.length === 11) ids.push(id); // length lock rats out playlists & anything that gets through
     }
-    console.log(ids);
     return ids;
 }
