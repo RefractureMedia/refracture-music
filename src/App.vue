@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div :class="'whole animate_' + state">
-      <sidebar ref="sidebar" :state="state"></sidebar>
+      <sidebar ref="sidebar" style="overflow: hidden;" :state="state"></sidebar>
       <div class="container">
         <nav-bar />
         <div class="content">
@@ -62,9 +62,9 @@ export default {
     return AppData
   },
   mounted() {
-    try {
-      setTimeout(() => _VueInstance.window_portal.doWindowControls(), 450);
-    } catch (e) {}
+    setTimeout(() => { try { _VueInstance.window_portal.doWindowControls() } catch (e) {} }, 450);
+
+    if (detect.os() == "AndroidOS" || detect.os() == "iOS") mobile_viewport();
     const library = this.$data.library,
       player = this.$data.player;
     library.albums = [];
@@ -335,6 +335,17 @@ function dispatch_presence(song, player) {
       }
     })
     document.dispatchEvent(discord_presence);
+}
+
+function mobile_viewport() {
+  setTimeout(function () {
+        var viewheight =window.innerHeight
+
+        var viewwidth = window.innerWidth
+        var viewport = document.querySelector("meta[name=viewport]");
+        viewport.setAttribute("content", "height=" + viewheight + "px, width=" + 
+        viewwidth + "px, initial-scale=1.0");
+    }, 300);
 }
 </script>
 

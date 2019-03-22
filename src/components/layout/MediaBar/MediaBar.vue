@@ -63,7 +63,7 @@
           <div class="timestamp total">{{ song.duration }}</div>
         </div>
       </center>
-      <div style="display: grid;align-content: center;height: 16vh;margin-left: 1rem;margin-right: 1rem;" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
+      <div style="display: grid;align-content: center;margin-left: 1rem;margin-right: 1rem;" v-if="$parent.md().os() == 'AndroidOS' || $parent.md().os() == 'iOS'">
         <div class="update_pause" style="display: none;" ref="pause_test" v-on:click="$parent.$data.player.paused ? $parent.$data.player.play() : $parent.$data.player.pause()">
           <control-button icon="pause"></control-button>
         </div>

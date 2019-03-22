@@ -49,8 +49,7 @@
     "vue": "^2.5.2",
     "vue-keybindings": "^1.0.0",
     "vue-router": "^3.0.1",
-    "youtube-crawl": "0.0.1",
-    "ytsr": "^0.1.8"
+    "youtube-crawl": "0.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
