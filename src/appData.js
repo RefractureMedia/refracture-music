@@ -1,4 +1,5 @@
 let player = new Audio("/static/empty.mp3");
+
 export default {
   state: "closed",
   currentCatagory: "Library",
@@ -189,11 +190,6 @@ export default {
     duration: "0:00"
   },
   player: player,
-  webviewURL: "https://www.youtube.com/watch?v=LDU_Txk06tM",
-  preload: `file:\\${require("path").resolve(
-    __dirname,
-    "./utilities/inject.js"
-  )}`,
   search: "",
   modal: {
     active: false,
