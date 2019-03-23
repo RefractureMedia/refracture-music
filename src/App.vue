@@ -10,7 +10,7 @@
           <library-search />
           <router-view :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
         </div>
-        <media-bar ref="mediabar" :song="currentSong" :state.sync="player.paused"></media-bar>
+        <media-bar ref="mediabar" :song="currentSong"></media-bar>
       </div>
     </div>
     <v-style>
@@ -22,7 +22,7 @@
       }
     </v-style>
     <div v-if="false" class="whole-overlay">
-      <media-bar style="background: transparent !important; align-self: end; margin-bottom: 5vh;" ref="mediabar" :song="currentSong" :state.sync="player.paused"></media-bar>
+      <media-bar style="background: transparent !important; align-self: end; margin-bottom: 5vh;" :song="currentSong"></media-bar>
     </div>
   </div>
 </template>
@@ -36,18 +36,16 @@ import MobileStyles from "./MobileStyles.css"
 import LibrarySearch from "./components/layout/LibrarySearch"
 import keys from "./keys.js"
 import router from "vue-router"
-import { getTimesFromMs, getTimestamp } from "./assets/js/timeManagement.js"
+import { getTimesFromMs, getTimestamp } from "./assets/js/time_stamp.js"
 import AppData from "./appData.js"
 import path from "path"
-import AdaptiveSourceFetcher from "./assets/js/asf.js"
+import ytSource from "./assets/js/yt_source.js"
 import ytSearch from "./assets/js/yt_search.js"
 import request from "request"
 import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
 import htmlToJson from "html-to-json"
-import crawl from "youtube-crawl"
-import crawlCordova from "./assets/js/yt-crawl-cordova.js"
 
 export default {
   name: "refracture-music",
@@ -63,7 +61,7 @@ export default {
   },
   mounted() {
     setTimeout(() => { try { _VueInstance.window_portal.doWindowControls() } catch (e) {} }, 450);
-
+    const detect = new MobileDetect(window.navigator.userAgent);
     if (detect.os() == "AndroidOS" || detect.os() == "iOS") mobile_viewport();
     const library = this.$data.library,
       player = this.$data.player;
@@ -115,6 +113,7 @@ export default {
     player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(player.currentTime)
       dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      this.media_session('time', Math.floor(player.currentTime));
     }
     player.onerror = e => {
       throw Error(
@@ -123,6 +122,7 @@ export default {
     }
     player.onchange = () => {
       if (player.canPlayType == false) throw Error("Cannot Play This File Type")
+      this.media_session('new')
       dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
     player.ondurationchange = () => {
@@ -130,17 +130,17 @@ export default {
       dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
 
-    const detect = new MobileDetect(window.navigator.userAgent)
-
     let paused_prev = true;
     this.$data.player.onpause = () => {
       dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      this.media_session('paused')
       if (!paused_prev) toggleVis("update_pause");
       if (!paused_prev) toggleVis("update_play");
       if (!paused_prev) paused_prev = true;
     }
     this.$data.player.onplay = () => {
       dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      this.media_session('played')
       if (paused_prev) toggleVis("update_pause");
       if (paused_prev) toggleVis("update_play");
       if (paused_prev) paused_prev = false;
@@ -171,7 +171,7 @@ export default {
         },
         cachedLink: "",
       };
-      AdaptiveSourceFetcher(vidId, res => {
+      ytSource(vidId, res => {
         if (clear) {
           this.$data.currentSong.song.title = res.title;
           this.$data.currentSong.song.artists = [res.channel];
@@ -179,6 +179,7 @@ export default {
           this.$data.currentSong.song.album.title = "YouTube";
         }
         dispatch_presence(this.$data.currentSong.song, this.$data.player);
+        this.media_session('new')
 
         player.src = res.links[0].url
         player.play()
@@ -211,6 +212,9 @@ export default {
     },
     md() {
       return new MobileDetect(window.navigator.userAgent)
+    },
+    media_session(action, options = undefined, platform = this.md().os()) {
+      run_media_session(this.$data.player, this.$data.currentSong, this.$data.queue,action, options, platform)
     }
   },
   shortcuts: {
@@ -346,6 +350,69 @@ function mobile_viewport() {
         viewport.setAttribute("content", "height=" + viewheight + "px, width=" + 
         viewwidth + "px, initial-scale=1.0");
     }, 300);
+}
+
+function run_media_session(player, song, queue, action, options, platform) {
+  if (platform == "iOS" || platform == "AndroidOS") {
+    switch (action) {
+      case 'new': {
+        try {
+          cordova.plugin.MediaSession.destroy();
+        } catch (e) {}
+
+        let session = {
+          track: song.song.title,
+          artist: song.song.artists.join(" & "),
+          cover: song.song.album.art[song.song.album.art.length - 1],
+          isPlaying: player.paused,
+          hasPrev: queue ? true : false,
+          hasNext: queue ? true : false,
+
+          // iOS
+          album: song.song.album.title,
+          duration: Math.floor(player.duration),
+          elapsed: 0,
+          hasScrubbing: true,
+
+          // Android
+          ticker: song.song.title, // displayed in the status bar on creation
+          notificationIcon: 'media_play' // android/res/drawable* folders
+        }
+        console.log(session);
+
+        cordova.plugin.MediaSession.create(session)
+
+        cordova.plugin.MediaSession.subscribe((data) => {
+          let event = JSON.parse(data);
+          switch (event.message) {
+            //case 'music-controls-next': this.queue_controller('skip'); break;
+            //case 'music-controls-previous': this.queue_controller('back'); break;
+            case 'music-controls-pause': player.pause(); break;
+            case 'music-controls-headset-unplugged': player.pause(); break;
+            case 'music-controls-play': player.play(); break;
+            case 'music-controls-headset-plugged': player.play(); break;
+            case 'music-controls-toggle-play-pause': player.paused ? player.pause() : player.play(); break;
+            case 'music-controls-media-button': player.paused ? player.pause() : player.play(); break;
+            case 'music-controls-seek-to': {
+              //this.media_session('time', event.position);
+              player.currentTime = event.position;
+            } break;
+            default: break;
+          }
+        })
+
+        cordova.plugin.MediaSession.listen();
+      } break;
+      case 'time': {
+        if (platform == "iOS") cordova.plugin.MediaSession.updateElapsed({
+          elapsed: options,
+          isPlaying: true
+        });
+      } break;
+      case 'played': cordova.plugin.MediaSession.updateIsPlaying(true); break;
+      case 'paused': cordova.plugin.MediaSession.updateIsPlaying(false); break;
+    }
+  }
 }
 </script>
 

@@ -20,7 +20,6 @@ app-debug.apk
 
 # Editor directories and files
 .idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj

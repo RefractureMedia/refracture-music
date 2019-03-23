@@ -5,7 +5,7 @@ import {
 } from '@capacitor/core';
 import Vue from 'vue';
 import App from './App';
-import ShareDialog from "./assets/js/Share.js";
+import ShareDialog from "./assets/js/cordova/share";
 import router from './router';
 import VueKeybindings from 'vue-keybindings'
 

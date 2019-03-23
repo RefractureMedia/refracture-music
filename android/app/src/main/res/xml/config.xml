@@ -21,4 +21,9 @@
     <param name="android-package" value="org.apache.cordova.media.AudioHandler"/>
   </feature>
 
+
+  <feature name="MediaSession">
+    <param name="android-package" value="com.timetravelers.hackedme.MediaSession"/>
+  </feature>
+
   </widget>

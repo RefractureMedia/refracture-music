@@ -1,26 +1,23 @@
 const request = require("request");
+const cordova_request = require("./cordova/request.js")
 
 export default (search_query, callback) => {
     try {
-        cordova.plugin.http.sendRequest(
+        cordova_request(
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
-            {
-                method: 'get',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
-                }
-            },
-            response => {
-                callback(getIDs(response.data))
-            },
-            err => { throw new Error(err.error); }
+            (err, res, dat) => {
+                if (err) throw new Error(err);
+                else callback(getIDs(dat));
+            }
         );
     } catch (e) {
+        console.log(e.toString(),"font-style: italic","font-style: inherit");
         request(
-            `https://www.youtube.com/results?search_query=${search_query}&spf=navigate&gl=US&hl=en`,
+            `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
+
                 if (err) console.error(err);
-                else callback(getIDs(dat))
+                else callback(getIDs(dat));
             }
         );
     }
@@ -28,13 +25,11 @@ export default (search_query, callback) => {
 
 function getIDs(data) {
     let ids = [];
-    let content = JSON.parse(data)[1].body.content; // Path to HTML YouTube API gives to renderer
-    let find_link = content.split("/watch?v=");
-    console.log(find_link[1])
-    for (let i = 1; i < find_link.length; i++) { // skips first set of HTML until first id
-        let id = find_link[i].split('"')[0]; // split on '"' skips HTML between
+    let content = JSON.parse(data)[1].body.content; // Path to Results HTML YouTube API gives to renderer
+    let find_links = content.split("/watch?v=").slice(1) // Finds watch links, slice 1 removes initial HTML in front of first link
+    for (let link of find_links) { // skips first set of HTML until first id
+        let id = link.split('"')[0]; // split on '"' skips HTML between
         if (id.length === 11) ids.push(id); // length lock rats out playlists & anything that gets through
     }
-
     return ids;
 }
