@@ -18,7 +18,7 @@
   },
   "homepage": "\\",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "cp -R src/assets/* static/ && webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "prestart": "npm i",
     "build": "node build/build.js",

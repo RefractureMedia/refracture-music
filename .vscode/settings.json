@@ -7,7 +7,6 @@
     "README.md": true,
     "index.html": true,
     "capacitor.config.json": true,
-    "www": true,
     "config": true,
     "build": true
   }
