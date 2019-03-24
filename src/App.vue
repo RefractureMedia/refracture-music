@@ -37,6 +37,7 @@ import LibrarySearch from "./components/layout/LibrarySearch"
 import router from "vue-router"
 import { getTimesFromMs, getTimestamp } from "./assets/js/time_stamp.js"
 import AppData from "./appData.js"
+import keys from "./keys.js";
 import path from "path"
 import ytSource from "./assets/js/yt_source.js"
 import ytSearch from "./assets/js/yt_search.js"
@@ -73,7 +74,7 @@ export default {
     for (let song of songs) {
       for (let artist of song.artists) {
         request(
-          `https://runkit.io/mulverinex/5c902ca8e55d6800134a3481/branches/master?method=artist.getinfo&artist=${artist}`,
+          `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
           (err, res, dat) => {
             let artist = JSON.parse(dat).artist
             if (err) throw new Error(err)
