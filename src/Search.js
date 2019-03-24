@@ -1,5 +1,4 @@
 import request from "request";
-import keys from "./keys.js";
 
 export default function (input, outgoing, page) {
   let output = {
@@ -60,7 +59,7 @@ export default function (input, outgoing, page) {
           for (let artist of raw_artists)
             if (!artistsTemp.includes(artist.artistName)) {
               request(
-                `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.artistName}&api_key=${keys.lastfm}&format=json`,
+                `https://runkit.io/mulverinex/5c902ca8e55d6800134a3481/branches/master?method=artist.getinfo&artist=${artist.artistName}`,
                 (err, res, dat) => {
                   let artist_ = JSON.parse(dat).artist;
                   let images = [];

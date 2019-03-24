@@ -11,15 +11,23 @@ export default (search_query, callback) => {
             }
         );
     } catch (e) {
-        console.log(e.toString(),"font-style: italic","font-style: inherit");
         request(
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
-
-                if (err) console.error(err);
+                if (err) runkit();
                 else callback(getIDs(dat));
             }
-        );
+        ).on("error", (err) => {})
+        
+        function runkit() {
+            request(
+                `https://runkit.io/mulverinex/5c868e6938210f0012b133b4/branches/master?search=${search_query}`,
+                (err, res, dat) => {
+                    if (err) console.warn(err);
+                    else callback(JSON.parse(dat).results); // Runkit has copy of getIDs employed
+                }
+            )
+        }
     }
 }
 
@@ -29,7 +37,7 @@ function getIDs(data) {
     let find_links = content.split("/watch?v=").slice(1) // Finds watch links, slice 1 removes initial HTML in front of first link
     for (let link of find_links) { // skips first set of HTML until first id
         let id = link.split('"')[0]; // split on '"' skips HTML between
-        if (id.length === 11) ids.push(id); // length lock rats out playlists & anything that gets through
+        if (id.length === 11 && !ids.includes(id)) ids.push(id); // length lock rats out playlists & anything that gets through, includes removes duplicates
     }
     return ids;
 }

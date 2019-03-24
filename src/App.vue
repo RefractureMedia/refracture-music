@@ -34,7 +34,6 @@ import NavBar from "./components/layout/NavBar.vue"
 import Modal from "./components/Modal.vue"
 import MobileStyles from "./MobileStyles.css"
 import LibrarySearch from "./components/layout/LibrarySearch"
-import keys from "./keys.js"
 import router from "vue-router"
 import { getTimesFromMs, getTimestamp } from "./assets/js/time_stamp.js"
 import AppData from "./appData.js"
@@ -74,11 +73,7 @@ export default {
     for (let song of songs) {
       for (let artist of song.artists) {
         request(
-          "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
-            artist +
-            "&api_key=" +
-            keys.lastfm +
-            "&format=json",
+          `https://runkit.io/mulverinex/5c902ca8e55d6800134a3481/branches/master?method=artist.getinfo&artist=${artist}`,
           (err, res, dat) => {
             let artist = JSON.parse(dat).artist
             if (err) throw new Error(err)
