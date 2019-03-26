@@ -11,7 +11,7 @@
 
 <script>
 import Dyler from "./dyler/Dyler.vue";
-import Dyle from "./dyler/dyle";
+import Dyle from "./dyler/Dyle.vue";
 
 export default {
   name: "albums",
