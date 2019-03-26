@@ -6,7 +6,7 @@
 
 <script>
 import Dyler from "./../../components/dyler/Dyler.vue";
-import Dyle from "./../../components/dyler/dyle";
+import Dyle from "./../../components/dyler/Dyle.vue";
 import Albums from "./../../components/Albums.vue";
 
 export default {
