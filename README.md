@@ -2,6 +2,8 @@
 
 Music Playing App that utilizes YouTube & Google Drive, syncing between all devices.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b5a2ce40-aa65-49d8-820b-626ccf4e4564/deploy-status)](https://app.netlify.com/sites/refracturemusic/deploys)
+
 > A Vue.js project
 
 ## Build Setup
