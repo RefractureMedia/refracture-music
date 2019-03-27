@@ -31,20 +31,6 @@ export default (search_query, callback) => {
     }
 }
 
-exports.handler = (event, context, callback) => {
-    request(
-        `https://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
-        (err, res, dat) => {
-            if (err) console.log(err);
-            else {
-                let ids = getIDs(dat);
-                callback(null, { statusCode: 200, body: JSON.stringify({ results: ids }) });
-                
-            }
-        }
-    )
-}
-
 function getIDs(data) {
     let ids = [];
     let content = JSON.parse(data)[1].body.content; // Path to Results HTML YouTube API gives to renderer
