@@ -22,7 +22,7 @@
     "start": "npm run dev",
     "prestart": "npm i",
     "build": "node build/build.js && npm run build:lambdas",
-    "build:lambdas": "rm -rf www/* && cd lambdas && npm i && npx browserify yt_search.js -o www/ytq_bundle.js && npx browserify yt_source.js -o www/ytsrc_bundle.js && rm -rf node_modules/* && rm -rf package-lock.json",
+    "build:lambdas": "rm -rf www/* && cd lambdas && npm i && npx browserify --node yt_search.js -o www/ytq_bundle.js && npx browserify --node yt_source.js -o www/ytsrc_bundle.js && rm -rf node_modules/* && rm -rf package-lock.json",
     "build:android": "npm run build && npm run compile:android",
     "alt": "npm run build:android && adb install app-debug.apk",
     "build:electron": "rm -rf electron/static/* && rm -rf electron/index.html && npm run build && cp -R www/* electron/",
