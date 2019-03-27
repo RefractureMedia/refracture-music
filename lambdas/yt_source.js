@@ -1,26 +1,31 @@
-const request = require("request");
+const http = require("http");
 
 exports.handler = (event, context, callback) => {
-    request(
-        `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.id}&el=detailpage`,
-        (err, res, dat) => {
-            if (err) {
-                console.log(err);
-                callback(null, { statusCode: 404, body: "Failed"})
-            }
-            else {
-                const bodyParams = new URLSearchParams(dat);
-                let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
-                callback(null, { statusCode: 200, body: JSON.stringify({
-                    title: bodyParams.get("title"),
-                    channel: bodyParams.get("author"),
-                    thumb: bodyParams.get("thumbnail_url"),
-                    links: links
-                }) });
-                
-            }
-        }
-    )
+    http.get(
+      `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.id}&el=detailpage`, {},
+      (res) => {
+        res.setEncoding('utf8');
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          if (res.complete) {
+            const bodyParams = new URLSearchParams(data);
+            let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
+            callback(null, {
+              statusCode: 200,
+              body: JSON.stringify({
+                title: bodyParams.get("title"),
+                channel: bodyParams.get("author"),
+                thumb: bodyParams.get("thumbnail_url"),
+                links: links
+              })
+            });
+          }
+        });
+      }
+    );
 }
 
 function getLinks(adapt_formats) {

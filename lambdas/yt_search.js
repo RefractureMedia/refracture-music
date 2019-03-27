@@ -1,17 +1,20 @@
-const request = require("request");
+const http = require("http");
 
 exports.handler = (event, context, callback) => {
-    request(
-        `https://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
-        (err, res, dat) => {
-            if (err) console.log(err);
-            else {
-                let ids = getIDs(dat);
-                callback(null, { statusCode: 200, body: JSON.stringify({ results: ids }) });
-                
-            }
+    http.get(
+        `https://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`, {},
+        (res) => {
+            res.setEncoding('utf8');
+            let data = '';
+            res.on('data', (chunk) => { data += chunk; });
+            res.on('end', () => {
+                if (res.complete) {
+                    let ids = getIDs(data);
+                    callback(null, { statusCode: 200, body: JSON.stringify({ results: ids }) });
+                }
+            });
         }
-    )
+    );
 }
 
 function getIDs(data) {
