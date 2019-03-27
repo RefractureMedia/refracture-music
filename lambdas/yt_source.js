@@ -1,4 +1,8 @@
 const http = require("http");
+const {
+  URLSearchParams
+} = require('url');
+global.URLSearchParams = URLSearchParams;
 
 exports.handler = (event, context, callback) => {
     http.get(
