@@ -4,7 +4,8 @@ const {
 } = require('url');
 global.URLSearchParams = URLSearchParams;
 
-exports.handler = (event, context, callback) => {
+exports.handler = async (event, context) => {
+  return new Promise((resolve, reject) => {
     http.get(
       `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.id}&el=detailpage`, {},
       (res) => {
@@ -13,23 +14,30 @@ exports.handler = (event, context, callback) => {
         res.on('data', (chunk) => {
           data += chunk;
         });
+        let foo = false;
+        if (foo) {
+          reject("foo bar");
+        }
         res.on('end', () => {
           if (res.complete) {
             const bodyParams = new URLSearchParams(data);
             let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
-            callback(null, {
-              statusCode: 200,
-              body: JSON.stringify({
-                title: bodyParams.get("title"),
-                channel: bodyParams.get("author"),
-                thumb: bodyParams.get("thumbnail_url"),
-                links: links
-              })
-            });
+            resolve(
+              {
+                statusCode: 200,
+                body: JSON.stringify({
+                  title: bodyParams.get("title"),
+                  channel: bodyParams.get("author"),
+                  thumb: bodyParams.get("thumbnail_url"),
+                  links: links
+                })
+              }
+            );
           }
         });
       }
     );
+  })
 }
 
 function getLinks(adapt_formats) {
