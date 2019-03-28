@@ -7,9 +7,10 @@ global.URLSearchParams = URLSearchParams;
 exports.handler = async (event, context) => {
   return new Promise((resolve, reject) => {
     request(
-      `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.id}&el=detailpage`,
+      `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.vid}&el=detailpage`,
       (err, res, dat) => {
         if (!err) {
+          console.log(dat);
           const bodyParams = new URLSearchParams(dat);
           let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
           resolve({
@@ -22,10 +23,12 @@ exports.handler = async (event, context) => {
             })
           });
         } else {
+          console.log(err.message);
           reject(err.message);
         }
       }
     ).on("error", (err) => {
+      console.log(err);
       console.log("Error: " + err.message);
     });
   })
