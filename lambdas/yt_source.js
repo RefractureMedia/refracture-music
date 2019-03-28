@@ -4,9 +4,7 @@ const {
 } = require('url');
 global.URLSearchParams = URLSearchParams;
 
-exports.handler = do_sourcing(event, context);
-
-async function do_sourcing(event, context) {
+exports.handler = async (event, context) => {
   return new Promise((resolve, reject) => {
     http.get(
       `http://www.youtube.com/get_video_info?html5=1&video_id=${event.queryStringParameters.id}&el=detailpage`, {},
