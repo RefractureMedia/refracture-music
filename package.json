@@ -21,7 +21,7 @@
     "dev": "cp -R src/assets/* static/ && webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "prestart": "npm i",
-    "build": "node build/build.js",
+    "build": "node build/build.js && cd lambdas && npm i",
     "build:lambdas": "rm -rf www/* && cd lambdas && npm i && npx browserify --node yt_search.js -o www/ytq_bundle.js && npx browserify --node yt_source.js -o www/ytsrc_bundle.js && rm -rf node_modules/* && rm -rf package-lock.json",
     "build:android": "npm run build && npm run compile:android",
     "alt": "npm run build:android && adb install app-debug.apk",
