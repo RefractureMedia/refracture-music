@@ -6,7 +6,7 @@ global.URLSearchParams = URLSearchParams;
 
 exports.handler = (event, context, callback) => {
     http.get(
-        `https://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`, {},
+        `http://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`, {},
         (res) => {
             res.setEncoding('utf8');
             let data = '';
