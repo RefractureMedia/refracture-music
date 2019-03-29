@@ -9,7 +9,13 @@ exports.handler = async (event, context) => {
             (err, res, dat) => {
                 if (!err) {
                     let ids = getIDs(dat);
-                    resolve({ statusCode: 200, body: JSON.stringify({ results: ids }) });
+                    resolve({ 
+                        statusCode: 200,
+                        headers: {
+                            "Access-Control-Allow-Origin": '*'
+                        },
+                        body: JSON.stringify({ results: ids })
+                    });
                 } else {
                     console.log(err.message);
                     reject(err.message);

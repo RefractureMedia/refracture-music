@@ -13,6 +13,9 @@ exports.handler = async (event, context) => {
                     let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
                     resolve({
                         statusCode: 200,
+                        headers: {
+                            "Access-Control-Allow-Origin": '*'
+                        },
                         body: JSON.stringify({
                             title: bodyParams.get("title"),
                             channel: bodyParams.get("author"),
