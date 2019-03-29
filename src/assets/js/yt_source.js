@@ -38,7 +38,7 @@ export default (id, callback) => {
 
         function runkit() {
             request(
-                `https://runkit.io/mulverinex/5c96a410d40f090012f926b5/branches/master?vid=${id}`,
+                `https://refracturemusic.netlify.com/.netlify/functions/yt_source?vid=${id}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
                     else callback(JSON.parse(dat).result); // Runkit has copy of getLinks employed

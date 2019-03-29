@@ -21,7 +21,7 @@ export default (search_query, callback) => {
         
         function runkit() {
             request(
-                `https://runkit.io/mulverinex/5c868e6938210f0012b133b4/branches/master?search=${search_query}`,
+                `https://refracturemusic.netlify.com/.netlify/functions/yt_search?search=${search_query}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
                     else callback(JSON.parse(dat).results); // Runkit has copy of getIDs employed
