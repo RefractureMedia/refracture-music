@@ -211,6 +211,24 @@ export default {
     },
     media_session(action, options = undefined, platform = this.md().os()) {
       run_media_session(this.$data.player, this.$data.currentSong, this.$data.queue,action, options, platform)
+    },
+    open_modal(type, content) {
+      this.$data.modal.type = type;
+      this.$data.modal.content = content;
+      if (type == "album") {
+        //console.log(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${content.artists.join(' & ')}&album=${content.title}&api_key=${keys.lastfm}&format=json`);
+        request(
+          `http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${content.artists.join(' & ')}&album=${content.title}&api_key=${keys.lastfm}&format=json`,
+          (err, res, dat) => {
+            let album = JSON.parse(dat)
+            if (err) console.log(err);
+            else {
+              console.log(album);
+              // this.$data.modal.active = true;
+            }
+          }
+        )
+      }
     }
   },
   shortcuts: {

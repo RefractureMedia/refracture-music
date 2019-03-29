@@ -5,6 +5,7 @@
       v-bind:key="album"
       :art="album.art[album.art.length - 1]"
       :title="album.title"
+      type="album"
     ></dyle>
   </dyler>
 </template>

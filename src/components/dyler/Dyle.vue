@@ -1,5 +1,5 @@
 <template>
-  <div class="tile">
+  <div class="tile" v-on:click="$parent.$parent.$parent.$parent.open_modal(type, { image: art, title: title, artists: [], songs: [] })">
     <img :src="art" class="art">
     <div class="description">
       <span class="title">{{ title }}</span>
@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "dyle",
-  props: ["art", "title"]
+  props: ["art", "title", "type"]
 };
 </script>
 
