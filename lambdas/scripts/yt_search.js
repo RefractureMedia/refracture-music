@@ -9,8 +9,7 @@ exports.handler = async (event, context) => {
             (err, res, dat) => {
                 if (!err) {
                     let ids = getIDs(dat);
-                    console.log(ids);
-                    resolve(null, { statusCode: 200, body: JSON.stringify({ results: ids }) });
+                    resolve({ statusCode: 200, body: JSON.stringify({ results: ids }) });
                 } else {
                     console.log(err.message);
                     reject(err.message);
