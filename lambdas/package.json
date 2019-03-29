@@ -4,9 +4,8 @@
   "description": "",
   "main": "zip_scripts.js",
   "scripts": {
-    "build": "npm i && mkdir output && npm run prep && npm run zip && npm run copy && npm run clean",
+    "build": "npm i && mkdir output && npm run prep && node zip_scripts.js && npm run copy && npm run clean",
     "prep": "cd scripts && npm i && npm run prep:yt_source && npm run prep:yt_search && cd ..",
-    "zip": "node zip_scripts.js",
     "copy": "cp yt_search.zip output && cp yt_source.zip output",
     "clean": "rm yt_search.zip && rm yt_source.zip && rm -rf scripts/yt_search && rm -rf scripts/yt_source"
   },
