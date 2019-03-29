@@ -371,7 +371,7 @@ function run_media_session(player, song, queue, action, options, platform) {
     switch (action) {
       case 'new': {
         try {
-          cordova.plugin.MediaSession.destroy();
+          cordova.plugin.MusicControls.destroy();
         } catch (e) {}
 
         let session = {
@@ -394,9 +394,9 @@ function run_media_session(player, song, queue, action, options, platform) {
         }
         console.log(session);
 
-        cordova.plugin.MediaSession.create(session)
+        cordova.plugin.MusicControls.create(session)
 
-        cordova.plugin.MediaSession.subscribe((data) => {
+        cordova.plugin.MusicControls.subscribe((data) => {
           let event = JSON.parse(data);
           switch (event.message) {
             //case 'music-controls-next': this.queue_controller('skip'); break;
@@ -415,16 +415,16 @@ function run_media_session(player, song, queue, action, options, platform) {
           }
         })
 
-        cordova.plugin.MediaSession.listen();
+        cordova.plugin.MusicControls.listen();
       } break;
       case 'time': {
-        if (platform == "iOS") cordova.plugin.MediaSession.updateElapsed({
+        if (platform == "iOS") cordova.plugin.MusicControls.updateElapsed({
           elapsed: options,
           isPlaying: true
         });
       } break;
-      case 'played': cordova.plugin.MediaSession.updateIsPlaying(true); break;
-      case 'paused': cordova.plugin.MediaSession.updateIsPlaying(false); break;
+      case 'played': cordova.plugin.MusicControls.updateIsPlaying(true); break;
+      case 'paused': cordova.plugin.MusicControls.updateIsPlaying(false); break;
     }
   }
 }
