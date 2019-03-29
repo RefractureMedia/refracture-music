@@ -1,12 +1,15 @@
 const request = require("request");
+const { URLSearchParams } = require('url');
+global.URLSearchParams = URLSearchParams;
 
 exports.handler = async (event, context) => {
     return new Promise((resolve, reject) => { 
         request(
-            `http://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
+            `https://www.youtube.com/results?search_query=${event.queryStringParameters.search}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
                 if (!err) {
                     let ids = getIDs(dat);
+                    console.log(ids);
                     resolve(null, { statusCode: 200, body: JSON.stringify({ results: ids }) });
                 } else {
                     console.log(err.message);
