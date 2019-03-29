@@ -5,7 +5,6 @@
     ".editorconfig": true,
     ".postcssrc.js": true,
     "README.md": true,
-    "index.html": true,
     "capacitor.config.json": true,
     "config": true,
     "build": true
