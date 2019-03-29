@@ -367,7 +367,7 @@ function mobile_viewport() {
 }
 
 function run_media_session(player, song, queue, action, options, platform) {
-  if (platform == "iOS"/* || platform == "AndroidOS"*/) {
+  if (false/*platform == "iOS" || platform == "AndroidOS"*/) {
     switch (action) {
       case 'new': {
         try {
