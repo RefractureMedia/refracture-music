@@ -31,17 +31,17 @@ export default (id, callback) => {
                         links: getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
                     });
                 } else {
-                    runkit();
+                    lambda();
                 }
             }
         ).on("error", (err) => {})
 
-        function runkit() {
+        function lambda() {
             request(
                 `https://refracturemusic.netlify.com/.netlify/functions/yt_source?vid=${id}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
-                    else callback(JSON.parse(dat).result); // Runkit has copy of getLinks employed
+                    else callback(JSON.parse(dat)); // Lambda Script has copy of getLinks employed
                 }
             )
         }
