@@ -6,7 +6,7 @@ export default (search_query, callback) => {
         cordova_request(
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
-                if (err) throw new Error(err);
+                if (err) console.log(err);
                 else callback(getIDs(dat));
             }
         );

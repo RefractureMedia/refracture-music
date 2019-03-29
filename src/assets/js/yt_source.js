@@ -6,7 +6,7 @@ export default (id, callback) => {
         cordova_request(
             `http://www.youtube.com/get_video_info?html5=1&video_id=${id}&el=detailpage`,
             (err, res, dat) => {
-                if (err) throw new Error(err);
+                if (err) console.log(err);
                 else {
                     const bodyParams = new URLSearchParams(dat);
                     callback({
