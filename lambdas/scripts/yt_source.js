@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
                 if (!err) {
                     console.log(dat);
                     const bodyParams = new URLSearchParams(dat);
-                    let links = getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
+                    let links = getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
                     resolve({
                         statusCode: 200,
                         headers: {
@@ -34,13 +34,29 @@ exports.handler = async (event, context) => {
     })
 }
 
-function getLinks(adapt_formats) {
-    let srcs = [],
-        i = 0;
-    for (; i < adapt_formats.length; i++)
-        if (adapt_formats[i].mimeType.split(';')[0].split('/')[0] === 'audio') srcs.push(adapt_formats[i]);
-    srcs.sort((a, b) => {
-        return parseInt(b.contentLength) - parseInt(a.contentLength);
+function getSources(formats) {
+    let sources = [];
+    for (let format of formats) {
+        let mime = format.mimeType.split('; ') // input ie "audio/webm; codecs=\"opus\""
+        let type = mime[0].split('/');
+        let codec = mime[1].split('"')[1].replace("mp4a.40.2", 'aac')
+
+        if (type[0] === 'audio') {
+            sources.push({
+                details: {
+                    date: new Date(),
+                    bitrate: parseInt(format.bitrate),
+                    duration: parseInt(format.approxDurationMs),
+                    format: type[1],
+                    codec: codec
+                },
+                url: format.url
+            });
+        }
+    }
+    sources.sort((a, b) => {
+        return parseInt(b.details.bitrate) - parseInt(a.details.bitrate);
     });
-    return srcs;
+    console.log(sources);
+    return sources;
 }

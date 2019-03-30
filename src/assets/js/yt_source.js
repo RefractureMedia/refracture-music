@@ -13,7 +13,7 @@ export default (id, callback) => {
                         title: bodyParams.get("title"),
                         channel: bodyParams.get("author"),
                         thumb: bodyParams.get("thumbnail_url"),
-                        links: getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
+                        sources: getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
                     });
                 }
             }
@@ -28,7 +28,7 @@ export default (id, callback) => {
                         title: bodyParams.get("title"),
                         channel: bodyParams.get("author"),
                         thumb: bodyParams.get("thumbnail_url"),
-                        links: getLinks(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
+                        sources: getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
                     });
                 } else {
                     lambda();
@@ -48,13 +48,29 @@ export default (id, callback) => {
     }
 }
 
-function getLinks(adapt_formats) {
-    let srcs = [],
-        i = 0;
-    for (; i < adapt_formats.length; i++)
-        if (adapt_formats[i].mimeType.split(';')[0].split('/')[0] === 'audio') srcs.push(adapt_formats[i]);
-    srcs.sort((a, b) => {
-        return parseInt(b.contentLength) - parseInt(a.contentLength);
+function getSources(formats) {
+    let sources = [];
+    for (let format of formats) {
+        let mime = format.mimeType.split('; ') // input ie "audio/webm; codecs=\"opus\""
+        let type = mime[0].split('/');
+        let codec = mime[1].split('"')[1].replace("mp4a.40.2", 'aac')
+
+        if (type[0] === 'audio') {
+            sources.push({
+                details: {
+                    date: new Date(),
+                    bitrate: parseInt(format.bitrate),
+                    duration: parseInt(format.approxDurationMs),
+                    format: type[1],
+                    codec: codec
+                },
+                url: format.url
+            });
+        }
+    }
+    sources.sort((a, b) => {
+        return parseInt(b.details.bitrate) - parseInt(a.details.bitrate);
     });
-    return srcs;
+    console.log(sources);
+    return sources;
 }
