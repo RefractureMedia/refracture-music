@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
                 if (!err) {
                     console.log(dat);
                     const bodyParams = new URLSearchParams(dat);
-                    let links = getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
+                    let sources = getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats);
                     resolve({
                         statusCode: 200,
                         headers: {
@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
                             title: bodyParams.get("title"),
                             channel: bodyParams.get("author"),
                             thumb: bodyParams.get("thumbnail_url"),
-                            links: links
+                            sources: sources
                         })
                     });
                 } else {
