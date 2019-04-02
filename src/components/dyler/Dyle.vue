@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" v-on:click="$parent.$parent.$parent.$parent.open_modal(type, { image: art, title: title, artists: [], songs: [] })">
+  <div class="tile">
     <img :src="art" class="art">
     <div class="description">
       <span class="title">{{ title }}</span>
