@@ -119,7 +119,7 @@ function escape_input() {
   padding-right: 1rem;
   color: @accent-primary;
   outline-color: transparent !important;
-  position: fixed;
+  position: absolute;
   transform: translate(-50%,0);
   margin-top: .5rem;
   font-family: Roboto;

@@ -179,14 +179,9 @@ export default {
         if (this.md().os() != "iOS") {
           player.src = res.sources[0].url
         } else {
-          let ios_version = window.navigator.userAgent.match(/(iPad|iPhone|iphone|iPod).*?(OS |os |OS\_)(\d+((_|\.)\d)?((_|\.)\d)?)/)[3].split('_')
-          if (parseInt(ios_version[0]) < 11) {
-            let old_ios_sources = [];
-            for (let source of res.sources) if (source.codec != "opus") old_ios_sources.push(source);
-            player.src = old_ios_sources[0].url
-          } else {
-            player.src = res.sources[0].url
-          }
+          let old_ios_sources = [];
+          for (let source of res.sources) if (source.codec != "opus") old_ios_sources.push(source);
+          player.src = old_ios_sources[0].url
         }
         player.play()
       })

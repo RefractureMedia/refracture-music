@@ -1,9 +1,6 @@
 {
   "files.exclude": {
     "__error": "Not found",
-    ".babelrc": true,
-    ".editorconfig": true,
-    ".postcssrc.js": true,
     "README.md": true,
     "capacitor.config.json": true,
     "config": true,

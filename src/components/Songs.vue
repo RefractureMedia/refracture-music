@@ -29,8 +29,8 @@
       >
         <div class="grow-container">
           <div class="grow song" v-for="song in songs" v-bind:key="song" v-on:dblclick="setSong(song)">
-            <div class="grow-cell entry">
-              <div style="width: 4rem; height: 4rem;" class="songs_art">
+            <div class="grow-cell entry song_art">
+              <div class="songs_art">
                 <img
                   v-bind:src="song.album.art[song.album.art.length - 1]"
                   width="100%"
@@ -38,7 +38,9 @@
                 >
               </div>
             </div>
-            <div class="grow-cell entry">
+            <div class="grow-cell entry no_song_art">
+            </div>
+            <div class="grow-cell entry text">
               <span v-for="(artist, index) in song.artists" v-bind:key="artist">
                 <a>{{ artist }}</a>
                 <span
@@ -47,7 +49,7 @@
               </span>
             </div>
             <div class="grow-cell seperator">-</div>
-            <div class="grow-cell entry">
+            <div class="grow-cell entry text">
               {{ song.title }}
               <span v-if="song.featuring[0]">
                 ft.
@@ -60,7 +62,7 @@
               </span>
             </div>
             <div class="grow-cell seperator">-</div>
-            <div class="grow-cell entry">
+            <div class="grow-cell entry text">
               {{ song.album.title }}
             </div>
             <div class="grow-cell seperator">-</div>
@@ -88,7 +90,7 @@
               >
             </div>
           </div>
-          <div class="grow-cell entry">
+          <div class="grow-cell entry text">
             {{ song.title }}
             <span v-if="song.featuring[0]">
               ft.
@@ -152,8 +154,8 @@ export default {
   .grow {
     display: grid;
     &.song {
-      grid-template-columns: 5rem 26% max-content 26% max-content 26% max-content 5%;
-      grid-template-areas: "left left left left left left left left right";
+      grid-template-columns: auto 1fr .1fr 1fr .1fr 1fr .1fr .35fr;
+      width: 85%;
       height: 5rem;
       margin-bottom: .2rem;
       cursor: pointer;
@@ -174,15 +176,32 @@ export default {
     .entry {
       justify-content: center;
       align-self: center;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      white-space: nowrap;
+      &.song_art {
+         @media (max-width: 41.5rem) { display: none; }
+      }
+            &.no_song_art {
+         @media (min-width: 41.5rem) { display: none; }
+      }
+      .songs_art {
+        margin-left: .5rem;
+        width: 4rem;
+        height: 4rem;
+      }
+      &.text {
+        padding-left: .5rem;
+        margin-right: .5rem;
+      }
     }
     .seperator {
       align-self: center;
     }
     .button {
       align-self: center;
-      grid-area: right;
       display: grid;
-      justify-content: right;
+      overflow-x: hidden;
     }
   }
 }
