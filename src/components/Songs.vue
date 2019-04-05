@@ -42,7 +42,7 @@
             </div>
             <div class="grow-cell entry text">
               <span v-for="(artist, index) in song.artists" v-bind:key="artist">
-                <a>{{ artist }}</a>
+                <a v-on:click="openArtist(artist)">{{ artist }}</a>
                 <span
                   v-if="song.artists.length > 1 && index != song.artists.length-1"
                 >&amp;{{ ' ' }}</span>
@@ -54,7 +54,7 @@
               <span v-if="song.featuring[0]">
                 ft.
                 <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
-                  <a>{{ feature }}</a>
+                  <a v-on:click="openArtist(feature)">{{ feature }}</a>
                   <span
                     v-if="song.featuring.length > 1 && index != song.featuring.length-1"
                   >&amp;{{ ' ' }}</span>
@@ -119,6 +119,8 @@
 import Desk from "./desk/Desk.vue";
 import DeskRow from "./desk/Row.vue";
 import ControlButton from "./layout/MediaBar/ControlButton.vue";
+import request from "request";
+import keys from "./../keys.js"
 
 export default {
   name: "artists",
@@ -131,6 +133,56 @@ export default {
   methods: {
     setSong(song) {
       this.$parent.$parent.setCurrentSong(song);
+    },
+    openArtist(artist) {
+      request(
+        "https://itunes.apple.com/search?&entity=musicArtist&term=" + artist,
+        (err, res, dat) => {
+          let data = JSON.parse(dat);
+          let id;
+          for (let result of data.results) if (result.artistName == artist) {
+            id = result.artistId;
+            break;
+          }
+          console.log(data.results[0]);
+          request(
+            "https://itunes.apple.com/lookup?id=" + data.results[0].artistId + "&entity=song",
+            (err, res, dat_) => {
+              let data_ = JSON.parse(dat_);
+              let parsed_songs = [];
+              console.log(data_);
+              for (let track of data_.results) {
+                request(
+                  "https://itunes.apple.com/lookup?id=" + track.collectionId,
+                  (err, res, dat__) => {
+                    if (err) throw new Error(err);
+                    else {
+                      let collectionArtist = JSON.parse(dat__).results[0].artistName;
+                      let song = {
+                        artists: track.artistName.split(/ *[&X,] *| *x +| +x */),
+                        title: track.trackName,
+                        featuring: [''],
+                        tracknum: track.trackNumber,
+                        album: {
+                          artists: collectionArtist.split(/ *[&X,] *| *x +| +x */),
+                          title: track.collectionName,
+                          art: [(
+                              track.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")
+                            ) /* Makes the artwork request be 1000px rather than 100*/
+                            .toString()
+                          ]
+                        }
+                      }
+                      parsed_songs.push(song);
+                      songsTemp.push(track.trackName);
+                    }
+                  }
+                );
+              }
+            }
+          )
+        }
+      )
     }
   }
 };

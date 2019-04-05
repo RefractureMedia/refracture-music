@@ -13,7 +13,7 @@ export default function (input, outgoing, page) {
   if (outgoing) {
     let songsTemp = [];
     request(
-      "https://itunes.apple.com/search?&entity=musicTrack&term=" + input,
+      "https://itunes.apple.com/search?&entity=song&term=" + input,
       (err, res, dat) => {
         let tracks = JSON.parse(dat).results,
           parsed_songs = [];

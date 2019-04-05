@@ -4,6 +4,9 @@
     "README.md": true,
     "capacitor.config.json": true,
     "config": true,
-    "build": true
+    "build": true,
+    ".postcssrc.js": true,
+    ".babelrc": true,
+    ".editorconfig": true
   }
 }
