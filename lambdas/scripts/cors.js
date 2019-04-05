@@ -5,7 +5,7 @@ global.URLSearchParams = URLSearchParams;
 exports.handler = async (event, context) => {
     return new Promise((resolve, reject) => {
         request(
-            event.queryStringParameters.url,
+            JSON.parse(decodeURIComponent(event.queryStringParameters.request)).url,
             (err, res, dat) => {
                 if (!err) {
                     resolve({

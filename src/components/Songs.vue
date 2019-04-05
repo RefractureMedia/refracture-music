@@ -145,8 +145,9 @@ export default {
             break;
           }
           console.log(data.results[0]);
+          console.log("https://refracturemusic.netlify.com/.netlify/functions/cors?request=" + encodeURIComponent(JSON.stringify({ url: "https://itunes.apple.com/lookup?id=" + data.results[0].artistId + "&entity=song"})));
           request(
-            "https://refracturemusic.netlify.com/.netlify/functions/cors?url=https://itunes.apple.com/lookup?id=" + data.results[0].artistId + "&entity=song",
+            "https://refracturemusic.netlify.com/.netlify/functions/cors?url=" + JSON.stringify({ url: "https://itunes.apple.com/lookup?id=" + data.results[0].artistId + "&entity=song"}),
             (err, res, dat_) => {
               let data_ = JSON.parse(dat_);
               let parsed_songs = [];
