@@ -31,17 +31,25 @@ export default (id, callback) => {
                         sources: getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
                     });
                 } else {
-                    lambda();
+                    cors();
                 }
             }
         ).on("error", (err) => {})
 
-        function lambda() {
+        function cors() {
             request(
-                `https://refracturemusic.netlify.com/.netlify/functions/yt_source?vid=${id}`,
+                `https://us-central1-refracture-media.cloudfunctions.net/cors?request=${encodeURIComponent(JSON.stringify({url:`http://www.youtube.com/get_video_info?html5=1&video_id=${id}&el=detailpage`}))}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
-                    else callback(JSON.parse(dat)); // Lambda Script has copy of getLinks employed
+                    else {
+                        const bodyParams = new URLSearchParams(dat);
+                        callback({
+                            title: bodyParams.get("title"),
+                            channel: bodyParams.get("author"),
+                            thumb: bodyParams.get("thumbnail_url"),
+                            sources: getSources(JSON.parse(bodyParams.get("player_response")).streamingData.adaptiveFormats)
+                        });
+                    }
                 }
             )
         }

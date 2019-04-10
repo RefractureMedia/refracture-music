@@ -14,17 +14,17 @@ export default (search_query, callback) => {
         request(
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
-                if (err) lambda();
+                if (err) cors();
                 else callback(getIDs(dat));
             }
         ).on("error", (err) => {})
         
-        function lambda() {
+        function cors() {
             request(
-                `https://refracturemusic.netlify.com/.netlify/functions/yt_search?search=${search_query}`,
+                `https://us-central1-refracture-media.cloudfunctions.net/cors?request=${encodeURIComponent(JSON.stringify({url:`https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`}))}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
-                    else callback(JSON.parse(dat).results); // Lambda Script has copy of getLinks employed
+                    else callback(getIDs(dat));
                 }
             )
         }
