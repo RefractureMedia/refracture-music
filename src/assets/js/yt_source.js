@@ -38,7 +38,7 @@ export default (id, callback) => {
 
         function cors() {
             request(
-                `https://us-central1-refracture-media.cloudfunctions.net/cors?request=${encodeURIComponent(JSON.stringify({url:`http://www.youtube.com/get_video_info?html5=1&video_id=${id}&el=detailpage`}))}`,
+                `https://cthh3ab7y4.execute-api.us-east-2.amazonaws.com/default/cors?request=${encodeURIComponent(JSON.stringify({url:`http://www.youtube.com/get_video_info?html5=1&video_id=${id}&el=detailpage`}))}`,
                 (err, res, dat) => {
                     if (err) console.warn(err);
                     else {
