@@ -145,6 +145,10 @@ export default {
     no_scroll();
 
     dispatch_presence(this.$data.currentSong.song, this.$data.player);
+
+    document.addEventListener("open_artist", (res) => {
+      this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
+    })
   },
   methods: {
     getCategory() {
@@ -220,9 +224,27 @@ export default {
     open_modal(type, content) {
       this.$data.modal.type = type;
       this.$data.modal.content = content;
-      if (type == "album") {
-        //console.log(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${content.artists.join(' & ')}&album=${content.title}&api_key=${keys.lastfm}&format=json`);
-        console.log(content);
+      switch (type) {
+        case "album": {
+          //console.log(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${content.artists.join(' & ')}&album=${content.title}&api_key=${keys.lastfm}&format=json`);
+          console.log(content);
+        }
+        case "artist": {
+          request(
+            `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${content.artist}&api_key=${keys.lastfm}&format=json`,
+            (err, res, dat) => {
+              let images = [];
+              let artist = JSON.parse(dat).artist
+              for (let image of artist.image) images.push(image["#text"])
+              console.log({
+                artist: content.artist,
+                art: images,
+                songs: content.songs,
+                description: artist.bio.summary.split('<a')[0].slice(0, -1)
+              })
+            }
+          )
+        }
       }
     }
   },
