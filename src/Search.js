@@ -60,7 +60,7 @@ export default function (input, outgoing, page) {
           for (let artist of raw_artists)
             if (!artistsTemp.includes(artist.artistName)) {
               request(
-                `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.artistName}&api_key=${keys.lastfm}&format=json`,
+                `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.artistName}&api_key=${keys.lastfm}&format=json`,
                 (err, res, dat) => {
                   let artist_ = JSON.parse(dat).artist;
                   let images = [];

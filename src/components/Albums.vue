@@ -26,9 +26,9 @@ export default {
   },
   methods: {
     open_album(album) {
-      console.log(encodeURI(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${album.artists.join(" & ")}&album=${album.title}&api_key=${keys.lastfm}&format=json`));
+      console.log(encodeURI(`https://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${album.artists.join(" & ")}&album=${album.title}&api_key=${keys.lastfm}&format=json`));
       request(
-        encodeURI(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${album.artists[0]}&album=${album.title}&api_key=${keys.lastfm}&format=json`),
+        encodeURI(`https://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${album.artists[0]}&album=${album.title}&api_key=${keys.lastfm}&format=json`),
         (err, res, dat) => {
           let data = JSON.parse(dat)
           if (err) console.log(err);

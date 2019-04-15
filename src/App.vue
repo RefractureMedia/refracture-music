@@ -74,7 +74,7 @@ export default {
     for (let song of songs) {
       for (let artist of song.artists) {
         request(
-          `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
+          `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
           (err, res, dat) => {
             let artist = JSON.parse(dat).artist
             if (err) throw new Error(err)
@@ -231,7 +231,7 @@ export default {
         }
         case "artist": {
           request(
-            `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${content.artist}&api_key=${keys.lastfm}&format=json`,
+            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${content.artist}&api_key=${keys.lastfm}&format=json`,
             (err, res, dat) => {
               let images = [];
               let artist = JSON.parse(dat).artist
