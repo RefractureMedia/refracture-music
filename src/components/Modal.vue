@@ -13,6 +13,20 @@
                 style="margin-left: .5rem; margin-top: 1rem;"
             />
         </div>
+        <div v-if="type == 'artist'">
+            <center>
+                <img :src="content.images[content.images.length - 1]" width="200vw">
+                <h2>{{ content.artist }}</h2>
+            </center>
+            <songs
+                :songs="content.songs"
+                :currentSong="$parent.currentSong"
+                :player="$parent.player"
+                displayHeader="false"
+                songContainer="songContainer"
+                style="margin-left: .5rem; margin-top: 1rem;"
+            />
+        </div>
     </div>
 </template>
 

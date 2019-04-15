@@ -7,8 +7,8 @@
         <div class="content">
           <div class="shadow"></div>
           <modal :active="modal.active" :type="modal.type" :content="modal.content" />
-          <library-search />
-          <router-view :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
+          <library-search v-if="!modal.active"/>
+          <router-view v-if="!modal.active" :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
         </div>
         <media-bar ref="mediabar" :song="currentSong"></media-bar>
       </div>
@@ -236,12 +236,10 @@ export default {
               let images = [];
               let artist = JSON.parse(dat).artist
               for (let image of artist.image) images.push(image["#text"])
-              console.log({
-                artist: content.artist,
-                art: images,
-                songs: content.songs,
-                description: artist.bio.summary.split('<a')[0].slice(0, -1)
-              })
+              this.$data.modal.content.images = images;
+              this.$data.modal.content.details = artist.bio.summary.split('<a')[0].slice(0, -1);
+              this.$data.modal.active = true;
+              console.log(this.$data.content);
             }
           )
         }
