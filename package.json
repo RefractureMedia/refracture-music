@@ -43,14 +43,18 @@
     "cordova-plugin-file": "^6.0.1",
     "cordova-plugin-media": "^5.0.2",
     "cordova-plugin-music-controls": "git+https://github.com/homerours/cordova-music-controls-plugin.git",
+    "from2": "^2.3.0",
     "html-to-json": "^0.6.0",
     "http": "0.0.0",
     "mobile-detect": "^1.4.3",
     "querystring": "^0.2.0",
     "request": "^2.88.0",
+    "stream-chunker": "^1.2.8",
+    "stream-to-blob-url": "^2.1.1",
     "vue": "^2.5.2",
     "vue-keybindings": "^1.0.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "ytdl-core": "^0.29.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

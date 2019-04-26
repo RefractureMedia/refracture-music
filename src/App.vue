@@ -46,6 +46,10 @@ import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
 import htmlToJson from "html-to-json"
+import ytdl from "ytdl-core"
+import chunker from "stream-chunker";
+import toBlobURL from "stream-to-blob-url";
+import from2 from "from2";
 
 export default {
   name: "refracture-music",
@@ -171,7 +175,7 @@ export default {
         },
         cachedLink: "",
       };
-      ytSource(vidId, res => {
+      /*ytSource(vidId, res => {
         if (clear) {
           this.$data.currentSong.song.title = res.title;
           this.$data.currentSong.song.artists = [res.channel];
@@ -188,7 +192,30 @@ export default {
           player.src = old_ios_sources[0].url
         }
         player.play()
-      })
+      })*/
+      let foo = 0;
+      var mediaSource = new MediaSource();
+      player.src = URL.createObjectURL(mediaSource);
+      mediaSource.addEventListener('sourceopen', () => {
+        let sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+        // Get video segments and append them to sourceBuffer.
+        let source = ytdl(`https://youtube.com/watch?v=${vidId}`, { quality: "lowestaudio"});
+        let queue = [];
+        source.on('data', (dat) => {
+          console.log(foo++ + ': ' + dat.length)
+          console.log(sourceBuffer.updating + ", " + queue.length);
+          if (!sourceBuffer.updating) sourceBuffer.appendBuffer(new Uint8Array(dat));
+          else queue.push(dat);
+        });
+        sourceBuffer.addEventListener('updateend', () => {
+          console.log("foo bar")
+          if ( queue.length ) {
+            console.log("bar foo");
+            sourceBuffer.appendBuffer(new Uint8Array(queue.shift()));
+          }
+        });
+        source.on('finish', () => { mediaSource.endOfStream(); });
+      });
     },
     browseSearch() {
       if (!this.$data.search.match(/:\/\//)) {
@@ -442,6 +469,30 @@ function run_media_session(player, song, queue, action, options, platform) {
       case 'paused': cordova.plugin.MusicControls.updateIsPlaying(false); break;
     }
   }
+}
+
+function fetchStreamFactory(url) {
+  return opts => {
+    const readerPromise = fetch(url, {
+      headers: {
+        Range: "bytes=" + opts.start + (opts.end ? "-" + opts.end : "-")
+      }
+    }).then(response => response.body.getReader());
+    return from2((_, next) => {
+      readerPromise.then(reader => {
+        function process() {
+          return reader.read().then(({ value, done }) => {
+            if (done) {
+              return next(null, null);
+            }
+            next(null, value);
+          });
+        }
+
+        return process();
+      });
+    }).pipe(chunker(opts.chunkSize, { flush: true }));
+  };
 }
 </script>
 
