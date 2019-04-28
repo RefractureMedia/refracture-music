@@ -5,7 +5,7 @@
         <img id="album-art" :src="song.song.album.art[song.song.album.art.length-1]">
       </div>
       <div id="song-info" class="song-info" v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'">
-        <p class="song">
+        <p>
           {{ song.song.title }}
           <span v-if="song.song.featuring[0] != ''">
             ft.
@@ -17,7 +17,7 @@
         </p>
         <p class="artist">
           <span v-for="(artist, index) of song.song.artists" v-bind:key="artist">
-            <a>{{ artist }}</a>
+            <a v-on:click="openArtist(artist)">{{ artist }}</a>
             <span v-if="song.song.artists.length > 1 && index != song.song.artists.length-1">{{ '&amp; '}}</span>
           </span>
         </p>
@@ -78,6 +78,9 @@
 <script>
 import Controls from "./Controls.vue";
 import ControlButton from "./ControlButton.vue";
+import getArtist from "./../../../assets/js/artist.js";
+import keys from "./../../../keys.js";
+
 export default {
   name: "media-bar",
   props: ["song", "state"],
@@ -135,6 +138,9 @@ export default {
     pause() {
       this.$data.player.pause();
       this.$data.isPaused = true;
+    },
+    openArtist(artist) {
+      getArtist(artist, keys);
     }
   }
 };

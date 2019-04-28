@@ -175,46 +175,49 @@ export default {
         },
         cachedLink: "",
       };
-      /*ytSource(vidId, res => {
+      let source = ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} });
+
+      source.on('info', (info) => {
         if (clear) {
-          this.$data.currentSong.song.title = res.title;
-          this.$data.currentSong.song.artists = [res.channel];
-          this.$data.currentSong.song.album.art = [res.thumb];
+          let title = info.title;
+          let final_featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [''];
+
+          title = title.replace(/((\[)|(\()).*?(R|r)elease((\])|(\)))/,'');
+          title = title.replace(/((\[)|(\())(((F|f)(eat|eaturing))|((F|f)t)) (.*?)((\])|(\)))/,'');
+          title = title.replace(/((\[)|(\()).*?(V|v)ideo((\])|(\)))/, '');
+          title = title.replace(/((\[)|(\())(O|o)fficial (.*?)((\])|(\)))/,'');
+          title = title.replace(/((\[)|(\())(A|a)nimation (.*?)((\])|(\)))/,'');
+          title = title.replace(/((M|m)usic (V|v)ideo)/, '')
+
+          let try1 = title.split(' - ')
+          let try2 = title.split(' by ');
+          let final_title;
+          let final_artists;
+          if (try1.length > 1) {
+            final_artists = try1[0].split(/ *[&X,] *| *x +| +x */);
+            if (try1.length == 2) final_title = try1[1];
+            else final_title = try1.slice(1).join(' - ');
+          } else if (try2.length > 1) {
+            final_title = try2[0];
+            final_artist = try2[1].split(/ *[&X,] *| *x +| +x */);
+          } else {
+            final_title = title;
+            final_artists = ['YouTube'];
+          }
+          this.$data.currentSong.song.title = final_title;
+          this.$data.currentSong.song.artists = final_artists;
+          this.$data.currentSong.song.featuring = final_featuring;
+          this.$data.currentSong.song.album.art = [info.player_response.videoDetails.thumbnail.thumbnails[info.player_response.videoDetails.thumbnail.thumbnails.length - 1].url];
           this.$data.currentSong.song.album.title = "YouTube";
         }
-        dispatch_presence(this.$data.currentSong.song, this.$data.player);
-        this.media_session('new')
-        if (this.md().os() != "iOS") {
-          player.src = res.sources[0].url
-        } else {
-          let old_ios_sources = [];
-          for (let source of res.sources) if (source.codec != "opus") old_ios_sources.push(source);
-          player.src = old_ios_sources[0].url
+        let parsed_formats = [];
+        for (let format of info.formats) {
+          if(format.type.includes('audio')) parsed_formats.push({
+            src: format.url
+          });
         }
-        player.play()
-      })*/
-      let foo = 0;
-      var mediaSource = new MediaSource();
-      player.src = URL.createObjectURL(mediaSource);
-      mediaSource.addEventListener('sourceopen', () => {
-        let sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
-        // Get video segments and append them to sourceBuffer.
-        let source = ytdl(`https://youtube.com/watch?v=${vidId}`, { quality: "lowestaudio"});
-        let queue = [];
-        source.on('data', (dat) => {
-          console.log(foo++ + ': ' + dat.length)
-          console.log(sourceBuffer.updating + ", " + queue.length);
-          if (!sourceBuffer.updating) sourceBuffer.appendBuffer(new Uint8Array(dat));
-          else queue.push(dat);
-        });
-        sourceBuffer.addEventListener('updateend', () => {
-          console.log("foo bar")
-          if ( queue.length ) {
-            console.log("bar foo");
-            sourceBuffer.appendBuffer(new Uint8Array(queue.shift()));
-          }
-        });
-        source.on('finish', () => { mediaSource.endOfStream(); });
+        player.src = parsed_formats[0].src;
+        player.play();
       });
     },
     browseSearch() {
