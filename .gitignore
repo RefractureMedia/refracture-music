@@ -8,7 +8,6 @@ android/app/src/*
 !android/app/src/main
 android/app/src/main/*
 !android/app/src/main/res
-/electron
 static/*
 /instant-run/
 /www/
