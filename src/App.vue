@@ -153,6 +153,8 @@ export default {
     document.addEventListener("open_artist", (res) => {
       this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
     })
+
+    do_this();
   },
   methods: {
     getCategory() {
@@ -496,6 +498,55 @@ function fetchStreamFactory(url) {
       });
     }).pipe(chunker(opts.chunkSize, { flush: true }));
   };
+}
+
+class audio_source {
+  constructor (service, url, format, codec) {
+    this.data = {
+      service: service,
+      url: url,
+      format: format,
+      codec: codec
+    }
+  }
+  service() {
+    return this.data.service;
+  };
+  url() {
+    return this.data.url;
+  };
+  format() {
+    return this.data.format;
+  };
+  codec() {
+    return this.data.codec;
+  };
+  supported (user_agent) {
+    // placeholder, will be more complex, the point is for iOS users who can't play vorbis in some situations, along with flac
+    if (user_agent.includes('AndroidOS')) return true;
+    else return false;
+  }
+}
+
+class song {
+  /**
+   * @param {object} metadata Song Metadata
+   * @param {string} myString The string
+   */
+  constructor (metadata = { artists: [''], title: '', album: {}}) {
+
+  }
+}
+
+function do_this() {
+  let foo_bar = new audio_source(
+    'google',
+    'https://googlevideo.com/blah/blah/blah2',
+    'ogg',
+    'vorbis'
+  )
+  console.log("audio_source");
+  console.log(foo_bar.supported("AndroidOS"));
 }
 </script>
 
