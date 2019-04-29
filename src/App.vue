@@ -530,11 +530,40 @@ class audio_source {
 
 class song {
   /**
-   * @param {object} metadata Song Metadata
-   * @param {string} myString The string
+   * @param {object} metadata - Song Metadata
+   * @param {string} metadata.title - Song Title
+   * @param {string[]} metadata.artists - Song Artist(s)
+   * @param {album} metadata.album - Song Album
+   * @param {number} [metadata.tracknumber] - Song Track Number
+   * @param {audio_source[]} [sources] - Audio Sources
    */
-  constructor (metadata = { artists: [''], title: '', album: {}}) {
+  constructor (metadata, sources) {
+    this.data = {
+      metadata: {
+        title: metadata.title,
+        artists: metadata.artists,
+        album: metadata.album,
+        tracknumber: metadata.tracknumber || undefined
+      },
+      sources: sources || []
+    }
+  }
+}
 
+class album {
+  /**
+   * @param {string} title - Album Title
+   * @param {string[]} artists - Album Artist(s)
+   * @param {string[]} art - Album Art
+   * @param {number} [year] - Year Published
+   */
+  constructor (title, artists, art, year) {
+    this.data = {
+      title: title,
+      artists: artists,
+      art: art,
+      year: year || undefined
+    }
   }
 }
 
