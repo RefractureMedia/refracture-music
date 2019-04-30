@@ -177,9 +177,8 @@ export default {
         },
         cachedLink: "",
       };
-      let source = ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} });
 
-      source.on('info', (info) => {
+      ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} }).on('info', (info) => {
         if (clear) {
           let title = info.title;
           let final_featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [''];
@@ -308,6 +307,7 @@ window.notify = function(x) {
 
   document.body.appendChild(toast)
 }
+
 Array.prototype.shuffle = function() {
   var input = this
   for (var i = input.length - 1; i >= 0; i--) {
@@ -337,6 +337,7 @@ function parseYTURL(input) {
     }
   }
 }
+
 function getSongInput() {
   let url = document.getElementsByClassName("browseSearch")[0].value
   return url
@@ -476,29 +477,6 @@ function run_media_session(player, song, queue, action, options, platform) {
   }
 }
 
-function fetchStreamFactory(url) {
-  return opts => {
-    const readerPromise = fetch(url, {
-      headers: {
-        Range: "bytes=" + opts.start + (opts.end ? "-" + opts.end : "-")
-      }
-    }).then(response => response.body.getReader());
-    return from2((_, next) => {
-      readerPromise.then(reader => {
-        function process() {
-          return reader.read().then(({ value, done }) => {
-            if (done) {
-              return next(null, null);
-            }
-            next(null, value);
-          });
-        }
-
-        return process();
-      });
-    }).pipe(chunker(opts.chunkSize, { flush: true }));
-  };
-}
 
 class audio_source {
   constructor (service, url, format, codec) {
