@@ -77,26 +77,33 @@ export default {
 
     for (let song of songs) {
       for (let artist of song.artists) {
-        request(
-          `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
-          (err, res, dat) => {
-            let artist = JSON.parse(dat).artist
-            if (err) throw new Error(err)
-            else {
-              console.log(artist);
-              if (!artistsTemp.includes(artist.name)) {
-                let images = [];
-                for (let image of artist.image) images.push(image["#text"])
-                library.artists.push({
-                  name: artist.name,
-                  art: images,
-                  description: artist.summary
-                })
-                artistsTemp.push(artist.name)
+        if (!artistsTemp.includes(artist.name)) {
+          request(
+            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
+            (err, res, dat) => {
+              let artist_ = JSON.parse(dat).artist
+              if (err) throw new Error(err)
+              else {
+                request(
+                  `https://itunes.apple.com/search?&entity=musicArtist&term=${artist}`,
+                  (err, res, dat) => {
+                    request(
+                      JSON.parse(dat).results[0].artistLinkUrl.split('?')[0],
+                      (err, res, dat) => {
+                        library.artists.push({
+                          name: artist_.name,
+                          art: [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('.jpg/')[0] + '.jpg/500x500.png'],
+                          description: artist_.summary
+                        })
+                        artistsTemp.push(artist_.name)
+                      }
+                    )
+                  }
+                )
               }
             }
-          }
-        )
+          )
+        }
       }
       if (!albumsTemp.includes(song.album.title)) {
         library.albums.push({
@@ -154,14 +161,6 @@ export default {
     document.addEventListener("open_artist", (res) => {
       this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
     })
-
-    request(
-      `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=Cher&api_key=dac95e8be8caf9edcf51f43dde5450f2
-&format=json`,
-      (err, res, dat) => {
-        console.log(JSON.parse(dat));
-      }
-    )
   },
   methods: {
     getCategory() {
