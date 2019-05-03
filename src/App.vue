@@ -83,6 +83,7 @@ export default {
             let artist = JSON.parse(dat).artist
             if (err) throw new Error(err)
             else {
+              console.log(artist);
               if (!artistsTemp.includes(artist.name)) {
                 let images = [];
                 for (let image of artist.image) images.push(image["#text"])
@@ -91,8 +92,8 @@ export default {
                   art: images,
                   description: artist.summary
                 })
+                artistsTemp.push(artist.name)
               }
-              artistsTemp.push(artist.name)
             }
           }
         )
@@ -154,7 +155,13 @@ export default {
       this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
     })
 
-    do_this();
+    request(
+      `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=Cher&api_key=dac95e8be8caf9edcf51f43dde5450f2
+&format=json`,
+      (err, res, dat) => {
+        console.log(JSON.parse(dat));
+      }
+    )
   },
   methods: {
     getCategory() {
@@ -494,15 +501,6 @@ class audio_source {
   }
 
   /**
-   * @description Returns Data Value to entered Key
-   * @param {string} [key] - Data Value Key, if not defined returns whole data
-   * @returns {any} Returns Data or parts of Data
-   */
-  get(key = false) {
-    return key ? this.data[key] : this.data;
-  }
-
-  /**
    * @description Returns Boolean of whether or not the audio is supported
    * @param {string} user_agent - UA String
    */
@@ -518,29 +516,16 @@ class song {
    * @param {object} metadata - Song Metadata
    * @param {string} metadata.title - Song Title
    * @param {string[]} metadata.artists - Song Artist(s)
+   * @param {string[]} [metadata.featuring] - Featured Artist(s)
    * @param {album} metadata.album - Song Album
    * @param {number} [metadata.tracknumber] - Song Track Number
    * @param {audio_source[]} [sources] - Audio Sources
    */
   constructor (metadata, sources) {
     this.data = {
-      metadata: {
-        title: metadata.title,
-        artists: metadata.artists,
-        album: metadata.album,
-        tracknumber: metadata.tracknumber
-      },
-      sources: sources ?  sources : []
+      metadata: metadata,
+      sources: sources ? sources : []
     }
-  }
-
-  /**
-   * @description Returns Data Value to entered Key
-   * @param {string} [key] - Data Value Key, if not defined returns whole data
-   * @returns {any} Returns Data or parts of Data
-   */
-  get(key = false) {
-    return key ? this.data[key] : this.data;
   }
 }
 
@@ -559,38 +544,6 @@ class album {
       year: year || undefined
     }
   }
-
-  /**
-   * @description Returns Data Value to entered Key
-   * @param {string} [key] - Data Value Key, if not defined returns whole data
-   * @returns {any} Returns Data or parts of Data
-   */
-  get(key = false) {
-    return key ? this.data[key] : this.data;
-  }
-}
-
-function do_this() {
-  let foo_bar = new song(
-    {
-      title: "Don't Stop Believin'",
-      artists: ["Journey"],
-      sources: [new audio_source(
-        'google',
-        'https://googlevideo.com/gooossdv/asdasdagr/asdasde',
-        'ogg',
-        'vorbis'
-      )],
-      album: new album(
-        'Escape',
-        ['Journey'],
-        ['https://itunescdn.com/asdasdaryh/asdasdy/100x.jpg'],
-        1999
-      )
-    }
-  )
-  console.log("song");
-  console.log(foo_bar.get());
 }
 </script>
 
