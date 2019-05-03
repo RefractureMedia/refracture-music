@@ -511,28 +511,28 @@ class audio_source {
   }
 }
 
-class song {
+class location {
   /**
+   * @param {string} service - Location's Service
    * @param {object} metadata - Song Metadata
    * @param {string} metadata.title - Song Title
-   * @param {string[]} metadata.artists - Song Artist(s)
-   * @param {string[]} [metadata.featuring] - Featured Artist(s)
+   * @param {(string|string[])} metadata.artists - Song Artist(s)
+   * @param {(string|string[])} [metadata.featuring] - Featured Artist(s)
    * @param {album} metadata.album - Song Album
    * @param {number} [metadata.tracknumber] - Song Track Number
-   * @param {object} [preload] - Preload Song With Data
-   * @param {object} [preload.location] - Song Location
-   * @param {string} [preload.location.service] - Service of Location
-   * @param {any} [preload.location.src] - Data Needed to get to Location
-   * @param {audio_source[]} [preload.sources] - Audio Sources
+   * @param {string|object} [data] - Data for Location on Service (ie video id on YouTube)
    */
-  constructor (metadata, preload) {
+  constructor (service = 'youtube', metadata, data = undefined) {
     this.data = {
+      service: service,
       metadata: metadata,
-      sources: preload.sources ? preload.sources : []
-      location: preload.location ? preload.location : this.match('')
+      data: data ? data : this.match(service)
     }
   }
 
+  /**
+   * @param {string} [service] - Service to match a location for the song on
+   */
   match (service) {
     switch (service) {
       case "youtube": {
@@ -540,11 +540,59 @@ class song {
           yt_search(
             `${this.data.metadata.artists.join('&')} 
             ${this.data.metadata.title}`,
-            ()
-            )
+            (ids) => {
+              this.data.data = ids[0];
+              resolve(ids[0]);
+            }
+          )
         })
       }
     }
+  }
+}
+
+class song {
+  /**
+   * @param {object} metadata - Song Metadata
+   * @param {string} metadata.title - Song Title
+   * @param {(string|string[])} metadata.artists - Song Artist(s)
+   * @param {(string|string[])} [metadata.featuring] - Featured Artist(s)
+   * @param {album} metadata.album - Song Album
+   * @param {number} [metadata.tracknumber] - Song Track Number
+   * @param {object} [preload] - Preload Song With Data
+   * @param {(audio_source|audio_source[])} [preload.sources] - Audio Sources
+   * @param {(location|location[])} [preload.locations] - Song Location(s)
+   */
+  constructor (metadata, preload) {
+    this.data = {
+      metadata: {
+        title: metadata.title,
+        artists: typeof metadata.artists == "string" ? [metadata.artists] : metadata.artists,
+        featuring: typeof metadata.featuring == "string" ? [metadata.featuring] : metadata.featuring,
+        album: metadata.album
+      },
+      sources: preload.sources ? preload.sources.length ? preload.sources : [preload.sources] : get_sources(),
+      locations: preload.locations ? preload.locations.length ? preload.locations : [preload.locations] : [new location('youtube', {
+        title: metadata.title, artists: typeof metadata.artists == "string" ? [metadata.artists] : metadata.artists})]
+    }
+  }
+  get_sources(locations = this.data.locations) {
+    for(let location of locations) {
+      if (location.data.data) {
+
+        break
+      }
+    }
+    return new Promise((resolve, reject) => {
+      ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} }).on('info', (info) => {
+        let sources = [];
+        for (let format of info.formats) format.type.includes('audio') ? 
+          sources.push(new audio_source('youtube', format.src, 'ogg', 'vorbis')) 
+          : console.log("No Available Sources")
+        this.data.sources = sources;
+        resolve(sources)
+      });
+    })
   }
 }
 
@@ -564,6 +612,7 @@ class album {
     }
   }
 }
+let foo = new song()
 </script>
 
 <style lang="less">
