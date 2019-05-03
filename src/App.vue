@@ -50,6 +50,7 @@ import ytdl from "ytdl-core"
 import chunker from "stream-chunker";
 import toBlobURL from "stream-to-blob-url";
 import from2 from "from2";
+import yt_search from './assets/js/yt_search.js';
 
 export default {
   name: "refracture-music",
@@ -518,12 +519,31 @@ class song {
    * @param {string[]} [metadata.featuring] - Featured Artist(s)
    * @param {album} metadata.album - Song Album
    * @param {number} [metadata.tracknumber] - Song Track Number
-   * @param {audio_source[]} [sources] - Audio Sources
+   * @param {object} [preload] - Preload Song With Data
+   * @param {object} [preload.location] - Song Location
+   * @param {string} [preload.location.service] - Service of Location
+   * @param {any} [preload.location.src] - Data Needed to get to Location
+   * @param {audio_source[]} [preload.sources] - Audio Sources
    */
-  constructor (metadata, sources) {
+  constructor (metadata, preload) {
     this.data = {
       metadata: metadata,
-      sources: sources ? sources : []
+      sources: preload.sources ? preload.sources : []
+      location: preload.location ? preload.location : this.match('')
+    }
+  }
+
+  match (service) {
+    switch (service) {
+      case "youtube": {
+        return new Promise((resolve, reject) => {
+          yt_search(
+            `${this.data.metadata.artists.join('&')} 
+            ${this.data.metadata.title}`,
+            ()
+            )
+        })
+      }
     }
   }
 }
