@@ -477,8 +477,13 @@ function run_media_session(player, song, queue, action, options, platform) {
   }
 }
 
-
 class audio_source {
+  /**
+   * @param {string} service - Audio hosting service
+   * @param {string} url - Audio Source URL
+   * @param {string} format - Audio Format
+   * @param {string} codec - Audio Codec
+   */
   constructor (service, url, format, codec) {
     this.data = {
       service: service,
@@ -487,18 +492,20 @@ class audio_source {
       codec: codec
     }
   }
-  service() {
-    return this.data.service;
-  };
-  url() {
-    return this.data.url;
-  };
-  format() {
-    return this.data.format;
-  };
-  codec() {
-    return this.data.codec;
-  };
+
+  /**
+   * @description Returns Data Value to entered Key
+   * @param {string} [key] - Data Value Key, if not defined returns whole data
+   * @returns {any} Returns Data or parts of Data
+   */
+  get(key = false) {
+    return key ? this.data[key] : this.data;
+  }
+
+  /**
+   * @description Returns Boolean of whether or not the audio is supported
+   * @param {string} user_agent - UA String
+   */
   supported (user_agent) {
     // placeholder, will be more complex, the point is for iOS users who can't play vorbis in some situations, along with flac
     if (user_agent.includes('AndroidOS')) return true;
@@ -521,10 +528,19 @@ class song {
         title: metadata.title,
         artists: metadata.artists,
         album: metadata.album,
-        tracknumber: metadata.tracknumber || undefined
+        tracknumber: metadata.tracknumber
       },
-      sources: sources || []
+      sources: sources ?  sources : []
     }
+  }
+
+  /**
+   * @description Returns Data Value to entered Key
+   * @param {string} [key] - Data Value Key, if not defined returns whole data
+   * @returns {any} Returns Data or parts of Data
+   */
+  get(key = false) {
+    return key ? this.data[key] : this.data;
   }
 }
 
@@ -543,17 +559,38 @@ class album {
       year: year || undefined
     }
   }
+
+  /**
+   * @description Returns Data Value to entered Key
+   * @param {string} [key] - Data Value Key, if not defined returns whole data
+   * @returns {any} Returns Data or parts of Data
+   */
+  get(key = false) {
+    return key ? this.data[key] : this.data;
+  }
 }
 
 function do_this() {
-  let foo_bar = new audio_source(
-    'google',
-    'https://googlevideo.com/blah/blah/blah2',
-    'ogg',
-    'vorbis'
+  let foo_bar = new song(
+    {
+      title: "Don't Stop Believin'",
+      artists: ["Journey"],
+      sources: [new audio_source(
+        'google',
+        'https://googlevideo.com/gooossdv/asdasdagr/asdasde',
+        'ogg',
+        'vorbis'
+      )],
+      album: new album(
+        'Escape',
+        ['Journey'],
+        ['https://itunescdn.com/asdasdaryh/asdasdy/100x.jpg'],
+        1999
+      )
+    }
   )
-  console.log("audio_source");
-  console.log(foo_bar.supported("AndroidOS"));
+  console.log("song");
+  console.log(foo_bar.get());
 }
 </script>
 
