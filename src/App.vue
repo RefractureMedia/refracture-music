@@ -93,7 +93,7 @@ export default {
                       (err, res, dat) => {
                         library.artists.push({
                           name: artist_.name,
-                          art: [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('.jpg/')[0] + '.jpg/500x500.png'],
+                          art: [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'],
                           description: artist_.summary
                         })
                         artistsTemp.push(artist_.name)
@@ -162,6 +162,8 @@ export default {
     document.addEventListener("open_artist", (res) => {
       this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
     })
+
+    run_this((url)=>{this.$data.player.src=url; this.$data.player.play();});
   },
   methods: {
     getCategory() {
@@ -514,31 +516,28 @@ class audio_source {
 class location {
   /**
    * @param {string} service - Location's Service
-   * @param {object} metadata - Song Metadata
-   * @param {string} metadata.title - Song Title
-   * @param {(string|string[])} metadata.artists - Song Artist(s)
-   * @param {(string|string[])} [metadata.featuring] - Featured Artist(s)
-   * @param {album} metadata.album - Song Album
-   * @param {number} [metadata.tracknumber] - Song Track Number
+   * @param {song_metadata} metadata
    * @param {string|object} [data] - Data for Location on Service (ie video id on YouTube)
    */
   constructor (service = 'youtube', metadata, data = undefined) {
     this.data = {
       service: service,
-      metadata: metadata,
-      data: data ? data : this.match(service)
+      metadata: metadata.data,
+      data: data ? data : function () {this.match(service)}
     }
   }
 
   /**
    * @param {string} [service] - Service to match a location for the song on
    */
-  match (service) {
+  match (service = 'youtube') {
     switch (service) {
       case "youtube": {
         return new Promise((resolve, reject) => {
+          let artists = []
+          for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
           yt_search(
-            `${this.data.metadata.artists.join('&')} 
+            `${artists.join(' & ')} 
             ${this.data.metadata.title}`,
             (ids) => {
               this.data.data = ids[0];
@@ -553,45 +552,149 @@ class location {
 
 class song {
   /**
-   * @param {object} metadata - Song Metadata
-   * @param {string} metadata.title - Song Title
-   * @param {(string|string[])} metadata.artists - Song Artist(s)
-   * @param {(string|string[])} [metadata.featuring] - Featured Artist(s)
-   * @param {album} metadata.album - Song Album
-   * @param {number} [metadata.tracknumber] - Song Track Number
+   * @param {song_metadata} metadata - Song Metadata
    * @param {object} [preload] - Preload Song With Data
    * @param {(audio_source|audio_source[])} [preload.sources] - Audio Sources
    * @param {(location|location[])} [preload.locations] - Song Location(s)
    */
   constructor (metadata, preload) {
     this.data = {
-      metadata: {
-        title: metadata.title,
-        artists: typeof metadata.artists == "string" ? [metadata.artists] : metadata.artists,
-        featuring: typeof metadata.featuring == "string" ? [metadata.featuring] : metadata.featuring,
-        album: metadata.album
-      },
-      sources: preload.sources ? preload.sources.length ? preload.sources : [preload.sources] : get_sources(),
-      locations: preload.locations ? preload.locations.length ? preload.locations : [preload.locations] : [new location('youtube', {
-        title: metadata.title, artists: typeof metadata.artists == "string" ? [metadata.artists] : metadata.artists})]
+      metadata: metadata,
+      sources: preload ? preload.sources ? preload.sources.length ? preload.sources : [preload.sources] : function () {this.get_sources()} : function () {this.get_sources()},
+      locations: preload ? preload.locations ? preload.locations.length ? preload.locations : [preload.locations] : [new location('youtube', metadata)] : [new location('youtube', metadata)]
     }
   }
-  get_sources(locations = this.data.locations) {
-    for(let location of locations) {
-      if (location.data.data) {
 
-        break
-      }
-    }
+  get_sources(locations = this.data.locations) {
     return new Promise((resolve, reject) => {
-      ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} }).on('info', (info) => {
+      this.data.locations[0].match().then((id)=>{ytdl(`https://youtube.com/watch?v=${id}`, { range: {start: 0, end: 0} }).on('info', (info) => {
         let sources = [];
-        for (let format of info.formats) format.type.includes('audio') ? 
-          sources.push(new audio_source('youtube', format.src, 'ogg', 'vorbis')) 
-          : console.log("No Available Sources")
+        for (let format of info.formats) if (format.type.includes('audio')) 
+          sources.push(new audio_source('youtube', format.url, 'ogg', 'vorbis'));
         this.data.sources = sources;
         resolve(sources)
-      });
+      })})
+    })
+  }
+}
+
+class song_metadata {
+  /**
+   * @param {string} title - Song Title
+   * @param {(artist|artist[])} artists - Song Artist(s)
+   * @param {album} album - Song Album
+   * @param {(artist|artist[])} [featuring] - Featured Artist(s)
+   * @param {number} [tracknumber] - Song Track Number
+   */
+  constructor (title, artists, album, featuring = [], tracknumber = 0) {
+    this.data = {
+      title: title,
+      artists: artists.length ? artists : [artists],
+      album: album,
+      featuring: featuring.length ? featuring : [featuring],
+      tracknumber: tracknumber
+    }
+  }
+}
+
+class artist {
+  /**
+   * @param {string} name - Artist Name
+   */
+  constructor (name) {
+    this.data = {
+      art: false,
+      name: name
+    };
+  }
+
+  /**
+   * @description Returns Artist's iTunes Avatar
+   * @param {string} [artist_url] - If you have the artist URL/ID already you can supplement it to reduce requests
+   */
+  avatar(artist_url = undefined) {
+    return new Promise((resolve, reject) => {
+      let art = this.data.art;
+      if (this.data.art) resolve(this.data.art);
+      else {
+        if (!artist_url) request(`https://itunes.apple.com/search?&entity=musicArtist&term=${this.data.name}`,(err, res, dat) => {
+          get_image(JSON.parse(dat).results[0].artistLinkUrl);
+        })
+        else get_image(artist_url)
+
+        function get_image(artist_link) {
+          request(
+            artist_link.split('?')[0],
+            (err, res, dat) => {
+              art = [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'];
+              resolve(art);
+            }
+          )
+        }
+      }
+    })
+  }
+
+  /**
+   * Returns Artist's Bio from LastFM
+   */
+  description() {
+    return new Promise((resolve, reject) => {
+      request(
+        `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${this.data.name}&api_key=${keys.lastfm}&format=json`,
+        (err, res, dat) => {
+          if (err) throw new Error(err)
+          else {
+            this.description = JSON.parse(dat).artist.bio.summary.split('<a')[0].slice(0, -1)
+            resolve(this.description)
+          }
+        }
+      )
+    })
+  }
+
+  tracks() {
+    return new Promise((resolve, reject) => {
+      request(
+        `https://itunes.apple.com/search?&entity=musicArtist&term=${this.data.name}`,
+        (err, res, dat) => {
+          request(
+            `https://itunes.apple.com/lookup?id=${JSON.parse(dat).results[0].artistId}&entity=song`,
+            (err, res, dat) => {
+              let raw_songs = JSON.parse(dat).results.slice(1);
+              let parsed_songs = [];
+              for (let track of raw_songs) {
+                request(
+                  "https://itunes.apple.com/lookup?id=" + track.collectionId,
+                  (err, res, dat__) => {
+                    if (err) throw new Error(err);
+                    else {
+                      let artists = []
+                      for (let foo of track.artistName.split(/ *[&X,] *| *x +| +x */)) artists.push(new artist(foo));
+                      let album_artists = []
+                      for (let foo of JSON.parse(dat__).results[0].artistName.split(/ *[&X,] *| *x +| +x */)) album_artists.push(new artist(foo));
+                      parsed_songs.push(new song(
+                        new song_metadata(
+                          track.trackName,
+                          artists,
+                          new album(
+                            track.collectionName,
+                            album_artists,
+                            [(track.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")).toString()]
+                          )
+                          [''],
+                          track.trackNumber
+                        ))
+                      );
+                      if (parsed_songs.length == raw_songs.length) resolve(parsed_songs);
+                    }
+                  }
+                );
+              }
+            }
+          )
+        }
+      )
     })
   }
 }
@@ -612,7 +715,16 @@ class album {
     }
   }
 }
-let foo = new song()
+
+function run_this(callback) {
+  let temp_artist = new artist('Journey');
+  temp_artist.tracks().then((songs) => {
+    console.log(songs);
+    songs[1].get_sources().then((sources) => {
+      callback(sources[0].data.url);
+    })
+  })
+}
 </script>
 
 <style lang="less">
