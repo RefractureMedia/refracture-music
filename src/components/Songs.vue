@@ -32,7 +32,7 @@
             <div class="grow-cell entry song_art">
               <div class="songs_art">
                 <img
-                  v-bind:src="song.album.art[song.album.art.length - 1]"
+                  v-bind:src="song.data.metadata.data.album.data.art[song.data.metadata.data.album.data.art.length - 1]"
                   width="100%"
                   height="100%"
                 >
@@ -41,29 +41,29 @@
             <div class="grow-cell entry no_song_art">
             </div>
             <div class="grow-cell entry text">
-              <span v-for="(artist, index) in song.artists" v-bind:key="artist">
-                <a v-on:click="openArtist(artist)">{{ artist }}</a>
+              <span v-for="(artist, index) in song.data.metadata.data.artists" v-bind:key="artist">
+                <a v-on:click="openArtist(artist)">{{ artist.data.name }}</a>
                 <span
-                  v-if="song.artists.length > 1 && index != song.artists.length-1"
+                  v-if="song.data.metadata.data.artists.length > 1 && index != song.data.metadata.data.artists.length-1"
                 >&amp;{{ ' ' }}</span>
               </span>
             </div>
             <div class="grow-cell seperator">-</div>
             <div class="grow-cell entry text">
-              {{ song.title }}
-              <span v-if="song.featuring[0]">
+              {{ song.data.metadata.data.title }}
+              <span v-if="song.data.metadata.data.featuring">
                 ft.
                 <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
-                  <a v-on:click="openArtist(feature)">{{ feature }}</a>
+                  <a v-on:click="openArtist(feature)">{{ feature.data.name }}</a>
                   <span
-                    v-if="song.featuring.length > 1 && index != song.featuring.length-1"
+                    v-if="song.data.metadata.data.featuring.length > 1 && index != song.data.metadata.data.featuring.length-1"
                   >&amp;{{ ' ' }}</span>
                 </span>
               </span>
             </div>
             <div class="grow-cell seperator">-</div>
             <div class="grow-cell entry text">
-              {{ song.album.title }}
+              {{ song.data.metadata.data.album.data.title }}
             </div>
             <div class="grow-cell seperator">-</div>
             <div class="grow-cell button">
@@ -84,28 +84,28 @@
           <div class="grow-cell entry">
             <div style="width: 4rem; height: 4rem;" class="songs_art">
               <img
-                v-bind:src="song.album.art[song.album.art.length - 1]"
+                v-bind:src="song.data.metadata.data.album.data.art[song.data.metadata.data.album.data.art.length - 1]"
                 width="100%"
                 height="100%"
               >
             </div>
           </div>
           <div class="grow-cell entry text">
-            {{ song.title }}
-            <span v-if="song.featuring[0]">
+            {{ song.data.metadata.data.title }}
+            <span v-if="song.data.metadata.data.featuring[0]">
               ft.
-              <span v-for="(feature, index) in song.featuring" v-bind:key="feature">
-                <a>{{ feature }}</a>
+              <span v-for="(feature, index) in song.data.metadata.data.featuring" v-bind:key="feature">
+                <a>{{ feature.data.name }}</a>
                 <span
-                  v-if="song.featuring.length > 1 && index != song.featuring.length-1"
+                  v-if="song.data.metadata.data.featuring.length > 1 && index != song.data.metadata.data.featuring.length-1"
                 >&amp;{{ ' ' }}</span>
               </span>
             </span>
             <br>
-            <span v-for="(artist, index) in song.artists" v-bind:key="artist">
-              <a>{{ artist }}</a>
+            <span v-for="(artist, index) in song.data.metadata.data.artists" v-bind:key="artist">
+              <a>{{ artist.data.name }}</a>
               <span
-                v-if="song.artists.length > 1 && index != song.artists.length-1"
+                v-if="song.data.metadata.data.artists.length > 1 && index != song.data.metadata.data.artists.length-1"
               >&amp;{{ ' ' }}</span>
             </span>
           </div>

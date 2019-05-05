@@ -70,53 +70,37 @@ export default {
     if (detect.os() == "AndroidOS" || detect.os() == "iOS") mobile_viewport();
     const library = this.$data.library,
       player = this.$data.player;
+    library.songs = [];
     library.albums = [];
     library.artists = [];
     let songs = library.songs,
       albumsTemp = [],
       artistsTemp = [];
-
+    for (let song_meta of this.$data.library.song_metas) {
+      songs.push(
+        deserialize_song({ data: { metadata: { data: song_meta }}})
+      )
+    }
+    console.log(songs);
     for (let song of songs) {
-      for (let artist of song.artists) {
-        if (!artistsTemp.includes(artist.name)) {
-          request(
-            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${keys.lastfm}&format=json`,
-            (err, res, dat) => {
-              let artist_ = JSON.parse(dat).artist
-              if (err) throw new Error(err)
-              else {
-                request(
-                  `https://itunes.apple.com/search?&entity=musicArtist&term=${artist}`,
-                  (err, res, dat) => {
-                    request(
-                      JSON.parse(dat).results[0].artistLinkUrl.split('?')[0],
-                      (err, res, dat) => {
-                        library.artists.push({
-                          name: artist_.name,
-                          art: [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'],
-                          description: artist_.summary
-                        })
-                        artistsTemp.push(artist_.name)
-                      }
-                    )
-                  }
-                )
-              }
-            }
-          )
+      for (let artist of song.data.metadata.data.artists) {
+        if (!artistsTemp.includes(artist.data.name)) {
+          artist.avatar().then(() => {
+            artist.description().then(() => {
+              library.artists.push(artist);
+              artistsTemp.push(artist.data.name);
+            })
+          })
         }
       }
-      if (!albumsTemp.includes(song.album.title)) {
-        library.albums.push({
-          artists: song.album.artists,
-          title: song.album.title,
-          art: song.album.art
-        })
-        albumsTemp.push(song.album.title)
-      } else
+      if (!albumsTemp.includes(song.data.metadata.data.album.data.title)) {
+        library.albums.push(song.data.metadata.data.album)
+        albumsTemp.push(song.data.metadata.data.album.title)
+      } else {
         for (let album of library.albums)
-          if (album.name == song.album && !album.art.includes(song.art))
-            album.art.push(song.album.art)
+          if (album.data.title == song.data.metadata.data.album.data.title && !album.data.art.includes(song.data.metadata.data.album.data.art))
+            album.data.art.push(song.data.metadata.data.album.data.art);
+      }
       this.$data.isDone = true
     }
     player.ontimeupdate = () => {
@@ -488,17 +472,19 @@ function run_media_session(player, song, queue, action, options, platform) {
 
 class audio_source {
   /**
-   * @param {string} service - Audio hosting service
-   * @param {string} url - Audio Source URL
-   * @param {string} format - Audio Format
-   * @param {string} codec - Audio Codec
+   * @param {object} input - Audio Source
+   * @param {string} input.service - Audio hosting service
+   * @param {string} input.url - Audio Source URL
+   * @param {string} input.format - Audio Format
+   * @param {string} input.codec - Audio Codec
+   * @param {object} [input.serialized] - Input Serialized Audio Source
    */
-  constructor (service, url, format, codec) {
-    this.data = {
-      service: service,
-      url: url,
-      format: format,
-      codec: codec
+  constructor (input) {
+    this.data = input.serialized ? input.serialized.data : {
+      service: input.service,
+      url: input.url,
+      format: input.format,
+      codec: input.codec
     }
   }
 
@@ -515,15 +501,17 @@ class audio_source {
 
 class location {
   /**
-   * @param {string} service - Location's Service
-   * @param {song_metadata} metadata
-   * @param {string|object} [data] - Data for Location on Service (ie video id on YouTube)
+   * @param {object} input - Location
+   * @param {string} input.service - Location's Service
+   * @param {song_metadata} input.metadata
+   * @param {string|object} [input.data] - Data for Location on Service (ie video id on YouTube)
+   * @param {object} [input.serialized] - Input Serialized Location
    */
-  constructor (service = 'youtube', metadata, data = undefined) {
-    this.data = {
-      service: service,
-      metadata: metadata.data,
-      data: data ? data : function () {this.match(service)}
+  constructor (input) {
+    this.data = input.serialized ? input.serialized.data : {
+      service: input.service,
+      metadata: input.metadata.data,
+      data: input.data ? input.data : function () {this.match(input.service)}
     }
   }
 
@@ -561,7 +549,7 @@ class song {
     this.data = {
       metadata: metadata,
       sources: preload ? preload.sources ? preload.sources.length ? preload.sources : [preload.sources] : function () {this.get_sources()} : function () {this.get_sources()},
-      locations: preload ? preload.locations ? preload.locations.length ? preload.locations : [preload.locations] : [new location('youtube', metadata)] : [new location('youtube', metadata)]
+      locations: preload ? preload.locations ? preload.locations.length ? preload.locations : [preload.locations] : [new location({ service: 'youtube', metadata: metadata })] : [new location({ service: 'youtube', metadata: metadata })]
     }
   }
 
@@ -570,7 +558,7 @@ class song {
       this.data.locations[0].match().then((id)=>{ytdl(`https://youtube.com/watch?v=${id}`, { range: {start: 0, end: 0} }).on('info', (info) => {
         let sources = [];
         for (let format of info.formats) if (format.type.includes('audio')) 
-          sources.push(new audio_source('youtube', format.url, 'ogg', 'vorbis'));
+          sources.push(new audio_source({ service: 'youtube', url: format.url, format: 'ogg', codec: 'vorbis' }));
         this.data.sources = sources;
         resolve(sources)
       })})
@@ -580,32 +568,51 @@ class song {
 
 class song_metadata {
   /**
-   * @param {string} title - Song Title
-   * @param {(artist|artist[])} artists - Song Artist(s)
-   * @param {album} album - Song Album
-   * @param {(artist|artist[])} [featuring] - Featured Artist(s)
-   * @param {number} [tracknumber] - Song Track Number
+   * @param {object} input - Song Metadata
+   * @param {string} input.title - Song Title
+   * @param {(artist|artist[])} input.artists - Song Artist(s)
+   * @param {album} input.album - Song Album
+   * @param {(artist|artist[])} [input.featuring] - Featured Artist(s)
+   * @param {number} [input.tracknumber] - Song Track Number
+   * @param {object} [input.serialized] - Input Serialized Song
    */
-  constructor (title, artists, album, featuring = [], tracknumber = 0) {
-    this.data = {
-      title: title,
-      artists: artists.length ? artists : [artists],
-      album: album,
-      featuring: featuring.length ? featuring : [featuring],
-      tracknumber: tracknumber
+  constructor (input) {
+    if (input.serialized) {
+      let artists = [];
+      for (let foo of input.serialized.data.artists)
+        artists.push(new artist({ serialized: foo }));
+      let featuring = []
+      if (input.serialized.data.featuring)
+        for (let foo of input.serialized.data.featuring)
+          featuring.push(new artist({ serialized: foo }));
+      
+      this.data = {
+        title: input.serialized.data.title,
+        artists: artists,
+        album: new album({ serialized: input.serialized.data.album }),
+        featuring: featuring,
+        tracknumber: input.serialized.data.tracknumber
+      }
+    } else this.data = {
+      title: input.title,
+      artists: input.artists.length ? input.artists : [input.artists],
+      album: input.album,
+      featuring: input.featuring ? input.featuring.length ? input.featuring : [input.featuring] : [],
+      tracknumber: input.tracknumber || 0
     }
   }
 }
 
 class artist {
   /**
-   * @param {string} name - Artist Name
+   * @param {object} input - Artist
+   * @param {string} input.name - Artist Name
+   * @param {object} input.serialized - Serialized Artist
    */
-  constructor (name) {
-    this.data = {
-      art: false,
-      name: name
-    };
+  constructor (input) {
+    this.data = input.serialized ? input.serialized.data : {
+      name: input.name
+    }
   }
 
   /**
@@ -613,6 +620,7 @@ class artist {
    * @param {string} [artist_url] - If you have the artist URL/ID already you can supplement it to reduce requests
    */
   avatar(artist_url = undefined) {
+    let foo_bar = this.data;
     return new Promise((resolve, reject) => {
       let art = this.data.art;
       if (this.data.art) resolve(this.data.art);
@@ -626,8 +634,8 @@ class artist {
           request(
             artist_link.split('?')[0],
             (err, res, dat) => {
-              art = [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'];
-              resolve(art);
+              foo_bar.art = [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'];
+              resolve(foo_bar.art);
             }
           )
         }
@@ -645,8 +653,53 @@ class artist {
         (err, res, dat) => {
           if (err) throw new Error(err)
           else {
-            this.description = JSON.parse(dat).artist.bio.summary.split('<a')[0].slice(0, -1)
-            resolve(this.description)
+            this.data.description = JSON.parse(dat).artist.bio.summary
+              .split('<a')[0].slice(0, -1); // Removes stupid links and crap at the end
+
+            /** What This Thing Does:
+             * There are at least three artists with this name
+             * 1. A popular American rock band
+             * 2. A British psychedelic trance producer
+             * 3. An underground rapper
+             * 
+             * Journey is an American rock band formed in San Francisco, California in 1973. 
+               The band has gone through several phases since its inception by former members of Santana. 
+               The band's greatest commercial success came in the late 1970s through the early 1980s with 
+               a series of power ballads and songs such as "Don't Stop Believin'"
+             * 
+             *  ||
+             *  \/
+             * 
+             * Journey is an American rock band formed in San Francisco, California in 1973. 
+               The band has gone through several phases since its inception by former members of Santana. 
+               The band's greatest commercial success came in the late 1970s through the early 1980s with 
+               a series of power ballads and songs such as "Don't Stop Believin'"
+             * 
+             * 
+             * There are at least three artists with this name
+             * 1. A popular American rock band
+             * 2. A British psychedelic trance producer
+             * 3. An underground rapper
+             */
+            if (this.data.description.split('\n')[0] == "There are at least three artists with this name") { // aka, "do we need to do all of this?"
+              let new_desc = []; // The part you want to read
+              let blah_blah = []; // The part you want at the bottom
+
+              for (let line of this.data.description.split('\n')) {
+                if (line.charAt(0).toString().match(/^[0-9]+$/) != null) new_desc.push(line); // Makes sure line doesn't start with number
+                else blah_blah.push(line);
+              }
+
+              this.data.description = [ // Backwards-ish (its weird)
+                ...blah_blah.slice(2), // Basic Descriptions of other artists
+                '','', // 2 Line Breaks for spacing
+                blah_blah[0], // There are at least.... line
+                '', // Line Break for spacing
+                ...new_desc // Artist Description
+              ].join('\n'); // Adds back in the newline formatting
+            }
+
+            resolve(this.data.description)
           }
         }
       )
@@ -670,21 +723,22 @@ class artist {
                     if (err) throw new Error(err);
                     else {
                       let artists = []
-                      for (let foo of track.artistName.split(/ *[&X,] *| *x +| +x */)) artists.push(new artist(foo));
+                      for (let foo of track.artistName.split(/ *[&X,] *| *x +| +x */)) artists.push(new artist({ name: foo }));
                       let album_artists = []
-                      for (let foo of JSON.parse(dat__).results[0].artistName.split(/ *[&X,] *| *x +| +x */)) album_artists.push(new artist(foo));
+                      for (let foo of JSON.parse(dat__).results[0].artistName.split(/ *[&X,] *| *x +| +x */)) album_artists.push(new artist({ name: foo }));
                       parsed_songs.push(new song(
-                        new song_metadata(
-                          track.trackName,
-                          artists,
-                          new album(
-                            track.collectionName,
-                            album_artists,
-                            [(track.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")).toString()]
-                          )
-                          [''],
-                          track.trackNumber
-                        ))
+                        new song_metadata({
+                          title: track.trackName,
+                          artists: artists,
+                          album: new album(
+                            {
+                              title: track.collectionName,
+                              artists: album_artists,
+                              art: [(track.artworkUrl100.replace("100x100bb.jpg", "200x200bb.jpg")).toString()]
+                            }
+                          ),
+                          tracknumber: track.trackNumber
+                        }))
                       );
                       if (parsed_songs.length == raw_songs.length) resolve(parsed_songs);
                     }
@@ -701,28 +755,62 @@ class artist {
 
 class album {
   /**
-   * @param {string} title - Album Title
-   * @param {string[]} artists - Album Artist(s)
-   * @param {string[]} art - Album Art
-   * @param {number} [year] - Year Published
+   * @param {object} input - Album
+   * @param {string} input.title - Album Title
+   * @param {string[]} input.artists - Album Artist(s)
+   * @param {string[]} input.art - Album Art
+   * @param {number} input.[year] - Year Published
+   * @param {object} [input.serialized] - Input a Serialized Album
    */
-  constructor (title, artists, art, year) {
-    this.data = {
-      title: title,
-      artists: artists,
-      art: art,
-      year: year || undefined
-    }
+  constructor (input) {
+    if (input.serialized) this.data = input.serialized.data;
+    else this.data = {
+      title: input.title,
+      artists: input.artists,
+      art: input.art,
+      year: input.year || undefined
+    };
   }
 }
 
+function deserialize_song(serialized_song) {
+  let locations = [];
+  if (serialized_song.data.locations)
+    for (let foo of serialized_song.data.locations) 
+      locations.push(new location({ serialized: foo }));
+
+  let sources = [];
+  if (serialized_song.data.sources) 
+    for (let foo of serialized_song.data.sources) 
+      sources.push(new audio_source({ serialized: foo }));
+  return new song(
+    new song_metadata({ serialized: serialized_song.data.metadata }),
+    {
+      ...(locations.length != 0
+        && {
+          locations: locations
+        }
+      ),
+      ...(sources.length != 0
+        && {
+          sources: sources
+        }
+      )
+    }
+  )
+}
+
 function run_this(callback) {
-  let temp_artist = new artist('Journey');
+  let temp_artist = new artist({ name: 'Michael Jackson' });
+  let localStorage = window.localStorage;
   temp_artist.tracks().then((songs) => {
     console.log(songs);
     songs[1].get_sources().then((sources) => {
       callback(sources[0].data.url);
     })
+  })
+  temp_artist.avatar().then((description) => {
+    console.log(description);
   })
 }
 </script>

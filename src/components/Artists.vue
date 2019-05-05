@@ -3,9 +3,9 @@
     <dyle
       v-for="artist of artists"
       v-bind:key="artist"
-      :art="artist.art[artist.art.length - 1]"
-      :title="artist.name"
-      v-on:click.native="open_artist(artist.name)"
+      :art="artist.data.art[artist.data.art.length - 1]"
+      :title="artist.data.name"
+      v-on:click.native="open_artist(artist)"
     ></dyle>
   </dyler>
 </template>

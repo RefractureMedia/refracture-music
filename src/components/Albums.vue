@@ -3,8 +3,8 @@
     <dyle
       v-for="album of albums"
       v-bind:key="album"
-      :art="album.art[album.art.length - 1]"
-      :title="album.title"
+      :art="album.data.art[album.data.art.length - 1]"
+      :title="album.data.title"
       type="album"
       v-on:click.native="open_album(album)"
     ></dyle>
