@@ -242,11 +242,9 @@ export default {
       this.$data.currentSong.song = song;
       this.$data.currentSong.currentTime = '0:00'
       this.$data.currentSong.duration = '0:00';
-      console.log(song.data.metadata)
-      let song_ = deserialize_song(JSON.parse(JSON.stringify(song)));
-      song_.locations[0].match();
-      song_.getSources().then((sources) => {
-        this.$data.player.src = sources[0].url;
+      song.data.locations[0].match();
+      song.get_sources().then((sources) => {
+        this.$data.player.src = sources[0].data.url;
         this.$data.player.play();
       })
       //dispatch_presence(this.$data.currentSong.song, this.$data.player);
@@ -529,10 +527,10 @@ class location {
    * @param {object} [input.serialized] - Input Serialized Location
    */
   constructor (input) {
-    this.data = {
+    this.data = input.serialized ? input.serialized.data : {
       service: input.service,
       metadata: input.metadata.data,
-      //data: input.data ? input.data : function () {this.match(input.service)}
+      data: input.data ? input.data : function () {this.match(input.service)}
     }
   }
 
@@ -545,9 +543,8 @@ class location {
         return new Promise((resolve, reject) => {
           let artists = []
           for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
-          yt_search(
-            `${artists.join(' & ')} 
-            ${this.data.metadata.title}`,
+          console.log(`${artists.join(' & ')} ${this.data.metadata.title}`);
+          yt_search(`${artists.join(' & ')} ${this.data.metadata.title}`,
             (ids) => {
               this.data.data = ids[0];
               resolve(ids[0]);
@@ -578,6 +575,7 @@ class song {
     return new Promise((resolve, reject) => {
       this.data.locations[0].match().then((id)=>{ytdl(`https://youtube.com/watch?v=${id}`, { range: {start: 0, end: 0} }).on('info', (info) => {
         let sources = [];
+        console.log(info);
         for (let format of info.formats) if (format.type.includes('audio')) 
           sources.push(new audio_source({ service: 'youtube', url: format.url, format: 'ogg', codec: 'vorbis' }));
         this.data.sources = sources;
@@ -802,7 +800,7 @@ function deserialize_song(serialized_song) {
 
   let sources = [];
   if (serialized_song.data.sources) 
-    for (let foo of serialized_song.data.sources) 
+    for (let foo of serialized_song.data.sources)
       sources.push(new audio_source({ serialized: foo }));
   return new song(
     new song_metadata({ serialized: serialized_song.data.metadata }),
@@ -829,6 +827,8 @@ function run_this(callback) {
     songs[1].get_sources().then((sources) => {
       callback(sources[0].data.url);
     })
+    console.log(songs[1])
+    console.log(deserialize_song(JSON.parse(JSON.stringify(songs[1]))))
   })
   temp_artist.avatar().then((description) => {
     console.log(description);
