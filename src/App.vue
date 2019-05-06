@@ -543,9 +543,10 @@ class location {
         return new Promise((resolve, reject) => {
           let artists = []
           for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
-          console.log(`${artists.join(' & ')} ${this.data.metadata.title}`);
-          yt_search(`${artists.join(' & ')} ${this.data.metadata.title}`,
+          console.log(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`));
+          yt_search(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`),
             (ids) => {
+              console.log(ids);
               this.data.data = ids[0];
               resolve(ids[0]);
             }
