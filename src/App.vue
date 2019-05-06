@@ -10,19 +10,19 @@
           <library-search v-if="!modal.active"/>
           <router-view v-if="!modal.active" :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
         </div>
-        <media-bar ref="mediabar" :song="currentSong"></media-bar>
+        <media-bar ref="mediabar"></media-bar>
       </div>
     </div>
     <v-style>
       .whole-overlay::before {
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url({{ currentSong.song.album.art[currentSong.song.album.art.length-1] }});
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url({{ currentSong.song.data.metadata.data.album.data.art[currentSong.song.data.metadata.data.album.data.art.length-1] }});
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
       }
     </v-style>
     <div v-if="false" class="whole-overlay">
-      <media-bar style="background: transparent !important; align-self: end; margin-bottom: 5vh;" :song="currentSong"></media-bar>
+      <media-bar style="background: transparent !important; align-self: end; margin-bottom: 5vh;"></media-bar>
     </div>
   </div>
 </template>
@@ -105,7 +105,7 @@ export default {
     }
     player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(player.currentTime)
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('time', Math.floor(player.currentTime));
     }
     player.onerror = e => {
@@ -116,23 +116,23 @@ export default {
     player.onchange = () => {
       if (player.canPlayType == false) throw Error("Cannot Play This File Type")
       this.media_session('new')
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
     player.ondurationchange = () => {
       this.$data.currentSong.duration = getTimestamp(player.duration)
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
 
     let paused_prev = true;
     this.$data.player.onpause = () => {
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('paused')
       if (!paused_prev) toggleVis("update_pause");
       if (!paused_prev) toggleVis("update_play");
       if (!paused_prev) paused_prev = true;
     }
     this.$data.player.onplay = () => {
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('played')
       if (paused_prev) toggleVis("update_pause");
       if (paused_prev) toggleVis("update_play");
@@ -141,12 +141,27 @@ export default {
 
     no_scroll();
 
-    dispatch_presence(this.$data.currentSong.song, this.$data.player);
+    //dispatch_presence(this.$data.currentSong.song, this.$data.player);
 
     document.addEventListener("open_artist", (res) => {
       this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
     })
 
+    this.$data.currentSong.song = {
+      data: {
+        metadata: {
+          data: {
+            artists: [{data: { name: ''}}],
+            title: '',
+            album: { data: {
+              art: ['https://i.imgur.com/HIcLTbc.png'],
+              title: '',
+              artists: [{data: { name: ''}}]
+            }}
+          }
+        }
+      }
+    }
     run_this((url)=>{this.$data.player.src=url; this.$data.player.play();});
   },
   methods: {
@@ -224,11 +239,17 @@ export default {
     },
     setCurrentSong(song) {
       this.$data.player.pause();
-      //this.$refs.mediabar[0].pause();
       this.$data.currentSong.song = song;
-      this.$data.currentSong.duration = song.duration || "0:00";
-      this.updateSong(song)
-      dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      this.$data.currentSong.currentTime = '0:00'
+      this.$data.currentSong.duration = '0:00';
+      console.log(song.data.metadata)
+      let song_ = deserialize_song(JSON.parse(JSON.stringify(song)));
+      song_.locations[0].match();
+      song_.getSources().then((sources) => {
+        this.$data.player.src = sources[0].url;
+        this.$data.player.play();
+      })
+      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
     },
     updateSong() {
       const song = this.$data.currentSong,
@@ -508,10 +529,10 @@ class location {
    * @param {object} [input.serialized] - Input Serialized Location
    */
   constructor (input) {
-    this.data = input.serialized ? input.serialized.data : {
+    this.data = {
       service: input.service,
       metadata: input.metadata.data,
-      data: input.data ? input.data : function () {this.match(input.service)}
+      //data: input.data ? input.data : function () {this.match(input.service)}
     }
   }
 

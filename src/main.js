@@ -33,10 +33,14 @@ Vue.use(VueKeybindings, {
   }
 })
 
+
+let store = {};
+
 /* eslint-disable no-new */
 window._VueInstance = new Vue({
   el: '#app',
   router,
+  store,
   components: {
     App
   },

@@ -51,15 +51,19 @@ export default {
   },
   currentSong: {
     song: {
-      artists: [""],
-      title: "",
-      featuring: [""],
-      album: {
-        artists: [""],
-        title: "",
-        art: ["https://i.imgur.com/HIcLTbc.png"]
-      },
-      cachedLink: "",
+      data: {
+        metadata: {
+          data: {
+            artists: [{data: { name: ''}}],
+            title: '',
+            album: { data: {
+              art: ['https://i.imgur.com/HIcLTbc.png'],
+              title: '',
+              artists: [{data: { name: ''}}]
+            }}
+          }
+        }
+      }
     },
     currentTime: "0:00",
     duration: "0:00"

@@ -1,7 +1,7 @@
 <template>
   <div>
     <center>
-      <div v-if="$parent.$parent.md().os() != 'AndroidOS' && $parent.$parent.md().os() != 'iOS' && displayHeader">
+      <div v-if="$root.$children[0].md().os() != 'AndroidOS' && $root.$children[0].md().os() != 'iOS' && displayHeader">
         <div class="grow-container">
           <div class="grow listheader">
             <div class="grow-cell entry">
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div
-        v-if="$parent.$parent.md().os() != 'AndroidOS' && $parent.$parent.md().os() != 'iOS'"
+        v-if="$root.$children[0].md().os() != 'AndroidOS' && $root.$children[0].md().os() != 'iOS'"
         v-bind:class="songContainer"
       >
         <div class="grow-container">
@@ -76,7 +76,7 @@
       </div>
     </center>
     <div
-      v-if="$parent.$parent.md().os() == 'AndroidOS' || $parent.$parent.md().os() == 'iOS'"
+      v-if="$root.$children[0].md().os() == 'AndroidOS' || $root.$children[0].md().os() == 'iOS'"
       v-bind:class="songContainer"
     >
       <div class="grow-container">
@@ -133,7 +133,7 @@ export default {
   },
   methods: {
     setSong(song) {
-      this.$parent.$parent.setCurrentSong(song);
+      this.$root.$children[0].setCurrentSong(song);
     },
     openArtist(artist) {
       getArtist(artist, keys);
