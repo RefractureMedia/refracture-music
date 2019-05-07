@@ -545,10 +545,9 @@ class location {
           for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
           console.log(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`));
           yt_search(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`),
-            (ids) => {
-              console.log(ids);
-              this.data.data = ids[0];
-              resolve(ids[0]);
+            (results) => {
+              this.data.data = results[0].id;
+              resolve(results[0].id);
             }
           )
         })

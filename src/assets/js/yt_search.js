@@ -8,100 +8,70 @@ export default (search_query, callback) => {
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
                 if (err) console.log(err);
-                else callback(getIDs(dat));
+                else callback(getResults(dat));
             }
         );
     } catch (e) {
         request(
             `https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
             (err, res, dat) => {
-                if (err) cors();
+                if (err) console.warn(err);
                 else {
-                    console.log(getResults(dat, getIDs(dat), getTitles(dat)));
-                    callback(getIDs(dat));
+                    callback(getResults(dat));
                 }
             }
         ).on("error", (err) => {})
-        
-        function cors() {
-            request(
-                `https://us-central1-refracture-media.cloudfunctions.net/cors?request=${encodeURIComponent(JSON.stringify({url:`https://www.youtube.com/results?search_query=${search_query}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`}))}`,
-                (err, res, dat) => {
-                    if (err) console.warn(err);
-                    else callback(getIDs(dat));
-                }
-            )
-        }
     }
 }
 
-function getResults(data, ids, titles) {
-    let results = []
-    let raw_titles = []
-    ids.forEach((id, index) => {
-        if (titles[index].substring(0,5) != 'Mix -') {
-            results.push({
-                id: id,
-                title: he.decode(titles[index])
-            });
-            raw_titles.push(titles[index]);
-        }
-    })
-    getMoreInfo(data, raw_titles);
+function getResults(data) {
+    let content = JSON.parse(data)[1].body.content; // Path to Results HTML YouTube API gives to renderer
+    let results = [];
+
+    for (let id of content.split('data-context-item-id="').slice(1)) {
+        let title = content.split(`data-context-item-id="${id.split('"')[0]}"`)[1].split('" rel="spf-prefetch"')[0].split('title="').slice(-1).pop();
+        title = title.includes('" aria-describedby="description-id-') ? title.split('" aria-describedby="description-id-')[0] : title;
+
+        results.push({
+            id: id.split('"')[0],
+            title: he.decode(title),
+            ...getMoreInfo(content.split(`title="${title}"`)[1].split('aria-label="')[1].split('"')[0].replace(title,""))
+        })
+    }
+    console.log(results);
     return results;
 }
 
-function getIDs(data) {
-    let ids = [];
-    let content = JSON.parse(data)[1].body.content; // Path to Results HTML YouTube API gives to renderer
-    let find_links = content.split("/watch?v=").slice(1) // Finds watch links, slice 1 removes initial HTML in front of first link
-    for (let link of find_links) {
-        let id = link.split('"')[0]; // split on '"' skips HTML between
-        if (id.length === 11 && !ids.includes(id)) ids.push(id); // length lock rats out playlists & anything that gets through, includes removing duplicates
-    }
-    return ids;
-}
-
-function getTitles(data) {
-    let titles = [];
-    let content = JSON.parse(data)[1].body.content;
-    let find_titles = content.split('"  title="').slice(28);
-    for (let title of find_titles) {
-        titles.push(title.split('"')[0]);
-    }
-    return titles;
-}
-
-function getMoreInfo(data, titles) {
-    let infos = [];
-    let content = JSON.parse(data)[1].body.content;
-    for (let title of titles) {
-        let split_title = content.split(title);
-        console.warn('-----')
-        let rest = split_title[2].split(' by ').slice(1).join(' by ');
-        let channel = rest.split(/ ([0-9][0-9]|[0-9]) (year|month|week|day|hour|minute|second)(s?) ago /)[0];
-        let time_text = remove(rest.split(channel)[1],['>','"',',',' ']);
-        let length = {};
-        let ago = {};
-        let captures = ['year','month','week','day','hour','minute','second'];
-        for (let capture of captures) {
-            for (let add of ['sago','ago','s','']) {
-                if (time_text.includes(`${capture}${add}`)) {
-                    let number = time_text.split(capture)[0].split(/[a-z]/).slice(-1).pop()
-                    if (add.includes('ago')) ago[`${capture}${add}`] = parseInt(number);
-                    else length[`${capture}${add}`] = parseInt(number);
-                    time_text = time_text.replace(`${number}${capture}${add}`, '');
+function getMoreInfo(title) {
+    let rest = title.split(' by ').slice(1).join(' by ');
+    let channel = rest.split(/ ([0-9][0-9]|[0-9]) (year|month|week|day|hour|minute|second)(s?) ago /)[0];
+    rest = rest.replace(channel, '');
+    let time_text = remove(rest,['>','"',',',' ']);
+    let length = {ms: 0};
+    let published = {};
+    let captures = [{measure: 'year'},{measure:'month'},{measure:'week', ms: 604800000},{measure:'day', ms:86400000},{measure: 'hour', ms:3600000},{ measure: 'minute', ms:60000},{ measure: 'second', ms: 1000}];
+    for (let capture of captures) {
+        for (let add of ['sago','ago','s','']) {
+            if (time_text.includes(`${capture.measure}${add}`)) {
+                let number = time_text.split(capture.measure)[0].split(/[a-z]/).slice(-1).pop()
+                if (add.includes('ago')) {
+                    published.unit = capture.measure;
+                    published.count = parseInt(number);
                 }
+                else {
+                    length[`${capture.measure}${add}`] = parseInt(number);
+                    if (capture.ms) length.ms += capture.ms*parseInt(number);
+                }
+                time_text = time_text.replace(`${number}${capture.measure}${add}`, '');
             }
         }
-        console.log({
-            channel: channel,
-            ...ago,
-            length: length,
-            views: parseInt(time_text.replace('views', ''))
-        });
-        //console.log(split_title[1]);
     }
+    return {
+        channel: channel,
+        published: published,
+        length: length,
+        views: parseInt(time_text.replace('views', ''))
+    };
 }
 
 function remove(input, array) {
@@ -114,6 +84,5 @@ function remove(input, array) {
         }
         if (!has) output.push(in_);
     }
-    console.log(output.join(''))
     return output.join('');
 }
