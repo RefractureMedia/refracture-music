@@ -162,7 +162,6 @@ export default {
         }
       }
     }
-    run_this((url)=>{this.$data.player.src=url; this.$data.player.play();});
   },
   methods: {
     getCategory() {
@@ -171,63 +170,6 @@ export default {
     sidebar_toggle() {
       if (this.$data.state == "closed") this.$data.state = "open";
       else this.$data.state = "closed";
-    },
-    setSong(vidId, clear = true) {
-      const player = this.$data.player
-      if (clear) this.$data.currentSong.song = {
-        artists: ["-"],
-        title: "-",
-        featuring: [""],
-        album: {
-          artists: ["-"],
-          title: "-",
-          art: ["https://i.imgur.com/HIcLTbc.png"]
-        },
-        cachedLink: "",
-      };
-
-      ytdl(`https://youtube.com/watch?v=${vidId}`, { range: {start: 0, end: 0} }).on('info', (info) => {
-        if (clear) {
-          let title = info.title;
-          let final_featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [''];
-
-          title = title.replace(/((\[)|(\()).*?(R|r)elease((\])|(\)))/,'');
-          title = title.replace(/((\[)|(\())(((F|f)(eat|eaturing))|((F|f)t)) (.*?)((\])|(\)))/,'');
-          title = title.replace(/((\[)|(\()).*?(V|v)ideo((\])|(\)))/, '');
-          title = title.replace(/((\[)|(\())(O|o)fficial (.*?)((\])|(\)))/,'');
-          title = title.replace(/((\[)|(\())(A|a)nimation (.*?)((\])|(\)))/,'');
-          title = title.replace(/((M|m)usic (V|v)ideo)/, '')
-
-          let try1 = title.split(' - ')
-          let try2 = title.split(' by ');
-          let final_title;
-          let final_artists;
-          if (try1.length > 1) {
-            final_artists = try1[0].split(/ *[&X,] *| *x +| +x */);
-            if (try1.length == 2) final_title = try1[1];
-            else final_title = try1.slice(1).join(' - ');
-          } else if (try2.length > 1) {
-            final_title = try2[0];
-            final_artist = try2[1].split(/ *[&X,] *| *x +| +x */);
-          } else {
-            final_title = title;
-            final_artists = ['YouTube'];
-          }
-          this.$data.currentSong.song.title = final_title;
-          this.$data.currentSong.song.artists = final_artists;
-          this.$data.currentSong.song.featuring = final_featuring;
-          this.$data.currentSong.song.album.art = [info.player_response.videoDetails.thumbnail.thumbnails[info.player_response.videoDetails.thumbnail.thumbnails.length - 1].url];
-          this.$data.currentSong.song.album.title = "YouTube";
-        }
-        let parsed_formats = [];
-        for (let format of info.formats) {
-          if(format.type.includes('audio')) parsed_formats.push({
-            src: format.url
-          });
-        }
-        player.src = parsed_formats[0].src;
-        player.play();
-      });
     },
     browseSearch() {
       if (!this.$data.search.match(/:\/\//)) {
@@ -248,15 +190,6 @@ export default {
         this.$data.player.play();
       })
       //dispatch_presence(this.$data.currentSong.song, this.$data.player);
-    },
-    updateSong() {
-      const song = this.$data.currentSong,
-        player = this.$data.player;
-      
-      ytSearch(
-        `${song.song.artists.join(" ")} ${song.song.title}`,
-        ids => { this.setSong(ids[0], false); }
-      );
     },
     md() {
       return new MobileDetect(window.navigator.userAgent)
@@ -543,7 +476,6 @@ class location {
         return new Promise((resolve, reject) => {
           let artists = []
           for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
-          console.log(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`));
           yt_search(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`),
             (results) => {
               this.data.data = results[0].id;
@@ -819,20 +751,43 @@ function deserialize_song(serialized_song) {
   )
 }
 
-function run_this(callback) {
-  let temp_artist = new artist({ name: 'Michael Jackson' });
-  let localStorage = window.localStorage;
-  temp_artist.tracks().then((songs) => {
-    console.log(songs);
-    songs[1].get_sources().then((sources) => {
-      callback(sources[0].data.url);
-    })
-    console.log(songs[1])
-    console.log(deserialize_song(JSON.parse(JSON.stringify(songs[1]))))
-  })
-  temp_artist.avatar().then((description) => {
-    console.log(description);
-  })
+function yt_title_parse(input) {
+  let title = input;
+  let final_featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [''];
+
+  title = title.replace(/((\[)|(\()).*?(R|r)elease((\])|(\)))/,'');
+  title = title.replace(/((\[)|(\())(((F|f)(eat|eaturing))|((F|f)t)) (.*?)((\])|(\)))/,'');
+  title = title.replace(/((\[)|(\()).*?(V|v)ideo((\])|(\)))/, '');
+  title = title.replace(/((\[)|(\())(O|o)fficial (.*?)((\])|(\)))/,'');
+  title = title.replace(/((\[)|(\())(A|a)nimation (.*?)((\])|(\)))/,'');
+  title = title.replace(/((M|m)usic (V|v)ideo)/, '')
+
+  let try1 = title.split(' - ')
+  let try2 = title.split(' by ');
+  let final_title;
+  let final_artists;
+  if (try1.length > 1) {
+    final_artists = try1[0].split(/ *[&X,] *| *x +| +x */);
+    if (try1.length == 2) final_title = try1[1];
+    else final_title = try1.slice(1).join(' - ');
+  } else if (try2.length > 1) {
+    final_title = try2[0];
+    final_artist = try2[1].split(/ *[&X,] *| *x +| +x */);
+  } else {
+    final_title = title;
+    final_artists = ['YouTube'];
+  }
+
+  return {
+    title: final_title,
+    artists: final_artists,
+    featuring: final_featuring,
+    album: {
+      art: [info.player_response.videoDetails.thumbnail.thumbnails[info.player_response.videoDetails.thumbnail.thumbnails.length - 1].url],
+      title: "YouTube",
+      artists: ["Foo bar"]
+    }
+  }
 }
 </script>
 
