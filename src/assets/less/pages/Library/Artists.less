@@ -12,6 +12,11 @@
       .art {
         width: 100%;
         height: 100%;
+        opacity: 1;
+        &:before {
+          content: '';
+          background: black;
+        }
       }
       .description {
         margin-top: -1.5rem;
@@ -21,6 +26,13 @@
         width: fit-content;
       }
       &:hover {
+        .art {
+          opacity: .7;
+          &:before {
+            content: '';
+            background: black;
+          }
+        }
         .description {
           margin-top: -2.5rem;
           color: currentColor;

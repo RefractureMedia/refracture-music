@@ -15,36 +15,37 @@ export default {
 </script>
 
 <style lang="less">
+@import './../../assets/less/variables.less';
+
 .tile {
   width: 11.5rem;
   height: 11.5rem;
   margin: .25rem;
+  background: black;
   .art {
     width: 100%;
     height: 100%;
+    opacity: 1;
+    transition: opacity .2s;
+    will-change: opacity;
   }
   .description {
     margin-top: -1.5rem;
-    color: transparent;
+    color: @accent-primary;
     transition: margin-top 40ms;
     width: fit-content;
+    opacity: 0;
+    position: relative;
   }
   &:hover {
-    &::after {
-      box-shadow: inset 0rem -6rem linear-gradient(180deg, rgba(0,0,0,.4) 0%, transparent 100%);
-      content: ''; 
-      display: block;
-      position: relative;
-      top: 0;
-      margin-top: -12rem;
-      width: 12rem;
-      height: 12rem;
-      z-index: 1000;
+    .art {
+      opacity: .4;
     }
     .description {
       margin-top: -2.5rem;
-      color: currentColor;
+      color: @accent-primary;
       transition: margin-top 40ms;
+      opacity: 1;
     }
   }
 }

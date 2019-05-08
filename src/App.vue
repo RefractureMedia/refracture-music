@@ -144,7 +144,7 @@ export default {
     //dispatch_presence(this.$data.currentSong.song, this.$data.player);
 
     document.addEventListener("open_artist", (res) => {
-      this.open_modal("artist", { artist: res.detail.artist, songs: res.detail.songs })
+      this.open_modal("artist", { artist: res })
     })
 
     this.$data.currentSong.song = {
@@ -206,18 +206,14 @@ export default {
           console.log(content);
         }
         case "artist": {
-          request(
-            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${content.artist}&api_key=${keys.lastfm}&format=json`,
-            (err, res, dat) => {
-              let images = [];
-              let artist = JSON.parse(dat).artist
-              for (let image of artist.image) images.push(image["#text"])
-              this.$data.modal.content.images = images;
-              this.$data.modal.content.details = artist.bio.summary.split('<a')[0].slice(0, -1);
-              this.$data.modal.active = true;
-              console.log(this.$data.content);
-            }
-          )
+          Promise.all([
+            content.avatar(),
+            content.description(),
+            content.tracks()
+          ]).then((results) => {
+            console.log(results);
+            this.$data.modal.active = true
+          })
         }
       }
     }
@@ -573,19 +569,20 @@ class artist {
   avatar(artist_url = undefined) {
     let foo_bar = this.data;
     return new Promise((resolve, reject) => {
-      let art = this.data.art;
       if (this.data.art) resolve(this.data.art);
       else {
         if (!artist_url) request(`https://itunes.apple.com/search?&entity=musicArtist&term=${this.data.name}`,(err, res, dat) => {
           get_image(JSON.parse(dat).results[0].artistLinkUrl);
         })
-        else get_image(artist_url)
-
+        else get_image(artist_url);
         function get_image(artist_link) {
           request(
             artist_link.split('?')[0],
             (err, res, dat) => {
-              foo_bar.art = [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'];
+              console.log(artist_link.split('?')[0]);
+              if (dat.includes('<meta property="og:image" content="')) {
+                foo_bar.art = [dat.split('<meta property="og:image" content="')[1].split('" id="')[0].split('/').slice(0, -1).join('/') + '/200x200.png'];
+              } else foo_bar.art = ['https://i.imgur.com/HIcLTbc.png'];
               resolve(foo_bar.art);
             }
           )
@@ -599,6 +596,8 @@ class artist {
    */
   description() {
     return new Promise((resolve, reject) => {
+      if (this.data.description) resolve(this.data.description);
+      else
       request(
         `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${this.data.name}&api_key=${keys.lastfm}&format=json`,
         (err, res, dat) => {
@@ -659,6 +658,8 @@ class artist {
 
   tracks() {
     return new Promise((resolve, reject) => {
+      if (this.data.tracks) resolve(this.data.tracks);
+      else 
       request(
         `https://itunes.apple.com/search?&entity=musicArtist&term=${this.data.name}`,
         (err, res, dat) => {
@@ -691,7 +692,10 @@ class artist {
                           tracknumber: track.trackNumber
                         }))
                       );
-                      if (parsed_songs.length == raw_songs.length) resolve(parsed_songs);
+                      if (parsed_songs.length == raw_songs.length) {
+                        this.data.tracks = parsed_songs;
+                        resolve(this.data.tracks);
+                      }
                     }
                   }
                 );

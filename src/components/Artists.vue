@@ -25,8 +25,7 @@ export default {
   },
   methods: {
     open_artist(artist) {
-      console.log(artist);
-      getArtist(artist, keys);
+      this.$root.$children[0].open_modal('artist',artist);
     }
   }
 };

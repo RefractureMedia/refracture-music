@@ -15,11 +15,11 @@
         </div>
         <div v-if="type == 'artist'">
             <center>
-                <img :src="content.images[content.images.length - 1]" width="200vw">
-                <h2>{{ content.artist }}</h2>
+                <img :src="content.data.art.slice(-1).pop()" width="200vw">
+                <h2>{{ content.data.name }}</h2>
             </center>
             <songs
-                :songs="content.songs"
+                :songs="content.data.tracks"
                 :currentSong="$parent.currentSong"
                 :player="$parent.player"
                 displayHeader="false"

@@ -136,7 +136,7 @@ export default {
       this.$root.$children[0].setCurrentSong(song);
     },
     openArtist(artist) {
-      getArtist(artist, keys);
+      this.$root.$children[0].open_modal('artist',artist);
     }
   }
 };
