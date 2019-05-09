@@ -38,7 +38,6 @@ function getResults(data) {
             ...getMoreInfo(content.split(`title="${title}"`)[1].split('aria-label="')[1].split('"')[0].replace(title,""))
         })
     }
-    console.log(results);
     return results;
 }
 

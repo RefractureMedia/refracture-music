@@ -2,10 +2,12 @@
     <div class="main" v-if="active">
         <a v-on:click="$parent.modal.active = false">Back</a>
         <div v-if="type == 'album'">
-            <img :src="content.image">
-            <p>{{ content.title }}</p>
+            <center>
+                <img :src="content.data.art.slice(-1).pop()" width="200vw">
+                <h2>{{ content.data.title }}</h2>
+            </center>
             <songs
-                :songs="content.songs"
+                :songs="content.data.songs"
                 :currentSong="$parent.currentSong"
                 :player="$parent.player"
                 displayHeader="false"

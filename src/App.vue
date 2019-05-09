@@ -202,16 +202,16 @@ export default {
       this.$data.modal.content = content;
       switch (type) {
         case "album": {
-          //console.log(`http://ws.audioscrobbler.com/2.0/?method=album.getInfo&artist=${content.artists.join(' & ')}&album=${content.title}&api_key=${keys.lastfm}&format=json`);
-          console.log(content);
+          content.getTracks().then(() => {
+            this.$data.modal.active = true
+          })
         }
         case "artist": {
           Promise.all([
             content.avatar(),
             content.description(),
             content.tracks()
-          ]).then((results) => {
-            console.log(results);
+          ]).then(() => {
             this.$data.modal.active = true
           })
         }
@@ -227,6 +227,11 @@ export default {
     },
     escape: function() {
       escape_input();
+    }
+  },
+  watch: {
+    '$route' () {
+        this.$data.modal.active = false;
     }
   }
 }
@@ -715,6 +720,7 @@ class album {
    * @param {string[]} input.artists - Album Artist(s)
    * @param {string[]} input.art - Album Art
    * @param {number} input.[year] - Year Published
+   * @param {number} input.[id] - iTunes CollectionID
    * @param {object} [input.serialized] - Input a Serialized Album
    */
   constructor (input) {
@@ -725,6 +731,48 @@ class album {
       art: input.art,
       year: input.year || undefined
     };
+  }
+
+  getTracks(online = true) {
+    if (online) return new Promise((resolve,reject) => {
+      request(
+        `https://itunes.apple.com/search?entity=musicArtist&term=${this.data.artists[0].data.name}`,
+        (err, res, dat) => {
+          if (!err) {
+            request(
+            `https://itunes.apple.com/lookup?id=${JSON.parse(dat).results[0].artistId}&entity=album`,
+            (err, res, dat) => {
+              let album_id;
+              if (!err) for (let foo of JSON.parse(dat).results.slice(1)) if (foo.collectionName.includes(this.data.title)) {
+                album_id = foo.collectionId;
+                break
+              }
+              request(
+                `https://itunes.apple.com/lookup?id=${album_id}&entity=song`,
+                (err, res, dat) => {
+                  let parsed_songs = [];
+                  for (let track of JSON.parse(dat).results.slice(1)) {
+                    let artists = [];
+                    for (let foo of track.artistName.split(/ *[&X,] *| *x +| +x */)) artists.push(new artist({name: foo}));
+                    parsed_songs.push(new song(new song_metadata({
+                      artists: artists,
+                      title: track.trackName,
+                      tracknum: track.trackNumber,
+                      album: this
+                    })));
+                  }
+                  this.data.songs = parsed_songs;
+                  resolve(parsed_songs);
+                }
+              )
+            }
+          )
+          }
+        }
+      )
+    }); else {
+      console.log('not_ready');
+    }
   }
 }
 
