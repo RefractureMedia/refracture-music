@@ -17,7 +17,7 @@
             <div class="grow-cell entry">
               <span>Title</span>
             </div>
-            <div class="grow-cell entry">
+            <div class="grow-cell entry" v-if="!disable.includes('album')">
               <span>Album</span>
             </div>
           </div>
@@ -29,7 +29,7 @@
       >
         <div class="grow-container">
           <div class="grow song" v-for="song in songs" v-bind:key="song" v-on:dblclick="setSong(song)">
-            <div class="grow-cell entry song_art">
+            <div class="grow-cell entry song_art" v-if="!disable.includes('art')">
               <div class="songs_art">
                 <img
                   v-bind:src="song.data.metadata.data.album.data.art[song.data.metadata.data.album.data.art.length - 1]"
@@ -37,8 +37,6 @@
                   height="100%"
                 >
               </div>
-            </div>
-            <div class="grow-cell entry no_song_art">
             </div>
             <div class="grow-cell entry text">
               <span v-for="(artist, index) in song.data.metadata.data.artists" v-bind:key="artist">
@@ -62,10 +60,10 @@
               </span>
             </div>
             <div class="grow-cell seperator">-</div>
-            <div class="grow-cell entry text">
+            <div class="grow-cell entry text" v-if="!disable.includes('album')">
               {{ song.data.metadata.data.album.data.title }}
             </div>
-            <div class="grow-cell seperator">-</div>
+            <div class="grow-cell seperator" v-if="!disable.includes('album')">-</div>
             <div class="grow-cell button">
               <div v-on:click="setSong(song)" style="justify-content: right; margin-right: .5rem;">
                 <control-button icon="play"></control-button>
@@ -125,7 +123,7 @@ import getArtist from "./../assets/js/artist.js";
 
 export default {
   name: "artists",
-  props: ["songs", "currentSong", "player", "displayHeader", "songContainer"],
+  props: ["songs", "currentSong", "player", "displayHeader", "songContainer","disable"],
   components: {
     Desk,
     DeskRow,
@@ -138,6 +136,9 @@ export default {
     openArtist(artist) {
       this.$root.$children[0].open_modal('artist',artist);
     }
+  },
+  mounted() {
+    this.$props.disable = [...(this.$props.disable ? this.$props.disable : false)];
   }
 };
 </script>
@@ -160,7 +161,8 @@ export default {
   .grow {
     display: grid;
     &.song {
-      grid-template-columns: auto 1fr .1fr 1fr .1fr 1fr .1fr .35fr;
+      grid-auto-columns: .1fr;
+      grid-template-rows: 1fr;
       width: 85%;
       height: 5rem;
       margin-bottom: .2rem;
@@ -185,10 +187,12 @@ export default {
       overflow-x: hidden;
       overflow-y: hidden;
       white-space: nowrap;
+      grid-row: 1;
       &.song_art {
          @media (max-width: 41.5rem) { display: none; }
+         grid-column: span 4;
       }
-            &.no_song_art {
+      &.no_song_art {
          @media (min-width: 41.5rem) { display: none; }
       }
       .songs_art {
@@ -197,17 +201,22 @@ export default {
         height: 4rem;
       }
       &.text {
+        grid-column: span 10;
         padding-left: .5rem;
         margin-right: .5rem;
       }
     }
     .seperator {
       align-self: center;
+      grid-column: span 1;
+      grid-row: 1;
     }
     .button {
       align-self: center;
       display: grid;
       overflow-x: hidden;
+      grid-column: span 4;
+      grid-row: 1;
     }
   }
 }
