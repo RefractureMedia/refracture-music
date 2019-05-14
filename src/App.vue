@@ -166,7 +166,13 @@ export default {
           }
         }
       }
-    }
+    },
+    request(
+      `https://www.youtube.com/results?search_query=${'monstercat'}&gl=US&hl=en&sp=EgIQAg%253D%253D&spf=navigate&html5=1&el=detailpage`,
+      (err, res, dat) => {
+        console.log(JSON.parse(dat)[1].body.content.split(/href="\/((user)|(channel))\/(.*?)"/)); 
+      }
+    )
   },
   methods: {
     getCategory() {
@@ -341,7 +347,7 @@ function getDumbDiscordTimestamps(videoTime, videoDuration) {
 }
 
 function dispatch_presence(song, player) {
-  let discord_presence = new CustomEvent("discord_presence", player.paused ? {
+  /*let discord_presence = new CustomEvent("discord_presence", player.paused ? {
       detail: {
         presence: {
           state: song.data.metadata.album.data.title,
@@ -368,7 +374,7 @@ function dispatch_presence(song, player) {
         }
       }
     })
-    document.dispatchEvent(discord_presence);
+    document.dispatchEvent(discord_presence);*/
 }
 
 function mobile_viewport() {

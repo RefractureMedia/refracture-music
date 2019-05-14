@@ -123,11 +123,7 @@ import getArtist from "./../assets/js/artist.js";
 
 export default {
   name: "artists",
-<<<<<<< HEAD
-  props: ["songs", "currentSong", "player", "displayHeader", "songContainer","browse"],
-=======
   props: ["songs", "currentSong", "player", "displayHeader", "songContainer","browse","disable"],
->>>>>>> d6327a0e2703b33edff55935499418e19f8c0241
   components: {
     Desk,
     DeskRow,
