@@ -125,7 +125,7 @@ import getArtist from "./../assets/js/artist.js";
 
 export default {
   name: "artists",
-  props: ["songs", "currentSong", "player", "displayHeader", "songContainer"],
+  props: ["songs", "currentSong", "player", "displayHeader", "songContainer","browse"],
   components: {
     Desk,
     DeskRow,
@@ -134,6 +134,10 @@ export default {
   methods: {
     setSong(song) {
       this.$root.$children[0].setCurrentSong(song);
+      if (this.$props.browse) {
+        console.log(this.$root.$children[0]._data);
+        this.$root.$children[0]._data.recentlyBrowsed.songs.push(song);
+      }
     },
     openArtist(artist) {
       this.$root.$children[0].open_modal('artist',artist);

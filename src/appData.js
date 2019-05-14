@@ -15,6 +15,20 @@ export default {
     youtube: [],
     soundcloud: []
   },
+  recentlyBrowsed: {
+    song_metadatas: [
+      {
+        artists: [{data: {name: "Noisestorm"}}],
+        title: "Crab Rave",
+        album: { data: {
+          artists: [{data: {name: "Noisestorm"}}],
+          title: "Crab Rave - Single",
+          art: ["https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg"],
+        }}
+      }
+    ],
+    songs: []
+  },
   library: {
     song_metas: [
       {

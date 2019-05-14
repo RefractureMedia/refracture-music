@@ -2,18 +2,21 @@
   <div class="control">
     <div class="now_playing">
       <div class="album-art">
-        <img id="album-art" :src="root_data().currentSong.song.data.metadata.data.album.data.art[root_data().currentSong.song.data.metadata.data.album.data.art.length-1]">
+        <img id="album-art" 
+          :src="root_data().currentSong.song.data.metadata.data.album.data.art.slice(-1).pop()"
+          :style="root_data().currentSong.song.data.metadata.data.album.data.art.slice(-1).pop().includes('ytimg') ? 'object-fit: none !important;': ''"
+        >
       </div>
       <div id="song-info" class="song-info" v-if="$parent.md().os() != 'AndroidOS' && $parent.md().os() != 'iOS'">
         <p>
           {{ root_data().currentSong.song.data.metadata.data.title }}
-          <span v-if="root_data().currentSong.song.data.metadata.data.featuring">
+          <!--<span v-if="root_data().currentSong.song.data.metadata.data.featuring">
             ft.
             <span v-for="(feature, index) of root_data().currentSong.song.data.metadata.data.featuring" v-bind:key="feature">
               <a>{{ feature.data.name }}</a>
               <span v-if="root_data().currentSong.song.data.metadata.data.featuring.length > 1 && index != root_data().currentSong.song.data.metadata.data.featuring.length-1">&amp;</span>
             </span>
-          </span>
+          </span>-->
         </p>
         <p class="artist">
           <span v-for="(artist, index) of root_data().currentSong.song.data.metadata.data.artists" v-bind:key="artist">

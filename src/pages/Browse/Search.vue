@@ -7,7 +7,7 @@
       style="padding-top: 3.5rem;"
     >
       <h2>Recently Browsed</h2>
-      <songs :songs="recentlyBrowsed.songs" :currentSong="currentSong" :player="player" style="margin-left: .5rem;"/>
+      <songs :songs="recents.songs" :currentSong="currentSong" :player="player" style="margin-left: .5rem;"/>
     </div>
     <div class="searchResults" style="padding-top: 3.5rem;">
       <div v-if="results.songs.length > 0">
@@ -17,6 +17,7 @@
           :songs="results.songs.slice(0,songsLimit)"
           :currentSong="currentSong"
           :player="player"
+          :browse="true"
           style="margin-left: .5rem;"
         />
         <a v-if="songsLimit!=50 && results.songs.length > 4" v-on:click="songsLimit=50">More Results</a>
@@ -52,7 +53,7 @@ import Artists from "./../../components/Artists.vue";
 import Albums from "./../../components/Albums.vue";
 
 export default {
-  props: ["currentSong", "player", "results"],
+  props: ["currentSong", "player", "results","recents"],
   components: {
     Songs,
     Artists,
@@ -60,29 +61,15 @@ export default {
   },
   data() {
     return {
-      recentlyBrowsed: {
-        songs: [
-          {
-            artists: ["Noisestorm"],
-            title: "Crab Rave",
-            featuring: [""],
-            album: {
-              artists: ["Noisestorm"],
-              title: "Crab Rave - Single",
-              art: [
-                "https://is2-ssl.mzstatic.com/image/thumb/Music115/v4/6f/c2/ad/6fc2ad48-f80b-bf7b-522a-f9bbaf4b46da/source/1000x1000bb.jpg"
-              ]
-            },
-            cachedLink: ""
-          }
-        ]
-      },
       songsLimit: 4,
       albumsLimit: 4,
       artistsLimit: 4
     };
   },
   mounted() {
+    this.$parent._data.searchResults.songs = [];
+    this.$parent._data.searchResults.artists = [];
+    this.$parent._data.searchResults.albums = [];
     document
       .getElementsByClassName("browseSearch")[0]
       .addEventListener("keyup", function(event) {

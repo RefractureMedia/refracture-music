@@ -8,7 +8,7 @@
           <div class="shadow"></div>
           <modal :active="modal.active" :type="modal.type" :content="modal.content" />
           <library-search v-if="!modal.active"/>
-          <router-view v-if="!modal.active" :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search"></router-view>
+          <router-view v-if="!modal.active" :library="library" :currentSong="currentSong.meta" :player="player" :results="searchResults" :search="search" :recents="recentlyBrowsed"></router-view>
         </div>
         <media-bar ref="mediabar"></media-bar>
       </div>
@@ -39,7 +39,7 @@ import { getTimesFromMs, getTimestamp } from "./assets/js/time_stamp.js"
 import AppData from "./appData.js"
 import keys from "./keys.js";
 import path from "path"
-import ytSource from "./assets/js/yt_source.js"
+import ytDetail from "./assets/js/yt_detail.js"
 import ytSearch from "./assets/js/yt_search.js"
 import request from "request"
 import { setTimeout } from "timers"
@@ -51,6 +51,7 @@ import chunker from "stream-chunker";
 import toBlobURL from "stream-to-blob-url";
 import from2 from "from2";
 import yt_search from './assets/js/yt_search.js';
+import { URLSearchParams } from 'url';
 
 export default {
   name: "refracture-music",
@@ -81,7 +82,11 @@ export default {
         deserialize_song({ data: { metadata: { data: song_meta }}})
       )
     }
-    console.log(songs);
+    for (let song_meta of this.$data.recentlyBrowsed.song_metadatas) {
+      this.$data.recentlyBrowsed.songs.push(
+        deserialize_song({ data: { metadata: { data: song_meta }}})
+      )
+    }
     for (let song of songs) {
       for (let artist of song.data.metadata.data.artists) {
         if (!artistsTemp.includes(artist.data.name)) {
@@ -105,7 +110,7 @@ export default {
     }
     player.ontimeupdate = () => {
       this.$data.currentSong.currentTime = getTimestamp(player.currentTime)
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('time', Math.floor(player.currentTime));
     }
     player.onerror = e => {
@@ -116,23 +121,23 @@ export default {
     player.onchange = () => {
       if (player.canPlayType == false) throw Error("Cannot Play This File Type")
       this.media_session('new')
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
     player.ondurationchange = () => {
       this.$data.currentSong.duration = getTimestamp(player.duration)
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
     }
 
     let paused_prev = true;
     this.$data.player.onpause = () => {
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('paused')
       if (!paused_prev) toggleVis("update_pause");
       if (!paused_prev) toggleVis("update_play");
       if (!paused_prev) paused_prev = true;
     }
     this.$data.player.onplay = () => {
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
       this.media_session('played')
       if (paused_prev) toggleVis("update_pause");
       if (paused_prev) toggleVis("update_play");
@@ -141,7 +146,7 @@ export default {
 
     no_scroll();
 
-    //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+    dispatch_presence(this.$data.currentSong.song, this.$data.player);
 
     document.addEventListener("open_artist", (res) => {
       this.open_modal("artist", { artist: res })
@@ -175,7 +180,21 @@ export default {
       if (!this.$data.search.match(/:\/\//)) {
         this.$data.searchResults = Search(this.$data.search, true, "");
       } else {
-        this.setSong(parseYTURL(this.$data.search))
+        ytDetail(parseYTURL(this.$data.search)).then((details) => {
+          this.player.pause();
+          let metadata = new song_metadata(yt_title_parse(details.title,details.rest));
+          this.$data.currentSong.song = new song(metadata, { locations: [ new location({
+            service: 'youtube',
+            metadata: metadata,
+            data: parseYTURL(this.$data.search)
+          })]});
+          this.$data.currentSong.currentTime = '0:00'
+          this.$data.currentSong.duration = '0:00';
+          this.$data.currentSong.song.get_sources().then((sources) => {
+            this.$data.player.src = sources[0].data.url;
+            this.$data.player.play();
+          })
+        })
       }
       search.value = ""
     },
@@ -189,7 +208,7 @@ export default {
         this.$data.player.src = sources[0].data.url;
         this.$data.player.play();
       })
-      //dispatch_presence(this.$data.currentSong.song, this.$data.player);
+      dispatch_presence(this.$data.currentSong.song, this.$data.player);
     },
     md() {
       return new MobileDetect(window.navigator.userAgent)
@@ -216,6 +235,9 @@ export default {
           })
         }
       }
+    },
+    deserial(song) {
+      return deserialize_song(song);
     }
   },
   shortcuts: {
@@ -322,8 +344,8 @@ function dispatch_presence(song, player) {
   let discord_presence = new CustomEvent("discord_presence", player.paused ? {
       detail: {
         presence: {
-          state: song.album.title,
-          details: song.title + ' by ' + song.artists.join(" & "),
+          state: song.data.metadata.album.data.title,
+          details: song.data.metadata.title + ' by ' + song.data.metadata.artists[0].data.name,
           largeImageKey: "main_logo",
           largeImageText: 'Version ' + '0.0.1',
           smallImageKey: 'pause_',
@@ -334,8 +356,8 @@ function dispatch_presence(song, player) {
     } : {
       detail: {
         presence: {
-          state: song.album.title,
-          details: song.title + ' by ' + song.artists.join(" & "),
+          state: song.data.metadata.album.data.title,
+          details: song.data.metadata.title + ' by ' + song.data.metadata.artists.artists[0].data.name,
           startTimestamp: getDumbDiscordTimestamps(player.currentTime, player.duration)[0],
           endTimestamp: Math.floor(getDumbDiscordTimestamps(player.currentTime, player.duration)[1]),
           largeImageKey: "main_logo",
@@ -477,7 +499,7 @@ class location {
         return new Promise((resolve, reject) => {
           let artists = []
           for (let bar of this.data.metadata.artists) artists.push(bar.data.name);
-          yt_search(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}`),
+          yt_search(encodeURIComponent(`${artists.join(' & ')} ${this.data.metadata.title}${this.data.metadata.title.toLowerCase().includes('remix') ? '' : ' original'}`),
             (results) => {
               this.data.data = results[0].id;
               resolve(results[0].id);
@@ -508,7 +530,6 @@ class song {
     return new Promise((resolve, reject) => {
       this.data.locations[0].match().then((id)=>{ytdl(`https://youtube.com/watch?v=${id}`, { range: {start: 0, end: 0} }).on('info', (info) => {
         let sources = [];
-        console.log(info);
         for (let format of info.formats) if (format.type.includes('audio')) 
           sources.push(new audio_source({ service: 'youtube', url: format.url, format: 'ogg', codec: 'vorbis' }));
         this.data.sources = sources;
@@ -803,42 +824,58 @@ function deserialize_song(serialized_song) {
   )
 }
 
-function yt_title_parse(input) {
+function yt_title_parse(input, info) {
   let title = input;
-  let final_featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [''];
+  let featuring = title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/) ? title.match(/((\[)|(\())(F|f)(eat|eaturing) (.*?)((\])|(\)))/)[5].split(/ *[&X,] *| *x +| +x */) : [];
+
 
   title = title.replace(/((\[)|(\()).*?(R|r)elease((\])|(\)))/,'');
   title = title.replace(/((\[)|(\())(((F|f)(eat|eaturing))|((F|f)t)) (.*?)((\])|(\)))/,'');
   title = title.replace(/((\[)|(\()).*?(V|v)ideo((\])|(\)))/, '');
   title = title.replace(/((\[)|(\())(O|o)fficial (.*?)((\])|(\)))/,'');
   title = title.replace(/((\[)|(\())(A|a)nimation (.*?)((\])|(\)))/,'');
+  title = title.replace(/((\[)|(\())EDM((\])|(\)))/,'');
   title = title.replace(/((M|m)usic (V|v)ideo)/, '')
 
-  let try1 = title.split(' - ')
+  let try1 = title.split(/ *[-—] *| *x +| +x */)
   let try2 = title.split(' by ');
   let final_title;
-  let final_artists;
+  let artists;
   if (try1.length > 1) {
-    final_artists = try1[0].split(/ *[&X,] *| *x +| +x */);
+    artists = try1[0].split(/ *[&X,] *| *x +| +x */);
     if (try1.length == 2) final_title = try1[1];
     else final_title = try1.slice(1).join(' - ');
   } else if (try2.length > 1) {
     final_title = try2[0];
-    final_artist = try2[1].split(/ *[&X,] *| *x +| +x */);
+    artists = try2[1].split(/ *[&X,] *| *x +| +x */);
   } else {
     final_title = title;
-    final_artists = ['YouTube'];
+    artists = ['YouTube'];
   }
 
+  for (let [index, foo] of artists) {
+    if (foo.includes('ft') || foo.includes('feat')) {
+      featuring.push(foo.split(/(((F)|(f))((t)|(eat)))(\.?) /)[9].split(/ *[&X,] *| *x +| +x */))
+      console.log(foo.match(/(((F)|(f))((t)|(eat)))(\.?) /)[0] + foo.split(/(((F)|(f))((t)|(eat)))(\.?) /)[9]);
+      artists[index] = foo.replace(foo.match(/(((F)|(f))((t)|(eat)))(\.?) /)[0] + foo.split(/(((F)|(f))((t)|(eat)))(\.?) /)[9],'');
+    }
+  }
+
+  let final_artists = [];
+  for (let foo of artists) final_artists.push(new artist({name: foo}));
+  let final_featuring = [];
+  for (let foo of featuring) final_featuring.push(new artist({name: foo}));
+
+
   return {
-    title: final_title,
+    title: final_title.trim(),
     artists: final_artists,
     featuring: final_featuring,
-    album: {
-      art: [info.player_response.videoDetails.thumbnail.thumbnails[info.player_response.videoDetails.thumbnail.thumbnails.length - 1].url],
+    album: new album({
+      art: [info.player_response.videoDetails.thumbnail.thumbnails[info.player_response.videoDetails.thumbnail.thumbnails.length - 1].url.split('?')[0]],
       title: "YouTube",
-      artists: ["Foo bar"]
-    }
+      artists: [new artist({name: info.channel})]
+    })
   }
 }
 </script>

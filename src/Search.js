@@ -416,6 +416,7 @@ class album {
    * @param {string[]} input.artists - Album Artist(s)
    * @param {string[]} input.art - Album Art
    * @param {number} input.[year] - Year Published
+   * @param {number} input.[id] - iTunes CollectionID
    * @param {object} [input.serialized] - Input a Serialized Album
    */
   constructor (input) {
@@ -427,8 +428,49 @@ class album {
       year: input.year || undefined
     };
   }
-}
 
+  getTracks(online = true) {
+    if (online) return new Promise((resolve,reject) => {
+      request(
+        `https://itunes.apple.com/search?entity=musicArtist&term=${this.data.artists[0].data.name}`,
+        (err, res, dat) => {
+          if (!err) {
+            request(
+            `https://itunes.apple.com/lookup?id=${JSON.parse(dat).results[0].artistId}&entity=album`,
+            (err, res, dat) => {
+              let album_id;
+              if (!err) for (let foo of JSON.parse(dat).results.slice(1)) if (foo.collectionName.includes(this.data.title)) {
+                album_id = foo.collectionId;
+                break
+              }
+              request(
+                `https://itunes.apple.com/lookup?id=${album_id}&entity=song`,
+                (err, res, dat) => {
+                  let parsed_songs = [];
+                  for (let track of JSON.parse(dat).results.slice(1)) {
+                    let artists = [];
+                    for (let foo of track.artistName.split(/ *[&X,] *| *x +| +x */)) artists.push(new artist({name: foo}));
+                    parsed_songs.push(new song(new song_metadata({
+                      artists: artists,
+                      title: track.trackName,
+                      tracknum: track.trackNumber,
+                      album: this
+                    })));
+                  }
+                  this.data.songs = parsed_songs;
+                  resolve(parsed_songs);
+                }
+              )
+            }
+          )
+          }
+        }
+      )
+    }); else {
+      console.log('not_ready');
+    }
+  }
+}
 
 const he = require("he");
 const cordova_request = require("./assets/js/cordova/request.js")
