@@ -172,7 +172,8 @@ export default {
       request(
         `https://youtube.com/playlist?list=${'UU' + results[0].slice(2)}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
         (err, res, dat) => {
-          console.log(JSON.parse(dat).body.content.split(/data-video-ids="(.*?)"/));
+          let video_ids = []
+          console.log(JSON.parse(dat).body.content.split(/data-video-ids="(.*?)"/).getEvery(4));
         }
       )
     })
@@ -325,10 +326,11 @@ function ytSearchChannels(query) {
     request(
       `https://www.youtube.com/results?search_query=${query}&gl=US&hl=en&sp=EgIQAg%253D%253D&spf=navigate&html5=1&el=detailpage`,
       (err, res, dat) => {
+        let parsed = JSON.parse(dat)[1].body.content.split(/href="\/((user)|(channel))\/(.*?)"/);
         let channel_ids = [];
-        JSON.parse(dat)[1].body.content.split(/href="\/((user)|(channel))\/(.*?)"/).forEach((result, index, results) => {
-          if (((index + 1) / 10).toString().split('.').length == 1) 
-            if (results[index - 2] == undefined) channel_ids.push(new Promise((res) => { res(result) }));
+        parsed.getEvery(10).forEach((result, index, results) => {
+          console.log(result);
+          if (parsed[(index * 10) - 2] == undefined) channel_ids.push(new Promise((res) => { res(result) }));
             else channel_ids.push(new Promise((resolve, reject) => {
               request(
                 `https://www.youtube.com/user/${result}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
@@ -344,6 +346,14 @@ function ytSearchChannels(query) {
         })
       }
     )
+  })
+}
+
+Array.prototype.getEvery = function(unit) {
+  let output = [];
+  this.forEach((value,index,input) => {
+    if (((index - 1) / unit).toString().split('.').length == 1) output.push(value);
+    if (index == (input.length - 1)) return output;
   })
 }
 
