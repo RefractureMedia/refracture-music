@@ -10,6 +10,7 @@
                 :songs="content.data.songs"
                 :currentSong="$parent.currentSong"
                 :player="$parent.player"
+                :disable="['art','album']"
                 displayHeader="false"
                 songContainer="songContainer"
                 style="margin-left: .5rem; margin-top: 1rem;"
