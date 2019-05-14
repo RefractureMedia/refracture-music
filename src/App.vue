@@ -322,26 +322,32 @@ function getSongInput() {
 }
 
 function ytSearchChannels(query) {
+  console.log('foo bar');
   return new Promise((resolve, reject) => {
     request(
       `https://www.youtube.com/results?search_query=${query}&gl=US&hl=en&sp=EgIQAg%253D%253D&spf=navigate&html5=1&el=detailpage`,
       (err, res, dat) => {
         let parsed = JSON.parse(dat)[1].body.content.split(/href="\/((user)|(channel))\/(.*?)"/);
         let channel_ids = [];
+        console.log(parsed)
         parsed.getEvery(10).forEach((result, index, results) => {
-          console.log(result);
-          if (parsed[(index * 10) - 2] == undefined) channel_ids.push(new Promise((res) => { res(result) }));
-            else channel_ids.push(new Promise((resolve, reject) => {
-              request(
-                `https://www.youtube.com/user/${result}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
-                (err, res, dat) => {
-                  if (err) resolve(false);
-                  else resolve(JSON.parse(dat).body.content.split('data-channel-external-id="')[1].split('"')[0]);
-                }
-              )
-            }))
+          if (index !== 0) {
+            console.log(parsed.slice((index*10) - 5, (index*10)))
+            console.log(type);
+            if (type.includes('channel')) channel_ids.push(new Promise((res) => { console.log(result); res(result) }));
+              else channel_ids.push(new Promise((resolve, reject) => {
+                request(
+                  `https://www.youtube.com/user/${result}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
+                  (err, res, dat) => {
+                    if (err) resolve(false);
+                    else resolve(JSON.parse(dat).body.content.split('data-channel-external-id="')[1].split('"')[0]);
+                  }
+                )
+              }))
+          }
         })
         Promise.all(channel_ids).then((results) => {
+          console.log(results);
           resolve(results);
         })
       }
@@ -352,9 +358,9 @@ function ytSearchChannels(query) {
 Array.prototype.getEvery = function(unit) {
   let output = [];
   this.forEach((value,index,input) => {
-    if (((index - 1) / unit).toString().split('.').length == 1) output.push(value);
-    if (index == (input.length - 1)) return output;
+    if (((index + 1) / unit).toString().split('.').length == 1) output.push(value);
   })
+  return output;
 }
 
 function toggleVis(classname, index = 0) {
