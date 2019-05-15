@@ -168,7 +168,7 @@ export default {
         }
       }
     }
-    ytSearchChannels('minecraft').then((results) => {
+    ytSearchChannels('bastille').then((results) => {
       console.log(results);
       request(
         `https://youtube.com/playlist?list=${'UU' + results[0].id.slice(2)}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
@@ -335,36 +335,57 @@ function ytSearchChannels(query) {
     request(
       `https://www.youtube.com/results?search_query=${query}&gl=US&hl=en&sp=EgIQAg%253D%253D&spf=navigate&html5=1&el=detailpage`,
       (err, res, dat) => {
-        let results = JSON.parse(dat)[1].body.content
+        let results_container = JSON.parse(dat)[1].body.content
           .split(/<ol/)[2] // <li> containers, 3rd container is the one for results
           .split('>').slice(1).join('>') // gets rid of attributes of <ol>
-          .split('<li><div class="yt-lockup') // finds every video result (extra crap at beginning ratted out)
-          .slice(1); // removes extra crap at top
-        
-        results[results.length - 1] = results // cleaning up last element
+          .split('</ol>')[0]
+          .replace('\n','')
+          /*.split('<li><div class="yt-lockup yt-lockup-tile yt-lockup-channel vve-check clearfix yt-uix-tile" data-visibility-tracking="') // finds every video result (extra crap at beginning ratted out)
+          .slice(1); // removes extra crap at top*/
+        let results = [];
+        htmlToJson.parse(`<ol>${results_container}</ol>`, {
+          'results': ($doc) => { $doc[0].childNodes[0].childNodes.forEach(async (li) => {
+            if (li.name == 'li') {
+              let image = await li.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1];
+              results.push({
+                avatar: `https://${image.attribs['data-thumb'] ? image.attribs['data-thumb'] : image.attribs.src}`,
+                name: await li.childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
+                videos: await li.childNodes[0].childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
+                id: await
+              })
+              console.log(results);
+            }
+          })}
+        })
+        /*results.forEach((value) => {console.log(htmlToJson.parse(`<li><div class="yt-lockup${value}`, {
+          'avatar' : ($doc) => { return `https://${doc.find('img')[0].attribs.src}` },
+          'name' : ($doc) => { return $doc.find('a')[1].attribs['data-thumb']},
+
+        }).done((result) => { console.log(result)}))})*/
+        /*results[results.length - 1] = results // cleaning up last element
           .last() // gets itself
           .split('</li>') // endings of <li> elements
           .slice(0,3) // contained <li> elements stay, crap at bottom goes
           .join('</li>'); // array condensed
-        
         results.forEach((result, index) => {
+          conso
           results[index] = {
-            name: he.decode(result.split('" aria-describedby="description-id-')[0].split('title="').last()),
-            id: result.split('data-channel-external-id="')[1].split('"')[0],
-            description: he.decode(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last()),
-            avatar: `https://${result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0]}`,
-            subscribers: parseInt(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',','')),
-            videos: parseInt(result.split('aria-label="').last().split('"')[0].replace(',',''))
+            original: result,
+            ...(result.split('" aria-describedby="description-id-')[0].split('title="').last() ? {name: he.decode(result.split('" aria-describedby="description-id-')[0].split('title="').last())} : false),
+            ...(result.split('data-channel-external-id="')[1].split('"')[0] ? {id: result.split('data-channel-external-id="')[1].split('"')[0]} : false),
+            ...(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last() ? {description: he.decode(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last())} : false),
+            ...(result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0] ? {avatar: `https://${result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0]}`} : false),
+            ...(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',','') ? {subscribers: parseInt(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',',''))} : false),
+            ...(result.split('aria-label="').last().split('"')[0].replace(',','') ? {videos: parseInt(result.split('aria-label="').last().split('"')[0].replace(',',''))} : false)
           }
-        })
-
+        })*/
         resolve(results);
       }
     )
   })
 }
 
-Array.prototype.getEvery = function(unit) {
+Array.prototype.getEvery = (unit) =>{
   let output = [];
   this.forEach((value,index,input) => {
     if (((index + 1) / unit).toString().split('.').length == 1) output.push(value);
