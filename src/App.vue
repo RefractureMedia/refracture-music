@@ -343,44 +343,50 @@ function ytSearchChannels(query) {
           /*.split('<li><div class="yt-lockup yt-lockup-tile yt-lockup-channel vve-check clearfix yt-uix-tile" data-visibility-tracking="') // finds every video result (extra crap at beginning ratted out)
           .slice(1); // removes extra crap at top*/
         let results = [];
+        console.warn('--------');
         htmlToJson.parse(`<ol>${results_container}</ol>`, {
-          'results': ($doc) => { $doc[0].childNodes[0].childNodes.forEach(async (li,index) => {
+          'results': ($doc) => { $doc[0].childNodes[0].childNodes.forEach(async (li,index,lis) => {
             if (li.name == 'li') {
+              console.log(li);
               let image = await li.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1];
-              console.log(li.childNodes[0].childNodes[1].nodeValue);
               results.push({
                 avatar: `https://${image.attribs['data-thumb'] ? image.attribs['data-thumb'] : image.attribs.src}`,
                 name: await li.childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
                 videos: await li.childNodes[0].childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
-                id: results_container.split('data-channel-external-id="')[index == 0 ? index : index - 1].split('"')[0]
+                id: await li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes.length > 2 ? 
+                  new Promise( res => { res(li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes[2].childNodes[0].attribs['data-channel-external-id'])})
+                  : getId(li.childNodes[0].childNodes[0].childNodes[0].attribs.href, index)
               })
               console.log(results);
+              if (index == lis.length - 2) {
+                let ids = [];
+                console.log(results);
+                results.forEach((value) => {
+                  ids.push(value.id);
+                })
+                Promise.all(ids).then((ids_) => {
+                  ids_.forEach((id,index) => {
+                    results[index].id = id;
+                  })
+                })
+              }
             }
           })}
         })
-        /*results.forEach((value) => {console.log(htmlToJson.parse(`<li><div class="yt-lockup${value}`, {
-          'avatar' : ($doc) => { return `https://${doc.find('img')[0].attribs.src}` },
-          'name' : ($doc) => { return $doc.find('a')[1].attribs['data-thumb']},
-
-        }).done((result) => { console.log(result)}))})*/
-        /*results[results.length - 1] = results // cleaning up last element
-          .last() // gets itself
-          .split('</li>') // endings of <li> elements
-          .slice(0,3) // contained <li> elements stay, crap at bottom goes
-          .join('</li>'); // array condensed
-        results.forEach((result, index) => {
-          conso
-          results[index] = {
-            original: result,
-            ...(result.split('" aria-describedby="description-id-')[0].split('title="').last() ? {name: he.decode(result.split('" aria-describedby="description-id-')[0].split('title="').last())} : false),
-            ...(result.split('data-channel-external-id="')[1].split('"')[0] ? {id: result.split('data-channel-external-id="')[1].split('"')[0]} : false),
-            ...(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last() ? {description: he.decode(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last())} : false),
-            ...(result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0] ? {avatar: `https://${result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0]}`} : false),
-            ...(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',','') ? {subscribers: parseInt(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',',''))} : false),
-            ...(result.split('aria-label="').last().split('"')[0].replace(',','') ? {videos: parseInt(result.split('aria-label="').last().split('"')[0].replace(',',''))} : false)
-          }
-        })*/
-        resolve(results);
+        function getId(user, index) {
+          return new Promise((resolve, reject) => {
+            console.log(index);
+            console.log(`https://youtube.com${user}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`);
+            request(
+              `https://youtube.com${user}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
+              (err, res, dat) => {
+                let id = JSON.parse(dat).body.content.split('data-channel-external-id="')[1].split('"')[0];
+                console.log(id);
+                resolve(id)
+              }
+            )
+          })
+        }
       }
     )
   })
