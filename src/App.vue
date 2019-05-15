@@ -344,14 +344,15 @@ function ytSearchChannels(query) {
           .slice(1); // removes extra crap at top*/
         let results = [];
         htmlToJson.parse(`<ol>${results_container}</ol>`, {
-          'results': ($doc) => { $doc[0].childNodes[0].childNodes.forEach(async (li) => {
+          'results': ($doc) => { $doc[0].childNodes[0].childNodes.forEach(async (li,index) => {
             if (li.name == 'li') {
               let image = await li.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1];
+              console.log(li.childNodes[0].childNodes[1].nodeValue);
               results.push({
                 avatar: `https://${image.attribs['data-thumb'] ? image.attribs['data-thumb'] : image.attribs.src}`,
                 name: await li.childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
                 videos: await li.childNodes[0].childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
-                id: await
+                id: results_container.split('data-channel-external-id="')[index == 0 ? index : index - 1].split('"')[0]
               })
               console.log(results);
             }
