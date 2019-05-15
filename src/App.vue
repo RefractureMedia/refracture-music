@@ -46,6 +46,7 @@ import { setTimeout } from "timers"
 import MobileDetect from "mobile-detect"
 import Search from "./Search.js"
 import htmlToJson from "html-to-json"
+import he from "he"
 import ytdl from "ytdl-core"
 import chunker from "stream-chunker";
 import toBlobURL from "stream-to-blob-url";
@@ -167,13 +168,21 @@ export default {
         }
       }
     }
-    ytSearchChannels('Proximity').then((results) => {
+    ytSearchChannels('minecraft').then((results) => {
       console.log(results);
       request(
-        `https://youtube.com/playlist?list=${'UU' + results[0].slice(2)}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
+        `https://youtube.com/playlist?list=${'UU' + results[0].id.slice(2)}&gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
         (err, res, dat) => {
-          let video_ids = []
-          console.log(JSON.parse(dat).body.content.split(/data-video-ids="(.*?)"/).getEvery(4));
+          let raw_videos = JSON.parse(dat).body.content.split('<tbody id="pl-load-more-destination">')[1].split('</tbody>')[0].split('<tr').slice(1);
+          let parsed_videos = [];
+          raw_videos.forEach((raw_video,index) => {
+            parsed_videos.push({
+              title: he.decode(raw_video.split('data-title="')[1].split('"')[0]),
+              id: raw_video.split('watch?v=')[1].split('&')[0],
+              thumbnail: raw_video.split('data-thumb="')[1].split('"')[0].split('?')[0]
+            })
+          })
+          console.log(parsed_videos);
         }
       )
     })
@@ -322,34 +331,34 @@ function getSongInput() {
 }
 
 function ytSearchChannels(query) {
-  console.log('foo bar');
   return new Promise((resolve, reject) => {
     request(
       `https://www.youtube.com/results?search_query=${query}&gl=US&hl=en&sp=EgIQAg%253D%253D&spf=navigate&html5=1&el=detailpage`,
       (err, res, dat) => {
-        let parsed = JSON.parse(dat)[1].body.content.split(/href="\/((user)|(channel))\/(.*?)"/);
-        let channel_ids = [];
-        console.log(parsed)
-        parsed.getEvery(10).forEach((result, index, results) => {
-          if (index !== 0) {
-            console.log(parsed.slice((index*10) - 5, (index*10)))
-            console.log(type);
-            if (type.includes('channel')) channel_ids.push(new Promise((res) => { console.log(result); res(result) }));
-              else channel_ids.push(new Promise((resolve, reject) => {
-                request(
-                  `https://www.youtube.com/user/${result}?gl=US&hl=en&spf=navigate&html5=1&el=detailpage`,
-                  (err, res, dat) => {
-                    if (err) resolve(false);
-                    else resolve(JSON.parse(dat).body.content.split('data-channel-external-id="')[1].split('"')[0]);
-                  }
-                )
-              }))
+        let results = JSON.parse(dat)[1].body.content
+          .split(/<ol/)[2] // <li> containers, 3rd container is the one for results
+          .split('>').slice(1).join('>') // gets rid of attributes of <ol>
+          .split('<li><div class="yt-lockup') // finds every video result (extra crap at beginning ratted out)
+          .slice(1); // removes extra crap at top
+        
+        results[results.length - 1] = results // cleaning up last element
+          .last() // gets itself
+          .split('</li>') // endings of <li> elements
+          .slice(0,3) // contained <li> elements stay, crap at bottom goes
+          .join('</li>'); // array condensed
+        
+        results.forEach((result, index) => {
+          results[index] = {
+            name: he.decode(result.split('" aria-describedby="description-id-')[0].split('title="').last()),
+            id: result.split('data-channel-external-id="')[1].split('"')[0],
+            description: he.decode(result.split('</div><div class="yt-lockup-badges"')[0].replace(/<(u|b|i)>/,'').replace(/<\/(u|b|i)>/,'').split('>').last()),
+            avatar: `https://${result.split('<img')[1].split('</img>')[0].split('src="')[1].split('"')[0]}`,
+            subscribers: parseInt(result.split('yt-subscriber-count" title="')[1].split('"')[0].replace(',','')),
+            videos: parseInt(result.split('aria-label="').last().split('"')[0].replace(',',''))
           }
         })
-        Promise.all(channel_ids).then((results) => {
-          console.log(results);
-          resolve(results);
-        })
+
+        resolve(results);
       }
     )
   })
@@ -362,6 +371,9 @@ Array.prototype.getEvery = function(unit) {
   })
   return output;
 }
+Array.prototype.last = function(){
+    return this[this.length - 1];
+};
 
 function toggleVis(classname, index = 0) {
   if (document.getElementsByClassName(classname)[index].style.cssText === "display: none;") document.getElementsByClassName(classname)[index].style.cssText = "display: initial;"
