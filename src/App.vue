@@ -349,15 +349,14 @@ function ytSearchChannels(query) {
             if (li.name == 'li') {
               console.log(li);
               let image = await li.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1];
-              console.log(li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes[2].childNodes[1].attribs.title.replace(',',''));
               results.push({
                 avatar: `https://${image.attribs['data-thumb'] ? image.attribs['data-thumb'] : image.attribs.src}`,
                 name: await li.childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data,
                 id: await li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes.length > 2 ? 
                   new Promise( res => { res(li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes[2].childNodes[0].attribs['data-channel-external-id'])})
                   : getId(li.childNodes[0].childNodes[0].childNodes[0].attribs.href, index),
-                subscribers: await parseInt(li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes[2].childNodes[1].attribs.title.replace(',','')),
-                videos: await parseInt(li.childNodes[0].childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data.toString().split(' v')[0].toString().replace(',',''))
+                subscribers: await parseInt(li.childNodes[0].childNodes[1].childNodes.slice(-1).pop().childNodes[2].childNodes[1].attribs.title.replace(',','').replace(',','')),
+                videos: await parseInt(li.childNodes[0].childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].data.toString().split(' v')[0].replace(',','').replace(',',''))
               })
               console.log(results);
               if (index == lis.length - 2) {
