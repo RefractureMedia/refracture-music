@@ -1,0 +1,26 @@
+{
+  "name": "refracture-music-cnrs",
+  "version": "0.0.1",
+  "description": "Refracture Music PWA Clientside Node Request Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/refracture/refracture-music.git"
+  },
+  "author": "MulverineX",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://gitlab.com/refracture/refracture-music/issues"
+  },
+  "homepage": "https://gitlab.com/refracture/refracture-music#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "request": "^2.88.0",
+    "url-parse": "^1.4.7"
+  }
+}
