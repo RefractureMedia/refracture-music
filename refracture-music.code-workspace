@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "main"
+		},
+		{
+			"path": "packages\\client-desktop\\app",
+			"name": "nuxt"
+		},
+		{
+			"path": "packages\\client-mobile",
+			"name": "flutter"
+		}
+	],
+	"settings": {
+		"nuxt.isNuxtApp": false
+	}
+}

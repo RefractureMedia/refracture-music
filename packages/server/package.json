@@ -1,0 +1,22 @@
+{
+  "name": "@refracturemedia/music-server",
+  "version": "0.1.0",
+  "description": "The local backend server for Refracture Music",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RefractureMedia/refracture-music.git"
+  },
+  "author": "MulverineX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RefractureMedia/refracture-music/issues"
+  },
+  "homepage": "https://github.com/RefractureMedia/refracture-music#readme",
+  "devDependencies": {
+    "typescript": "^4.7.2"
+  }
+}

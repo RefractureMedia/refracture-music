@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "scripts": {},
+    "devDependencies": {
+        "electron": "^19.0.1",
+        "electron-builder": "^23.0.3"
+    }
+}
