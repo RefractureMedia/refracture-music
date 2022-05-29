@@ -1,7 +1,7 @@
 {
-  "name": "@refracturemedia/music-server",
+  "name": "@refracturemedia/music-core",
   "version": "0.1.0",
-  "description": "The local backend server for Refracture Music",
+  "description": "The core backend for Refracture Music",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
