@@ -1,5 +1,6 @@
 {
   "name": "@refracturemedia/music-client-cli",
+  "private": true,
   "version": "0.1.0",
   "description": "A barebones CLI to rapidly test & develop music-core",
   "main": "lib/index.js",

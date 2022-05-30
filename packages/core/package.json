@@ -18,5 +18,9 @@
   "homepage": "https://github.com/RefractureMedia/refracture-music#readme",
   "devDependencies": {
     "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "@types/uuid": "^8.3.4",
+    "uuid": "^8.3.2"
   }
 }
