@@ -16,12 +16,17 @@ export default class SessionManager {
                 if (res.request_id === request_id) {
                     resolve(res.query);
                 } else return;
-            })
+            });
         });
     }
 
     async startup () {
-        this.socket = io(`ws://${DB.address.origin}:${DB.address.port}`);
+        this.socket = io(`wss://${DB.address.origin}:${DB.address.port}`);
+        await new Promise((resolve, reject) => {
+            this.socket.on('connect', () => {
+                resolve(true);
+            });
+        });
     }
 
     constructor (core: MusicCore) {

@@ -1,6 +1,9 @@
-
 export type PluginData = Map<PluginIdentifier, DataEntryClass>;
 export type RawData = string | number | boolean | string[] | number[] | boolean[] | RawData[] | { [type: string]: RawData; };
+
+export class RuntimeBundle {
+    raw_script: string;
+}
 export class PluginManager {
     plugin_map: Map<PluginIdentifier, PluginClass>;
 
