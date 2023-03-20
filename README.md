@@ -29,7 +29,7 @@ A self-hosted session & library dameon/service. Provides a centralized location 
 ## Client Plugins
 
 ### [base]()
-Base user-fafmits all browse, library, profile, & session data for the app.
+User-facing UI & local/self-hosted music.
 
 ## Server Plugins
 
