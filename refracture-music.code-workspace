@@ -5,12 +5,12 @@
 			"name": "main"
 		},
 		{
-			"path": "packages\\client-desktop\\app",
-			"name": "nuxt"
+			"path": "packages\\client-flutter",
+			"name": "flutter"
 		},
 		{
-			"path": "packages\\client-mobile",
-			"name": "flutter"
+			"path": "packages\\homepage",
+			"name": "homepage"
 		}
 	],
 	"settings": {
