@@ -1,3 +1,4 @@
 {
-    "nuxt.isNuxtApp": false
+    "nuxt.isNuxtApp": false,
+    "cmake.sourceDirectory": "W:/workspace/web/refracture/refracture-music/packages/client-flutter/windows/flutter"
 }

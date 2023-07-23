@@ -1,3 +1,4 @@
 {
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "cmake.sourceDirectory": "W:/workspace/web/refracture/refracture-music/packages/client-flutter/windows/flutter"
 }
