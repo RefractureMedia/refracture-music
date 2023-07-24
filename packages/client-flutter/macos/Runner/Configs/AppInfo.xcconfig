@@ -11,4 +11,4 @@ PRODUCT_NAME = refracture_music
 PRODUCT_BUNDLE_IDENTIFIER = org.refracturemedia.refractureMusic
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = MIT License. Copyright © 2022 Refracture Media.
+PRODUCT_COPYRIGHT = Copyright © 2023 org.refracturemedia. All rights reserved.

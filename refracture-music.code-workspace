@@ -14,6 +14,7 @@
 		}
 	],
 	"settings": {
-		"nuxt.isNuxtApp": false
+		"nuxt.isNuxtApp": false,
+		"java.configuration.updateBuildConfiguration": "interactive"
 	}
 }
