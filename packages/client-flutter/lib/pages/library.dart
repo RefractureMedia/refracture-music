@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 
-class LibraryPage extends StatefulWidget {
-  const LibraryPage({Key? key, required this.title}) : super(key: key);
+enum LibPage { tracks, playlists, albums, artists }
 
-  final String title;
+class LibraryPage extends StatefulWidget {
+  const LibraryPage({required this.startPage}) : super();
+
+  final LibPage startPage;
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<LibraryPage> {
+  LibPage? currentPage;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    currentPage ??= widget.startPage;
+
+    return Text("Library page: ${currentPage.runtimeType}");
   }
 }

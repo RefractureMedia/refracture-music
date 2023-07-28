@@ -7,7 +7,7 @@ void main() {
 }
 
 class MusicApp extends StatelessWidget {
-  const MusicApp({Key? key}) : super(key: key);
+  const MusicApp() : super();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MusicApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.dark,
-      home: const NavigationView(title: 'Library'),
+      home: const NavigationView(startPage: NavPage.home),
       debugShowCheckedModeBanner: false,
     );
   }
