@@ -23,7 +23,7 @@ class MusicApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.dark,
-      home: const NavigationView(startPage: NavPage.home),
+      home: const Scaffold(body: NavigationView(startPage: NavPage.home)),
       debugShowCheckedModeBanner: false,
     );
   }

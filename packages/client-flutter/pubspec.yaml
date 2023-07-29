@@ -62,7 +62,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:     
+  fonts:
+    - family: Refracture Icons
+      fonts:
+        - asset: assets/font/icons.ttf
+
+  assets:
     - assets/icon/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

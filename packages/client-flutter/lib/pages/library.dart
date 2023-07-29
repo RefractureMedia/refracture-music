@@ -18,6 +18,6 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     currentPage ??= widget.startPage;
 
-    return Text("Library page: ${currentPage.runtimeType}");
+    return Text("Library page: ${currentPage!.name}");
   }
 }
