@@ -30,7 +30,7 @@ A self-hosted session & library dameon/service. Provides a centralized location 
 - Uses Docker on non-win32 OSes.
 - Uses ElasticSearch for DB.
 
-## [web](https://github.com/RefractureMedia/refracture-music/tree/main/packages/addon-host)
+### [web](https://github.com/RefractureMedia/refracture-music/tree/main/packages/addon-host)
 Hosting server for the project.
 - Written in TypeScript.
 - Support for several deployments; Vercel, Docker, etc.
