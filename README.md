@@ -3,7 +3,7 @@ Aiming to fix a fractured, limited, & inconsistent music experience; a modular, 
 ## Packages
 
 
-## [addon-host](https://github.com/RefractureMedia/refracture-music/tree/main/packages/addon-host)
+### [addon-host](https://github.com/RefractureMedia/refracture-music/tree/main/packages/addon-host)
 Hosting server for addons (plugins & themes).
 - Written in TypeScript.
 - Support for several deployments; CLI, Docker, NPM/Embedded, CloudFlare Worker/Edge, etc.
