@@ -1,5 +1,5 @@
 {
-  "name": "@refracturemedia/music-client-desktop",
+  "name": "@refracturemedia/music-web",
   "private": true,
   "version": "0.1.0",
   "main": "lib/index.js",
