@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:refracture_music/content/item/album.dart';
 import 'package:refracture_music/content/library/albums.dart';
 import 'package:refracture_music/content/library/artists.dart';
 import 'package:refracture_music/content/library/playlists.dart';
 import 'package:refracture_music/content/library/tracks.dart';
+
+import '../content/item/playlist.dart';
+import '../util/main.dart';
 
 enum LibPage { tracks, playlists, albums, artists }
 
@@ -20,28 +24,46 @@ class _LibraryPageState extends State<LibraryPage> {
 
   LibPage? hoverPage;
 
+  String? subPage;
+
   @override
   Widget build(BuildContext context) {
     currentPage ??= widget.startPage;
-
-    capitalize(String s) {
-      return "${s[0].toUpperCase()}${s.substring(1)}";
-    }
 
     final subtext = Theme.of(context).textTheme.bodySmall?.apply(color: const Color(0xFF649AA6));
 
     late StatelessWidget page;
 
+    late double contentWidth = MediaQuery.of(context).size.width-140;
+
     switch (currentPage) {
       case LibPage.tracks: page = const ContentTracks();
-      case LibPage.playlists: page = const ContentPlaylists();
-      case LibPage.albums: page = const ContentAlbums();
-      case LibPage.artists: page = const ContentArtists();
+      case LibPage.playlists: {
+        if (subPage == null) {
+          page = ContentPlaylists(contentWidth: contentWidth, openPlaylist: (String id) { setState(() { subPage = id; }); });
+        } else {
+          page = ContentPlaylist(playlist: "$subPage"); // Shut up flutter
+        }
+      }
+      case LibPage.albums: {
+        if (subPage == null) {
+          page = ContentAlbums(contentWidth: contentWidth, openAlbum: (String id) { setState(() { subPage = id; }); });
+        } else {
+          page = ContentAlbum(album: "$subPage"); // Shut up flutter
+        }
+      }
+      case LibPage.artists: {
+        if (subPage == null) {
+          page = ContentArtists(contentWidth: contentWidth, openArtist: (String id) { setState(() { subPage = id; }); });
+        } else {
+          // page = ContentArtist(artist: "$subPage"); // Shut up flutter
+        }
+      }
       default:
     }
     
     return SizedBox(
-      width: MediaQuery.of(context).size.width-140,
+      width: contentWidth,
       child: Column(children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +74,10 @@ class _LibraryPageState extends State<LibraryPage> {
               onExit: (ev) { setState(() { hoverPage = null; }); },
               child: GestureDetector(
                 onTap: () {
-                  setState(() { currentPage = e; });
+                  setState(() {
+                    currentPage = e;
+                    subPage = null;
+                  });
                 },
                 child: Text( // TODO: Fix screwy styling (wtf)
                   "     ${capitalize(e.name)}     ",
@@ -67,7 +92,7 @@ class _LibraryPageState extends State<LibraryPage> {
           alignment: Alignment.topLeft,
           child: SizedBox(
             height: MediaQuery.of(context).size.height-175, 
-            child: SingleChildScrollView(child: page)
+            child: page,
           )
         ),
       ]),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
-import 'package:refracture_music/components/content/part/track.dart';
+import 'package:refracture_music/components/content/track_list.dart';
 
 class ContentTracks extends StatelessWidget {
   const ContentTracks() : super();
@@ -28,14 +27,6 @@ class ContentTracks extends StatelessWidget {
       tracks.add(tracks[0]);
     }
 
-    return Column(children: [...tracks.mapIndexed((index, data) {
-      return Column(children: [
-        Track(data: data),
-        Container(
-          color: Color(0xFF3D5E66),
-          height: index == (tracks.length - 1) ? 0 : 1,
-        ),
-      ]);
-    })]);
+    return TrackList(tracks: tracks);
   }
 }

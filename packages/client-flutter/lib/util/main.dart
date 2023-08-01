@@ -10,3 +10,7 @@ durationToTimestamp(int seconds) {
 
   return init;
 }
+
+capitalize(String s) {
+  return "${s[0].toUpperCase()}${s.substring(1)}";
+}

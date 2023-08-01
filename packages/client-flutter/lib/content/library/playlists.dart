@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:refracture_music/components/content/square_list.dart';
 
 class ContentPlaylists extends StatelessWidget {
-  const ContentPlaylists() : super();
+  final double contentWidth;
+
+  final Function openPlaylist;
+
+  const ContentPlaylists({required this.contentWidth, required this.openPlaylist}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -9,21 +14,18 @@ class ContentPlaylists extends StatelessWidget {
       "id": "2678450293423487097324987",
       "art": "assets/icon/kaffee-placeholder.png",
       "title": "consectetur adipiscing",
-      "track_count": "5",
-      "artist": {
+      "type": 0,
+      "track_count": 5,
+      "author": {
         "id": "2678450293423487097324987",
         "name": "OpenMoji",
       },
     }];
-    for (var i = 0; i < 20; i++) {
+
+    for (var i = 0; i < 40; i++) {
       playlists.add(playlists[0]);
     }
 
-    return GridView.count(
-      crossAxisCount: 5,
-      children: [...playlists.map((playlist) {
-        return Container(child: Image(image: ResizeImage(AssetImage(playlist['art']), width: 85)));
-      })]
-    );
+    return SquareList(contentWidth: contentWidth, squareList: playlists, open: openPlaylist);
   }
 }
