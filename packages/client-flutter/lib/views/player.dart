@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PlayerView extends StatefulWidget {
-  const PlayerView({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const PlayerView({Key? key}) : super(key: key);
 
   @override
   State<PlayerView> createState() => _PlayerViewState();

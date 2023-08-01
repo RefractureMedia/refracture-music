@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:refracture_music/content/item/album.dart';
 import 'package:refracture_music/content/library/albums.dart';
 import 'package:refracture_music/content/library/artists.dart';
@@ -30,7 +31,12 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     currentPage ??= widget.startPage;
 
-    final subtext = Theme.of(context).textTheme.bodySmall?.apply(color: const Color(0xFF649AA6));
+    // kill
+    final subtext = GoogleFonts.inter(
+      color: const Color(0xFF649AA6),
+      fontWeight: FontWeight.w500,
+      fontSize: 18
+    );
 
     late StatelessWidget page;
 
@@ -42,21 +48,21 @@ class _LibraryPageState extends State<LibraryPage> {
         if (subPage == null) {
           page = ContentPlaylists(contentWidth: contentWidth, openPlaylist: (String id) { setState(() { subPage = id; }); });
         } else {
-          page = ContentPlaylist(playlist: "$subPage"); // Shut up flutter
+          page = ContentPlaylist(playlist: "$subPage");
         }
       }
       case LibPage.albums: {
         if (subPage == null) {
           page = ContentAlbums(contentWidth: contentWidth, openAlbum: (String id) { setState(() { subPage = id; }); });
         } else {
-          page = ContentAlbum(album: "$subPage"); // Shut up flutter
+          page = ContentAlbum(album: "$subPage");
         }
       }
       case LibPage.artists: {
         if (subPage == null) {
           page = ContentArtists(contentWidth: contentWidth, openArtist: (String id) { setState(() { subPage = id; }); });
         } else {
-          // page = ContentArtist(artist: "$subPage"); // Shut up flutter
+          // page = ContentArtist(artist: "$subPage");
         }
       }
       default:

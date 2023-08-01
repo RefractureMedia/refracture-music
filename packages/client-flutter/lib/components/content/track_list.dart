@@ -28,6 +28,7 @@ class TrackList extends StatelessWidget {
 
     if (header != null) {
       list.insert(0, header as Widget);
+      list.insert(1, const SizedBox(height: 20));
     }
 
     return SingleChildScrollView(child: Column(children: list));

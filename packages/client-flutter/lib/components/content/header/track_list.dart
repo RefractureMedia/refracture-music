@@ -13,6 +13,8 @@ class TrackListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final subtext = Theme.of(context).textTheme.bodySmall?.apply(color: const Color(0xFF649AA6));
+
     return Row(children: [
       const Image(image: ResizeImage(AssetImage("assets/icon/kaffee-placeholder.png"), width: 128), width: 100),
       const SizedBox(width: 12),
@@ -46,19 +48,20 @@ class TrackListHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         textBaseline: TextBaseline.alphabetic,
         children: [
-          const Row(children: [
-            Text("24"),
-            SizedBox(width: 4),
-            CustomIcon(pointKey: "context-music-notes", size: 12),
-            SizedBox(width: 20),
-            Text("2 hrs"),
-            SizedBox(width: 4),
-            CustomIcon(pointKey: "detail-duration", size: 12),
+          Row(children: [
+            Text("24", style: subtext),
+            const SizedBox(width: 4),
+            const CustomIcon(pointKey: "context-music-notes", size: 12),
+            const SizedBox(width: 20),
+            Text("2 hrs", style: subtext),
+            const SizedBox(width: 4),
+            const CustomIcon(pointKey: "detail-duration", size: 12),
           ]),
+          const SizedBox(height: 12),
           Align(
             alignment: Alignment.bottomRight,
             child: Row(children: [
-              const Text('Snowboarder1337'),
+              Text('Snowboarder1337', style: subtext),
               CustomButton(icon: "context-peer", onPressed: () {}),
             ]),
           ),
