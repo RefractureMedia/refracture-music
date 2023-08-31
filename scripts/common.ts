@@ -34,6 +34,7 @@ for (const path of paths) {
         const files = await fs.readdir(pkg_dir)
 
         if (files.includes('webpack.config.js')) {
+            console.log(pkg_dir)
             const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })
 
             exec('npm i')
