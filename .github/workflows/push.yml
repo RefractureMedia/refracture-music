@@ -35,6 +35,7 @@ jobs:
           COMMIT_HASH: ${{ steps.commit-hash.outputs.short }}
           COMMIT_PATHS: ${{ steps.changed-files.outputs.all_changed_files }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          REPOSITORY: ${{ github.repository }}
         run: "cd scripts && pnpm i && cd .. && npx ts-node --esm scripts/common.ts"
 
       - name: Upload assets artifact
@@ -58,3 +59,5 @@ jobs:
         with:
           files: ${{ steps.common.outputs.assets }}
           tag_name: "v${{ steps.commit-hash.outputs.short }}"
+          name: ${{ steps.common.outputs.release }}
+          body: ${{ steps.common.outputs.changelog }}

@@ -41,6 +41,6 @@ export class MusicCore {
 
 export const Music = new MusicCore();
 
-console.log('[Music Core] Hello world!!!')
+console.log('[Music Core] Hello world!!!!')
 
 export default Music;

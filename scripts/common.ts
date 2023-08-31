@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
+import crypto from 'crypto'
 import { Path as PathParser } from 'path-parser'
 import { fileURLToPath } from 'url'
 import * as child from 'child_process'
@@ -33,7 +34,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
     await fs.ensureDir(dist)
 
-    const assets: string[] = []
+    const releases: { pkg: string, asset: string, version: string }[] = []
 
     let changelog = ''
 
@@ -47,9 +48,13 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
             exec('pnpm i')
             exec('pnpm webpack')
 
-            const asset = path.join(dist, `${pkg}-${process.env.COMMIT_HASH}.js`)
+            let version = process.env.COMMIT_HASH;
 
-            assets.push(asset)
+            if (release) version = JSON.parse(await fs.readFile(path.join(pkg_dir, 'package.json'), { encoding: 'utf-8' })).version
+
+            const asset = path.join(dist, `${pkg}-${version}.js`)
+
+            releases.push({ pkg, asset, version })
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
 
@@ -65,9 +70,35 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
         }
     }
 
-    setOutput('assets', assets.length === 0 ? 'false' : assets.join('\n'))
+    if (release) {
+        setOutput('release', process.env.COMMIT_MESSAGE.split(' ').slice(1).join(' '))
+
+        let manifest = {};
+
+        try {
+            manifest = await (await fetch(`https://github.com/${process.env.REPOSITORY}/releases/latest/download/manifest.json`)).json()
+        } catch (e) {}
+
+        const entries = {}
+
+        releases.forEach(async ({ pkg, asset, version }) => entries[pkg] = {
+            src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
+            hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
+            version,
+        })
+
+        const manifestPath = path.join(dist, 'manifest.json')
+
+        await fs.writeFile(manifestPath, JSON.stringify({ ...manifest, ...entries }))
+
+        releases.push({
+            asset: manifestPath,
+            pkg: '',
+            version: '',
+        })
+    }
+
+    setOutput('assets', releases.length === 0 ? 'false' : releases.map((r) => r.asset).join('\n'))
 
     setOutput('changelog', release ? changelog : 'false')
-
-    if (release) setOutput('release', process.env.COMMIT_MESSAGE.split(' ').slice(1).join(' '))
 })()
