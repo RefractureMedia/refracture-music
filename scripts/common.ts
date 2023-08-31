@@ -30,11 +30,11 @@ for (const path of paths) {
 
     await fs.ensureDir(dist)
 
-    for (const pkg of pkgs) {
+    const assets: string[] = []
+
+    for await (const pkg of pkgs) {
         const pkg_dir = path.join(dir, pkg)
         const files = await fs.readdir(pkg_dir)
-
-        const assets: string[] = []
 
         if (files.includes('webpack.config.js')) {
             console.log(pkg_dir)
@@ -49,7 +49,7 @@ for (const path of paths) {
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
         }
-
-        setOutput('assets', assets.length === 0 ? 'false' : assets.join('\n'))
     }
+
+    setOutput('assets', assets.length === 0 ? 'false' : assets.join('\n'))
 })()
