@@ -40,3 +40,9 @@ jobs:
         with:
           name: assets
           path: dist/
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: ${{ !contains(steps.common.outputs.changelog, 'false') }}
+        with:
+          files: ${{ steps.common.outputs.assets }}
