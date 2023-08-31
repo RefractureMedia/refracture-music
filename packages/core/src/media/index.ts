@@ -10,7 +10,7 @@ function getItem(item_type: ItemTypes, item_id: ItemIdentifierType) {
 }
 type ManagerUpdate = () => void;
 
-// Test 7
+// Test 8
 
 export class ItemManager {
     type: ItemTypes;
