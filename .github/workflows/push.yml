@@ -25,5 +25,5 @@ jobs:
       - name: Run common
         env:
           COMMIT_HASH: "${{ steps.commit-hash.outputs.short }}"
-          COMMIT_FILES: "${{ steps.changed-files.outputs.all_changed_files }}"
+          COMMIT_PATHS: "${{ steps.changed-files.outputs.all_changed_files }}"
         run: "cd scripts && npm i && cd .. && npx ts-node --esm scripts/common.ts"
