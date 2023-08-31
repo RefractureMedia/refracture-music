@@ -34,7 +34,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
     await fs.ensureDir(dist)
 
-    const releases: { pkg: string, asset: string, version: string }[] = []
+    const releases: { pkg: string, assets: Record<string, string>, version: string }[] = []
 
     let changelog = ''
 
@@ -54,7 +54,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
             const asset = path.join(dist, `${pkg}-${version}.js`)
 
-            releases.push({ pkg, asset, version })
+            releases.push({ pkg, assets: { bundle: asset }, version })
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
 
@@ -87,10 +87,18 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
             changelog += `Compare: https://github.com/${process.env.REPOSITORY}/compare/${manifest.tag}...${mergeManifest.tag}`
         }
 
-        for await (const { pkg, asset, version } of releases) {
+        for await (const { pkg, assets, version } of releases) {
+            const resolvedAssets: any = {}
+
+            for await (const [ name, asset ] of Object.entries(assets)) {
+                resolvedAssets[name] = {
+                    src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${asset}`,
+                    hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64')
+                }
+            }
+
             mergeManifest[pkg] = {
-                src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
-                hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
+                assets: resolvedAssets,
                 version,
                 tag: mergeManifest.tag,
             }
@@ -102,13 +110,13 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
         await fs.writeFile(manifestPath, JSON.stringify({ ...manifest, ...mergeManifest }))
 
         releases.push({
-            asset: manifestPath,
+            assets: { manifest: manifestPath },
             pkg: '',
             version: '',
         })
     }
 
-    setOutput('assets', releases.length === 0 ? 'false' : releases.map((r) => r.asset).join('\n'))
+    setOutput('assets', releases.length === 0 ? 'false' : releases.flatMap((r) => Object.entries(r.assets).map(([n, s]) => s)).join('\n'))
 
     setOutput('changelog', release ? changelog : 'false')
 })()
