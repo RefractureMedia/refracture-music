@@ -91,8 +91,10 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
             mergeManifest[pkg] = {
                 src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
                 hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
-                version
+                version,
+                tag: mergeManifest.tag,
             }
+            if (manifest.tag) mergeManifest[pkg].previous = manifest.tag
         }
 
         const manifestPath = path.join(dist, 'manifest.json')
