@@ -57,3 +57,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ steps.common.outputs.assets }}
+          tag_name: "v${{ steps.commit-hash.outputs.short }}"
