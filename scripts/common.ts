@@ -92,7 +92,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
             for await (const [ name, asset ] of Object.entries(assets)) {
                 resolvedAssets[name] = {
-                    src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${asset}`,
+                    src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${asset.split('dist/')[1]}`,
                     hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64')
                 }
             }
