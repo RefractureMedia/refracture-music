@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     branches:
-        - main
+      - main
 
 jobs: 
   changed_files:
     runs-on: ubuntu-latest
-    name: Test changed-files
+    name: Build Commit
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,3 +31,9 @@ jobs:
           COMMIT_HASH: "${{ steps.commit-hash.outputs.short }}"
           COMMIT_PATHS: "${{ steps.changed-files.outputs.all_changed_files }}"
         run: "cd scripts && pnpm i && cd .. && npx ts-node --esm scripts/common.ts"
+
+      - name: Upload assets artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: dist/

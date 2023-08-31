@@ -3,6 +3,7 @@ import path from 'path'
 import { Path as PathParser } from 'path-parser'
 import { fileURLToPath } from 'url'
 import * as child from 'child_process'
+import { setOutput } from '@actions/core'
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -33,6 +34,8 @@ for (const path of paths) {
         const pkg_dir = path.join(dir, pkg)
         const files = await fs.readdir(pkg_dir)
 
+        const assets: string[] = []
+
         if (files.includes('webpack.config.js')) {
             console.log(pkg_dir)
             const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })
@@ -40,9 +43,13 @@ for (const path of paths) {
             exec('pnpm i')
             exec('pnpm webpack')
 
-            console.info(`${pkg}-${process.env.COMMIT_HASH}.js`)
+            const asset = path.join(dist, `${pkg}-${process.env.COMMIT_HASH}.js`)
 
-            await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), path.join(dist, `${pkg}-${process.env.COMMIT_HASH}.js`))
+            assets.push(asset)
+
+            await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
         }
+
+        setOutput('assets', assets.length === 0 ? 'false' : assets.join('\n'))
     }
 })()
