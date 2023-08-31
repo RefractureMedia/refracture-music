@@ -34,7 +34,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
     await fs.ensureDir(dist)
 
-    const releases: { pkg: string, asset: string, version: string, tag: string }[] = []
+    const releases: { pkg: string, asset: string, version: string }[] = []
 
     let changelog = ''
 
@@ -54,9 +54,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
             const asset = path.join(dist, `${pkg}-${version}.js`)
 
-            const tag = `v${process.env.COMMIT_HASH}`
-
-            releases.push({ pkg, asset, version, tag })
+            releases.push({ pkg, asset, version })
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
 
@@ -75,32 +73,36 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
     if (release) {
         setOutput('release', process.env.COMMIT_MESSAGE.split(' ').slice(1).join(' '))
 
-        let manifest = {};
+        let manifest: any = {};
 
         try {
             manifest = await (await fetch(`https://github.com/${process.env.REPOSITORY}/releases/latest/download/manifest.json`)).json()
         } catch (e) {}
 
-        const entries = {}
+        const mergeManifest = { tag: `v${process.env.COMMIT_HASH}`, previous: undefined }
 
-        for await (const { pkg, asset, version, tag } of releases) {
-            entries[pkg] = {
+        if (manifest.tag) {
+            mergeManifest.previous = manifest.tag
+
+            changelog += `Compare: https://github.com/${process.env.REPOSITORY}/compare/${manifest.tag}...${mergeManifest.tag}`
+        }
+
+        for await (const { pkg, asset, version } of releases) {
+            mergeManifest[pkg] = {
                 src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
                 hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
-                version,
-                tag
+                version
             }
         }
 
         const manifestPath = path.join(dist, 'manifest.json')
 
-        await fs.writeFile(manifestPath, JSON.stringify({ ...manifest, ...entries }))
+        await fs.writeFile(manifestPath, JSON.stringify({ ...manifest, ...mergeManifest }))
 
         releases.push({
             asset: manifestPath,
             pkg: '',
             version: '',
-            tag: ''
         })
     }
 
