@@ -36,8 +36,8 @@ for (const path of paths) {
         if (files.includes('webpack.config.js')) {
             const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })
 
-            exec('pnpm i')
-            exec('pnpm webpack')
+            exec('npm i')
+            exec('npm run webpack')
 
             console.info(`${pkg}-${process.env.COMMIT_HASH}.js`)
 
