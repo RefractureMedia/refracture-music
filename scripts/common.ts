@@ -39,6 +39,8 @@ for (const path of paths) {
             exec('pnpm i')
             exec('pnpm webpack')
 
+            console.info(`${pkg}-${process.env.COMMIT_HASH}.js`)
+
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), path.join(dist, `${pkg}-${process.env.COMMIT_HASH}.js`))
         }
     }
