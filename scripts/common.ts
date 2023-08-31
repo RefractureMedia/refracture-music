@@ -34,7 +34,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
     await fs.ensureDir(dist)
 
-    const releases: { pkg: string, asset: string, version: string }[] = []
+    const releases: { pkg: string, asset: string, version: string, tag: string }[] = []
 
     let changelog = ''
 
@@ -54,7 +54,9 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
             const asset = path.join(dist, `${pkg}-${version}.js`)
 
-            releases.push({ pkg, asset, version })
+            const tag = `v${process.env.COMMIT_HASH}`
+
+            releases.push({ pkg, asset, version, tag })
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
 
@@ -64,8 +66,8 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
                 const second_heading = lexed.findIndex((c) => c.type === 'heading' && c.raw.startsWith('# '))
 
                 changelog += 
-                    `# /music-${pkg}\n` +
-                    `${lexed.slice(0, second_heading).map((c) => c.raw).join('\n')}\n\n`
+                    `## /music-${pkg} v${version}\n` +
+                    `${lexed.slice(0, second_heading === -1 ? undefined : second_heading).map((c) => c.raw).join('\n')}\n\n`
             }
         }
     }
@@ -81,11 +83,14 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
         const entries = {}
 
-        releases.forEach(async ({ pkg, asset, version }) => entries[pkg] = {
-            src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
-            hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
-            version,
-        })
+        for await (const { pkg, asset, version, tag } of releases) {
+            entries[pkg] = {
+                src: `https://github.com/${process.env.REPOSITORY}/releases/latest/download/${pkg}-${version}.js`,
+                hash: crypto.createHash('sha512').update(await fs.readFile(asset)).digest('base64'),
+                version,
+                tag
+            }
+        }
 
         const manifestPath = path.join(dist, 'manifest.json')
 
@@ -95,6 +100,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
             asset: manifestPath,
             pkg: '',
             version: '',
+            tag: ''
         })
     }
 
