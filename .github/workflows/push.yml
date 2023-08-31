@@ -21,9 +21,13 @@ jobs:
       - name: Get commit hash
         id: commit-hash
         uses: prompt/actions-commit-hash@v2
+      
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Run common
         env:
           COMMIT_HASH: "${{ steps.commit-hash.outputs.short }}"
           COMMIT_PATHS: "${{ steps.changed-files.outputs.all_changed_files }}"
-        run: "cd scripts && npm i && cd .. && npx ts-node --esm scripts/common.ts"
+        run: "cd scripts && pnpm i && cd .. && npx ts-node --esm scripts/common.ts"
