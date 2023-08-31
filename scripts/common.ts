@@ -4,6 +4,7 @@ import { Path as PathParser } from 'path-parser'
 import { fileURLToPath } from 'url'
 import * as child from 'child_process'
 import { setOutput } from '@actions/core'
+import { lexer } from 'marked'
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -23,6 +24,8 @@ for (const path of paths) {
     }
 }
 
+const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
+
 (async () => {
     const dir = path.join(__dirname, '..', 'packages')
 
@@ -32,12 +35,13 @@ for (const path of paths) {
 
     const assets: string[] = []
 
+    let changelog = ''
+
     for await (const pkg of pkgs) {
         const pkg_dir = path.join(dir, pkg)
         const files = await fs.readdir(pkg_dir)
 
         if (files.includes('webpack.config.js')) {
-            console.log(pkg_dir)
             const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })
 
             exec('pnpm i')
@@ -48,8 +52,22 @@ for (const path of paths) {
             assets.push(asset)
 
             await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
+
+            if (release) {
+                const lexed = lexer(await fs.readFile(path.join(pkg_dir, 'changelog.md'), { encoding: 'utf-8' })).slice(1)
+
+                const second_heading = lexed.findIndex((c) => c.type === 'heading' && c.raw.startsWith('# '))
+
+                changelog += 
+                    `# /music-${pkg}\n` +
+                    `${lexed.slice(0, second_heading).map((c) => c.raw).join('\n')}\n\n`
+            }
         }
     }
 
     setOutput('assets', assets.length === 0 ? 'false' : assets.join('\n'))
+
+    setOutput('changelog', release ? changelog : 'false')
+
+    if (release) setOutput('release', process.env.COMMIT_MESSAGE.split(' ').slice(1).join(' '))
 })()
