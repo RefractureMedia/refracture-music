@@ -3,9 +3,8 @@ import path from 'path'
 import crypto from 'crypto'
 import { Path as PathParser } from 'path-parser'
 import { fileURLToPath } from 'url'
-import * as child from 'child_process'
 import { setOutput } from '@actions/core'
-import { lexer } from 'marked'
+import { webpackCI } from './types/webpack.js'
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -27,6 +26,8 @@ for (const path of paths) {
 
 const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
+export type Releases = { pkg: string, assets: Record<string, string>, version: string }[]
+
 (async () => {
     const dir = path.join(__dirname, '..', 'packages')
 
@@ -34,7 +35,7 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
 
     await fs.ensureDir(dist)
 
-    const releases: { pkg: string, assets: Record<string, string>, version: string }[] = []
+    const releases: Releases = []
 
     let changelog = ''
 
@@ -43,30 +44,9 @@ const release = process.env.COMMIT_MESSAGE.startsWith('🚀');
         const files = await fs.readdir(pkg_dir)
 
         if (files.includes('webpack.config.js')) {
-            const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })
+            const CI = webpackCI(pkg_dir, release, releases, dist, pkg)
 
-            exec('pnpm i')
-            exec('pnpm webpack')
-
-            let version = process.env.COMMIT_HASH;
-
-            if (release) version = JSON.parse(await fs.readFile(path.join(pkg_dir, 'package.json'), { encoding: 'utf-8' })).version
-
-            const asset = path.join(dist, `${pkg}-${version}.js`)
-
-            releases.push({ pkg, assets: { bundle: asset }, version })
-
-            await fs.rename(path.join(pkg_dir, 'dist', 'bundle.js'), asset)
-
-            if (release) {
-                const lexed = lexer(await fs.readFile(path.join(pkg_dir, 'changelog.md'), { encoding: 'utf-8' })).slice(1)
-
-                const second_heading = lexed.findIndex((c) => c.type === 'heading' && c.raw.startsWith('# '))
-
-                changelog += 
-                    `## /music-${pkg} v${version}\n` +
-                    `${lexed.slice(0, second_heading === -1 ? undefined : second_heading).map((c) => c.raw).join('\n')}\n\n`
-            }
+            if (CI) changelog += CI
         }
     }
 
