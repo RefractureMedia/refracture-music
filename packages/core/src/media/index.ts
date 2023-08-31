@@ -153,9 +153,9 @@ export class ItemClass<ItemIdentifier extends ItemIdentifierType = ItemIdentifie
 
     data: PluginData;
 
-    serializers: Map<PluginIdentifier, DataSerializer>;
+    // serializers: Map<PluginIdentifier, DataSerializer>;
 
-    accessors: Map<PluginIdentifier, DataAccessor>;
+    // accessors: Map<PluginIdentifier, DataAccessor>;
 
     constructor(id: ItemIdentifier, data: RawData) {
         this.id = id;
