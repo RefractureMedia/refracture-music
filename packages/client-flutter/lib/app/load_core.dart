@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_js/flutter_js.dart';
 
 Future<void> load() async {
-  final appData = (await getApplicationDocumentsDirectory()).path;
+  final appData = (await getApplicationSupportDirectory()).path;
 
   final db = sqlite3.open(join(appData, 'main.db'));
 
@@ -30,7 +30,7 @@ Future<void> load() async {
   } catch (e) {/* do nothing */}
 
   if (currentTag == false || currentTag != manifest['core']['tag']) {
-    bundle = (await http.get(Uri.parse('${basePath}/${manifest['core']['assets']['bundle']['src']}'))).body;
+    bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
 
     await tagFile.writeAsString(manifest['core']['tag']);
 
