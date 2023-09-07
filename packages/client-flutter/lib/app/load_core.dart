@@ -29,10 +29,10 @@ Future<void> load() async {
     currentTag = await tagFile.readAsString();
   } catch (e) {/* do nothing */}
 
-  if (currentTag == false || currentTag != manifest.core.tag) {
-    bundle = (await http.get(Uri.parse('${basePath}/${manifest.core.assets.bundle.src}'))).body;
+  if (currentTag == false || currentTag != manifest['core']['tag']) {
+    bundle = (await http.get(Uri.parse('${basePath}/${manifest['core']['assets']['bundle']['src']}'))).body;
 
-    await tagFile.writeAsString(manifest.core.tag);
+    await tagFile.writeAsString(manifest['core']['tag']);
 
     await coreFile.writeAsString(bundle);
   } else {
@@ -62,4 +62,6 @@ Future<void> load() async {
   core.onMessage('queryDatabase', (query) {
     return db.select(query);
   });
+
+  print(core);
 }
