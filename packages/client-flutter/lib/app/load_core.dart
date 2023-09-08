@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:sqlite3/sqlite3.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +11,17 @@ import 'package:flutter_js/flutter_js.dart';
 Future<void> load() async {
   final appData = (await getApplicationSupportDirectory()).path;
 
-  final db = sqlite3.open(join(appData, 'main.db'));
+  if (Platform.isWindows || Platform.isLinux) {
+    // Initialize FFI
+    sqfliteFfiInit();
+  }
+  // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib` you can forget
+  // this step, it will use the sqlite version available on the system.
+  databaseFactory = databaseFactoryFfi;
+
+  final db = await openDatabase(join(appData, 'main.db'));
+
+  // TODO: Add ability to run Refracture offline
 
   const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
 
@@ -60,7 +70,7 @@ Future<void> load() async {
   initDatabase();
 
   core.onMessage('queryDatabase', (query) {
-    return db.select(query);
+    return db.query(query);
   });
 
   print(core);
