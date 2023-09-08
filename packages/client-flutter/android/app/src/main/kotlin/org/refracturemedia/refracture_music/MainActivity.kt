@@ -1,4 +1,4 @@
-package org.refracturemedia.refracture_music
+package media.refracture.refracture_music
 
 import io.flutter.embedding.android.FlutterActivity
 

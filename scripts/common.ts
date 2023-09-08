@@ -46,7 +46,7 @@ export type Releases = { pkg: string, assets: Record<string, string>, version: s
         if (files.includes('webpack.config.js')) {
             const CI = webpackCI(pkg_dir, release, releases, dist, pkg)
 
-            if (CI) changelog += CI
+            if (CI) changelog += await CI
         }
     }
 

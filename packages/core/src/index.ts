@@ -21,7 +21,7 @@ export class MusicCore {
     playlists: ItemManager;
 
     async startup () {
-        await this.session.startup();
+        // await this.session.startup();
     }
 
     constructor() {
@@ -40,8 +40,6 @@ export class MusicCore {
 }
 
 export const Music = new MusicCore();
-
-console.log('[Music Core] Hello world!!!!!!!!');
 
 declare function sendMessage(channel_name: string, message: any): any;
 
