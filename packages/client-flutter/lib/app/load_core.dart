@@ -76,7 +76,7 @@ Future<void> load() async {
     return db.query(query);
   });
 
-  core.onMessage('test', (message) {
+  core.onMessage('print', (message) {
     print(message);
   });
 

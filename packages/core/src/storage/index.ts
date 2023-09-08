@@ -4,6 +4,8 @@ interface ConnectionData {
     address: string
 }
 
+declare const connection_data: ConnectionData
+
 export class Database {
     address: URL;
 
@@ -17,8 +19,6 @@ export class Database {
     }
 
     constructor () {
-        const connection_data = JSON.parse(localStorage.getItem('connection_data')) as ConnectionData;
-
         this.address = new URL(connection_data.address);
     }
 }

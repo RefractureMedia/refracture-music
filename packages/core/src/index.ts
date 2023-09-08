@@ -1,3 +1,6 @@
+import 'react-native-polyfill';
+import 'core-js/actual/url';
+import 'core-js/actual/clearTimeout';
 import { AccountManager, AccountClass } from './account/index';
 import { ItemManager } from './media/index';
 import Player from './player/index';
@@ -41,8 +44,9 @@ export class MusicCore {
 
 export const Music = new MusicCore();
 
-declare function sendMessage(channel_name: string, message: any): any;
-
-sendMessage('test', '[Music Core] Hello? *tap tap* Is this thing on?');
+/**
+ * @param message Must be valid JSON; '"Helooo"', JSON.stringify({blah: 'foo'}), etc.
+ */
+declare function sendMessage(channel_name: string, message: string): any;
 
 export default Music;

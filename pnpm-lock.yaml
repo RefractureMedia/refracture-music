@@ -26,9 +26,15 @@ importers:
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
+      core-js:
+        specifier: ^3.32.2
+        version: 3.32.2
       locale-codes:
         specifier: ^1.3.1
         version: 1.3.1
+      react-native-polyfill:
+        specifier: ^1.2.1
+        version: 1.2.1
       socket.io-client:
         specifier: ^4.5.1
         version: 4.5.1
@@ -469,6 +475,11 @@ packages:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
 
+  /core-js@3.32.2:
+    resolution: {integrity: sha512-pxXSw1mYZPDGvTQqEc5vgIb83jGQKFGYWY76z4a7weZXUolw3G+OvpZqSRcfYOoOVUQJYEPsWeQK8pKEnUtWxQ==}
+    requiresBuild: true
+    dev: false
+
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: false
@@ -856,6 +867,12 @@ packages:
       safe-buffer: 5.2.1
     dev: true
 
+  /react-native-polyfill@1.2.1:
+    resolution: {integrity: sha512-U1Mzmn4gWuMN3tbMVTEz//L93E8CWNwXlxRh4JUDYH9yxORyDFe7y5JuowtotzRf3wnOCrBxbWzqb0DO26fHcw==}
+    dependencies:
+      unorm: 1.6.0
+    dev: false
+
   /rechoir@0.8.0:
     resolution: {integrity: sha512-/vxpCXddiX8NGfGO/mTafwjq4aFa/71pvamip0++IQk3zG8cbCj0fifNPrjjF1XMXUne91jL9OoxmdykoEtifQ==}
     engines: {node: '>= 10.13.0'}
@@ -1099,6 +1116,11 @@ packages:
   /universalify@2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
+    dev: false
+
+  /unorm@1.6.0:
+    resolution: {integrity: sha512-b2/KCUlYZUeA7JFUuRJZPUtr4gZvBh7tavtv4fvk4+KV9pfGiR6CQAQAWl49ZpR3ts2dk4FYkP7EIgDJoiOLDA==}
+    engines: {node: '>= 0.4.0'}
     dev: false
 
   /update-browserslist-db@1.0.11(browserslist@4.21.10):
