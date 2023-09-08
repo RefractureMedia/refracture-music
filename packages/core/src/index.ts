@@ -41,6 +41,10 @@ export class MusicCore {
 
 export const Music = new MusicCore();
 
-console.log('[Music Core] Hello world!!!!!!!!')
+console.log('[Music Core] Hello world!!!!!!!!');
+
+declare function sendMessage(channel_name: string, message: any): any;
+
+sendMessage('test', '[Music Core] Hello? *tap tap* Is this thing on?');
 
 export default Music;
