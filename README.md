@@ -24,36 +24,36 @@
     - Rich Presence/Activity Discord plugin
     - Full [Audius Music](https://audius.co/) integration plugin
   - 🕙️ Q4 2024
-- 🚀 **[Full Roadmap](/tree/main/packages/docs/user/roadmap.md)**
+- 🚀 **[Full Roadmap](/packages/docs/user/roadmap.md)**
 
 ## Packages
 
-### 🏬 [addon-host](/tree/main/packages/addon-host)
+### 🏬 [addon-host](/packages/addon-host)
 Hosting server for addons (plugins & themes).
 - Written in TypeScript.
 - Support for several deployments; CLI, Docker, NPM/Embedded, CloudFlare Worker/Edge, etc.
 
-### 🚥 [client-cli](/tree/main/packages/client-cli)
+### 🚥 [client-cli](/packages/client-cli)
 Testing client for development of core.
 
-### 🍃 [client-flutter](/tree/main/packages/client-flutter)
+### 🍃 [client-flutter](/packages/client-flutter)
 Cross-platform UI. (All platforms)
 
-### ⚙️ [core](/tree/main/packages/core)
+### ⚙️ [core](/packages/core)
 All internal functionality code. Requires codec compatibility info and implemented native user input & playback hooks.
 - Written in TypeScript.
 - Releases will include compatible bundles for Node 18 & Latest Deno/Bun.
 - Will use Refracture [Intern](https://github.com/RefractureMedia/intern) to provide SponsorBlock style crowd-sourced submissions to simplify, optimize, & enrich music metadata.
 
-### 📄 [docs](/tree/main/packages/docs)
+### 📄 [docs](/packages/docs)
 Markdown documentation of the project.
 
-### ☁️ [server](/tree/main/packages/server)
+### ☁️ [server](/packages/server)
 A self-hosted session & library dameon/service. Provides a centralized location for syncing your profile between devices and streaming/distributing your saved library.
 - Written in TypeScript.
 - A runtime agnostic CLI with Linux tooling & windows support (through the app).
 
-### ❇️ [web](/tree/main/packages/addon-host)
+### ❇️ [web](/packages/addon-host)
 Hosting server for the project.
 - Written in TypeScript.
 - Support for several deployments; Vercel, Docker, etc.
@@ -61,17 +61,17 @@ Hosting server for the project.
 
 ## Official Plugins
 
-### [base](/tree/main/packages/plugin-base)
+### [base](/packages/plugin-base)
 Offline/self-hosted music.
 
-### [spotify](/tree/main/packages/plugin-spotify)
+### [spotify](/packages/plugin-spotify)
 Full integration with Spotify. (Premium users only)
 
-### [audius](/tree/main/packages/plugin-audius)
+### [audius](/packages/plugin-audius)
 Full integration with Audius. (free!)
 
-### [discord](/tree/main/packages/plugin-discord)
+### [discord](/packages/plugin-discord)
 Rich Presence/Activity in Discord.
 
-### [lastfm](/tree/main/packages/plugin-lastfm)
+### [lastfm](/packages/plugin-lastfm)
 Playback scrobbling.
