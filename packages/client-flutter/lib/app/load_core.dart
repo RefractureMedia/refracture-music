@@ -98,6 +98,8 @@ class AppCore {
       print('a');
       core.dispose();
 
+      core = getJavascriptRuntime();
+
       await connectionData();
 
       final test = await utf8.decodeStream(req.read());
