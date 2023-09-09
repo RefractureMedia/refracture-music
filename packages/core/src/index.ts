@@ -1,11 +1,11 @@
 import 'react-native-polyfill';
 import 'core-js/actual/url';
-import 'core-js/actual/clearTimeout';
 import { AccountManager, AccountClass } from './account/index';
 import { ItemManager } from './media/index';
 import Player from './player/index';
 import { PluginManager } from './plugin/index';
 import SessionManager from './session/index';
+import { Logger } from './util/logging';
 
 export class MusicCore {
     session: SessionManager;
@@ -44,9 +44,6 @@ export class MusicCore {
 
 export const Music = new MusicCore();
 
-/**
- * @param message Must be valid JSON; '"Helooo"', JSON.stringify({blah: 'foo'}), etc.
- */
-declare function sendMessage(channel_name: string, message: string): any;
+Logger.info('Hello World!')
 
 export default Music;

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:refracture_music/app/load_core.dart';
+import 'package:refracture_music/app/core.dart';
 
 import 'views/navigation.dart';
 
 void main() {
-  runApp(const MusicApp());
-
-  final core = AppCore();
-
-  core.load();
+  runApp(AppCore(child: const MusicApp())..load());
 }
 
 class MusicApp extends StatelessWidget {

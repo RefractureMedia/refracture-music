@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_js/extensions/fetch.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
@@ -12,54 +13,33 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 
-class AppCore {
-  late String appData;
+// ignore: must_be_immutable
+class AppCore extends InheritedWidget {
+  late String appDataDir;
 
   late Database db;
 
   late JavascriptRuntime core;
 
-  Future<void> load() async {
-    appData = (await getApplicationSupportDirectory()).path;
+  AppCore({
+    super.key, 
+    required Widget child,
+  }) : super(child: child);
 
-    if (Platform.isWindows || Platform.isLinux) {
-      // Initialize FFI
-      sqfliteFfiInit();
-    }
-    // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib` you can forget
-    // this step, it will use the sqlite version available on the system.
-    databaseFactory = databaseFactoryFfi;
+  @override
+  bool updateShouldNotify(AppCore oldWidget) => core != oldWidget.core;
+  
+  static AppCore? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<AppCore>();
+  }
 
-    db = await openDatabase(join(appData, 'main.db'));
+  static AppCore of(BuildContext context) {
+    final AppCore? result = maybeOf(context);
+    assert(result != null, 'No AppCore found in context');
+    return result!;
+  }
 
-    // TODO: Add ability to run Refracture offline
-
-    const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
-
-    final manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
-
-    String bundle;
-
-    dynamic currentTag = false;
-
-    final tagFile = File(join(appData, 'core_tag'));
-
-    final coreFile = File(join(appData, 'core'));
-
-    try {
-      currentTag = await tagFile.readAsString();
-    } catch (e) {/* do nothing */}
-
-    if (currentTag == false || currentTag != manifest['core']['tag']) {
-      bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
-
-      await tagFile.writeAsString(manifest['core']['tag']);
-
-      await coreFile.writeAsString(bundle);
-    } else {
-      bundle = await coreFile.readAsString();
-    }
-
+  initCore(String bundle) async {
     core = getJavascriptRuntime();
 
     await core.enableFetch();
@@ -82,29 +62,60 @@ class AppCore {
       print(message);
     });
 
-    connectionData() async {
-      await core.evaluateAsync("""
-        var connection_data = ${json.encode({"address": "http://localhost:4829"})};
-      """);
-    }
-
-    await connectionData();
+    await core.evaluateAsync("""
+      var connection_data = ${json.encode({"address": "http://localhost:4829"})};
+    """);
 
     await core.evaluateAsync(bundle);
 
     // await databaseInitialized.future;
+  }
+
+  Future<void> load() async {
+    appDataDir = (await getApplicationSupportDirectory()).path;
+
+    if (Platform.isWindows || Platform.isLinux) {
+      // Initialize FFI
+      sqfliteFfiInit();
+    }
+    // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib` you can forget
+    // this step, it will use the sqlite version available on the system.
+    databaseFactory = databaseFactoryFfi;
+
+    db = await openDatabase(join(appDataDir, 'main.db'));
+
+    // TODO: Add ability to run Refracture offline
+
+    const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
+
+    final manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
+
+    String bundle;
+
+    dynamic currentTag = false;
+
+    final tagFile = File(join(appDataDir, 'core_tag'));
+
+    final coreFile = File(join(appDataDir, 'core'));
+
+    try {
+      currentTag = await tagFile.readAsString();
+    } catch (e) {/* do nothing */}
+
+    if (currentTag == false || currentTag != manifest['core']['tag']) {
+      bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
+
+      await tagFile.writeAsString(manifest['core']['tag']);
+
+      await coreFile.writeAsString(bundle);
+    } else {
+      bundle = await coreFile.readAsString();
+    }
+
+    initCore(bundle);
 
     Future<Response> updateRes(Request req) async {
-      print('a');
-      core.dispose();
-
-      core = getJavascriptRuntime();
-
-      await connectionData();
-
-      final test = await utf8.decodeStream(req.read());
-
-      await core.evaluateAsync(test);
+      await initCore(await utf8.decodeStream(req.read()));
 
       return Response(200);
     }
