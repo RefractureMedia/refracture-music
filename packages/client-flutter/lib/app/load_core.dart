@@ -8,81 +8,108 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_js/flutter_js.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:shelf_router/shelf_router.dart' as shelf_router;
 
-Future<void> load() async {
-  final appData = (await getApplicationSupportDirectory()).path;
+class AppCore {
+  late String appData;
 
-  if (Platform.isWindows || Platform.isLinux) {
-    // Initialize FFI
-    sqfliteFfiInit();
-  }
-  // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib` you can forget
-  // this step, it will use the sqlite version available on the system.
-  databaseFactory = databaseFactoryFfi;
+  late Database db;
 
-  final db = await openDatabase(join(appData, 'main.db'));
+  late JavascriptRuntime core;
 
-  // TODO: Add ability to run Refracture offline
+  Future<void> load() async {
+    appData = (await getApplicationSupportDirectory()).path;
 
-  const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
+    if (Platform.isWindows || Platform.isLinux) {
+      // Initialize FFI
+      sqfliteFfiInit();
+    }
+    // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib` you can forget
+    // this step, it will use the sqlite version available on the system.
+    databaseFactory = databaseFactoryFfi;
 
-  final manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
+    db = await openDatabase(join(appData, 'main.db'));
 
-  String bundle;
+    // TODO: Add ability to run Refracture offline
 
-  dynamic currentTag = false;
+    const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
 
-  final tagFile = File(join(appData, 'core_tag'));
+    final manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
 
-  final coreFile = File(join(appData, 'core'));
+    String bundle;
 
-  try {
-    currentTag = await tagFile.readAsString();
-  } catch (e) {/* do nothing */}
+    dynamic currentTag = false;
 
-  if (currentTag == false || currentTag != manifest['core']['tag']) {
-    bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
+    final tagFile = File(join(appData, 'core_tag'));
 
-    await tagFile.writeAsString(manifest['core']['tag']);
+    final coreFile = File(join(appData, 'core'));
 
-    await coreFile.writeAsString(bundle);
-  } else {
-    bundle = await coreFile.readAsString();
-  }
+    try {
+      currentTag = await tagFile.readAsString();
+    } catch (e) {/* do nothing */}
 
-  final core = getJavascriptRuntime();
+    if (currentTag == false || currentTag != manifest['core']['tag']) {
+      bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
 
-  await core.enableFetch();
+      await tagFile.writeAsString(manifest['core']['tag']);
 
-  await core.enableHandlePromises();
+      await coreFile.writeAsString(bundle);
+    } else {
+      bundle = await coreFile.readAsString();
+    }
 
-  initDatabase() async {
+    core = getJavascriptRuntime();
 
-    final c = Completer();
+    await core.enableFetch();
+
+    await core.enableHandlePromises();
+
+    final databaseInitialized = Completer();
 
     core.onMessage('initDatabase', (sql) {
       db.execute(sql);
 
-      c.complete();
+      databaseInitialized.complete();
     });
 
-    return c.future;
+    core.onMessage('queryDatabase', (query) {
+      return db.query(query);
+    });
+
+    core.onMessage('print', (message) {
+      print(message);
+    });
+
+    connectionData() async {
+      await core.evaluateAsync("""
+        var connection_data = ${json.encode({"address": "http://localhost:4829"})};
+      """);
+    }
+
+    await connectionData();
+
+    await core.evaluateAsync(bundle);
+
+    // await databaseInitialized.future;
+
+    Future<Response> updateRes(Request req) async {
+      print('a');
+      core.dispose();
+
+      await connectionData();
+
+      final test = await utf8.decodeStream(req.read());
+
+      await core.evaluateAsync(test);
+
+      return Response(200);
+    }
+
+    final cascade = Cascade().add(shelf_router.Router()..post('/', updateRes));
+
+    // TODO: Set this to false before every release
+    if (true) await shelf_io.serve(logRequests().addHandler(cascade.handler), InternetAddress.anyIPv4, 4578);
   }
-
-  //await initDatabase();
-  initDatabase();
-
-  core.onMessage('queryDatabase', (query) {
-    return db.query(query);
-  });
-
-  core.onMessage('print', (message) {
-    print(message);
-  });
-
-  await core.evaluateAsync("""
-    var connection_data = ${json.encode({"address": "http://localhost:4829"})};
-  """);
-
-  await core.evaluateAsync(bundle);
 }

@@ -36,7 +36,7 @@ jobs:
           COMMIT_PATHS: ${{ steps.changed-files.outputs.all_changed_files }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           REPOSITORY: ${{ github.repository }}
-        run: "cd scripts && pnpm i && cd .. && npx ts-node --esm scripts/common.ts"
+        run: "cd scripts && pnpm i && cd .. && npx ts-node --esm scripts/ci.ts"
 
       - name: Upload assets artifact
         if: ${{ !contains(steps.common.outputs.assets, 'false') }}

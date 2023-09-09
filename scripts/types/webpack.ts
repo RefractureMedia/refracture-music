@@ -2,7 +2,7 @@ import * as child from 'child_process'
 import fs from 'fs-extra'
 import path from 'path'
 import { lexer } from 'marked'
-import { Releases } from '../common.js'
+import { Releases } from '../ci.js'
 
 export async function webpackCI(pkg_dir: string, release: boolean, releases: Releases, dist: string, pkg: string) {
     const exec = (cmd: string) => child.execSync(cmd, { cwd: pkg_dir })

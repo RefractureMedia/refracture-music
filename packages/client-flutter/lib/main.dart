@@ -7,7 +7,9 @@ import 'views/navigation.dart';
 void main() {
   runApp(const MusicApp());
 
-  load();
+  final core = AppCore();
+
+  core.load();
 }
 
 class MusicApp extends StatelessWidget {
