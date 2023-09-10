@@ -1,5 +1,6 @@
 import 'react-native-polyfill';
 import 'core-js/actual/url';
+
 import { AccountManager, AccountClass } from './account/index';
 import { ItemManager } from './media/index';
 import Player from './player/index';

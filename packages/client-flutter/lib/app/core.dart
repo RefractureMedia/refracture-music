@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_js/extensions/fetch.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
@@ -122,7 +123,6 @@ class AppCore extends InheritedWidget {
 
     final cascade = Cascade().add(shelf_router.Router()..post('/', updateRes));
 
-    // TODO: Set this to false before every release
-    if (true) await shelf_io.serve(logRequests().addHandler(cascade.handler), InternetAddress.anyIPv4, 4578);
+    if (kDebugMode) await shelf_io.serve(logRequests().addHandler(cascade.handler), InternetAddress.anyIPv4, 4578);
   }
 }
