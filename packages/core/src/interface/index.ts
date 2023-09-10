@@ -1,12 +1,14 @@
-import { RuntimeBundle } from "../plugin/index";
+import { RuntimeBundle } from "../plugin/index.js";
 
 /**
  * Embedded webpage overlay
  */
 export class InterfaceWebview {
-    origin: URL;
-    readonly cookies: Map<string, string>;
-    readonly storage: Map<string, string>;
+    readonly origin: URL;
+    readonly cookies: Map<string, string> = new Map();
+    readonly storage: Map<string, string> = new Map();
+
+    route: URL;
 
     enable_javascript = true;
     inject_javascript: RuntimeBundle | undefined;
@@ -35,6 +37,7 @@ export class InterfaceWebview {
      * @returns Paths and stringified bundles for the page's source
      */
     get_sources(): Map<string, string | RuntimeBundle> {
+        /* @ts-ignore */
         return;
     }
     /**
@@ -42,6 +45,12 @@ export class InterfaceWebview {
      * @returns Stringified DOM
      */
     get_dom(): string {
+        /* @ts-ignore */
         return;
+    }
+
+    constructor(origin: URL) {
+        this.origin = origin;
+        this.route = origin;
     }
 }

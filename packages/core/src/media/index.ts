@@ -1,11 +1,11 @@
 import { v4 as uuid } from 'uuid';
-import { PluginIdentifier, RawData, PluginData } from '../plugin/index';
-import { DB } from '../storage/index';
+import { PluginIdentifier, RawData, PluginData } from '../plugin/index.js';
+import { DB } from '../storage/index.js';
 
-function getItem(item_type: ItemTypes, item_id: ItemIdentifierType) {
+function getItem(item_type: ItemTypes, item_id: ItemIdentifierType, instance: ItemManager) {
     return (async () => {
-        this.item_map[item_id] = new ItemClass(item_id, await DB.request(item_type, item_id));
-        return this.item_map[item_id] as ItemClass<ItemIdentifierType>;
+        instance.item_map.set(item_id, new ItemClass(item_id, await DB.request(item_type, item_id)));
+        return instance.item_map.get(item_id) as ItemClass<ItemIdentifierType>;
     });
 }
 type ManagerUpdate = () => void;
@@ -24,15 +24,15 @@ export class ItemManager {
         if (!access_id)
             access_id = uuid();
 
-        if (this.item_map[item_id])
-            this.accessed_items[item_id].push(access_id);
+        if (this.item_map.get(item_id))
+            this.accessed_items.get(item_id)!.push(access_id);
         else {
-            this.accessed_items[item_id] = [access_id];
+            this.accessed_items.set(item_id, [access_id]);
 
-            this.item_map[item_id] = new ItemClass(item_id, await DB.request(this.type, item_id));
+            this.item_map.set(item_id, new ItemClass(item_id, await DB.request(this.type, item_id)));
         }
 
-        return [this.item_map[item_id], access_id] as [ItemClass<ItemIdentifierType>, AccessIdentifierType];
+        return [this.item_map.get(item_id), access_id] as [ItemClass<ItemIdentifierType>, AccessIdentifierType];
     }
 
     /**
@@ -49,20 +49,22 @@ export class ItemManager {
 
         const results: ItemClass<ItemIdentifierType>[] = [];
 
-        ((await DB.request(`${this.type}_sorted`, `${count}`, `${start_at}`, sort_order)) as RawData[]).forEach((id: string, data: RawData) => {
-            if (this.item_map[id]) {
-                this.accessed_items[id].push(access_id);
-                this.item_map[id] = new ItemClass(id, data);
+        ((await DB.request(`${this.type}_sorted`, `${count}`, `${start_at}`, sort_order!)) as RawData[]).forEach((_id, i, data: RawData[]) => {
+            const id = _id as unknown as string
+            const current = this.item_map.get(id);
+            if (current) {
+                this.accessed_items.get(id)!.push(access_id!);
+                this.item_map.set(id, new ItemClass(id, data));
 
-                results.push(this.item_map[id]);
+                results.push(current);
             } else {
-                this.accessed_items[id] = [access_id];
-                results.push(this.item_map[id]);
+                this.accessed_items.set(id, [access_id!]);
+                results.push(current!); // TODO: This probably is bad
             }
         });
 
         if (manager_update)
-            this.update_listeners[manager_update[0]] = manager_update[1];
+            this.update_listeners.set(manager_update[0], manager_update[1]);
 
         // TypeScript why
         return [results, access_id] as [ItemClass<ItemIdentifierType>[], AccessIdentifierType];
@@ -83,9 +85,10 @@ export class ItemManager {
         const add_items: [number[], ItemIdentifierType[]] = [[], []];
 
         for (const [i, id] of item_ids.entries()) {
-            if (this.item_map[id]) {
-                results.push(this.item_map[id]);
-                this.accessed_items[id].push(access_id);
+            const current = this.item_map.get(id)
+            if (current) {
+                results.push(current);
+                this.accessed_items.get(id)!.push(access_id);
             } else {
                 add_items[0].push(i);
                 add_items[1].push(id);
@@ -97,9 +100,9 @@ export class ItemManager {
             const id = add_items[1][i];
 
             // TypeScript Funny
-            this.item_map[id] = new ItemClass(id, data);
-            this.accessed_items[id] = [access_id];
-            results[add_items[0][i]] = this.item_map[id];
+            this.item_map.set(id, new ItemClass(id, data));
+            this.accessed_items.set(id, [access_id]);
+            results[add_items[0][i]] = this.item_map.get(id)!;
         }
 
         return results as ItemClass<ItemIdentifierType>[];
@@ -110,14 +113,13 @@ export class ItemManager {
      * @param access_id The database access id of the current scope received from `ItemManager.access[0]`.
      * @param item_id Optional. If a single item has been accessed provide this to optimize logic.
      */
-    free(access_id: AccessIdentifierType, item_id?: ItemIdentifierType) {
+    async free(access_id: AccessIdentifierType, item_id?: ItemIdentifierType) {
         if (item_id) {
-            // uhhhhh, duh!? wtf typescript
-            this.accessed_items[item_id] = (this.accessed_items[item_id] as AccessIdentifierType[]).filter((id) => id !== item_id);
+            this.accessed_items.set(item_id, this.accessed_items.get(item_id)!.filter((id) => id !== item_id));
 
-            if (!this.accessed_items[item_id].length) {
-                delete this.accessed_items[item_id];
-                this.item_map[item_id] = getItem(this.type, item_id);
+            if (this.accessed_items.get(item_id)!.length === 0) {
+                this.accessed_items.delete(item_id);
+                this.item_map.set(item_id, await getItem(this.type, item_id, this)());
             }
         }
         else
@@ -125,11 +127,12 @@ export class ItemManager {
                 const access_index = access.indexOf(access_id);
 
                 if (access_index !== -1) {
-                    this.accessed_items[item].splice(access_index, 1);
+                    const current = this.accessed_items.get(item)!;
+                    this.accessed_items.set(item, current.splice(access_index, 1));
 
-                    if (!this.accessed_items[item].length) {
-                        delete this.accessed_items[item];
-                        this.item_map[item] = getItem(this.type, item);
+                    if (current.length === 0) {
+                        this.accessed_items.delete(item);
+                        this.item_map.set(item, await getItem(this.type, item, this)());
                     }
                 }
             }
@@ -141,6 +144,8 @@ export class ItemManager {
         this.item_map = new Map();
 
         this.accessed_items = new Map();
+
+        this.update_listeners = new Map();
     }
 }
 
@@ -151,7 +156,7 @@ type ItemTypes = 'source' | 'track' | 'artist' | 'album' | 'playlist';
 export class ItemClass<ItemIdentifier extends ItemIdentifierType = ItemIdentifierType> {
     id: ItemIdentifier;
 
-    data: PluginData;
+    data!: PluginData; // TODO
 
     // serializers: Map<PluginIdentifier, DataSerializer>;
 

@@ -1,18 +1,18 @@
 import 'react-native-polyfill';
 import 'core-js/actual/url';
 
-import { AccountManager, AccountClass } from './account/index';
-import { ItemManager } from './media/index';
-import Player from './player/index';
-import { PluginManager } from './plugin/index';
-import SessionManager from './session/index';
-import { Logger } from './util/logging';
+import { AccountManager, AccountClass } from './account/index.js';
+import { ItemManager } from './media/index.js';
+import Player from './player/index.js';
+import { PluginManager } from './plugin/index.js';
+import SessionManager from './session/index.js';
+import { Logger } from './util/logging.js';
 
 export class MusicCore {
     session: SessionManager;
 
-    accounts: AccountManager;
-    current_account: AccountClass;
+    accounts!: AccountManager;
+    current_account!: AccountClass;
 
     plugins: PluginManager;
 
@@ -45,6 +45,6 @@ export class MusicCore {
 
 export const Music = new MusicCore();
 
-Logger.info('Hello World!')
+Logger.info('Hello World!!')
 
 export default Music;

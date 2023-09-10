@@ -1,15 +1,43 @@
+import fs from 'fs-extra'
+import path from 'path'
+
+function trimCode(input: string) {
+    let s = input;
+
+    const leading = new RegExp(`^${s.match(/^\n( +)/g)[0].slice(1)}`,'gm');
+
+    return s.replaceAll(leading, '').trim();
+}
+
 export async function webpackDB(pkg_dir: string) {
-    const migrations: { date: number, sql: string }[] = [];
+    const dates: {date: number, index: number}[] = [];
+    const sql: string[] = [];
 
-    const output = 
-`const webpack = require('webpack');
+    const dir = path.join(pkg_dir, 'prisma', 'migrations');
 
-export default new webpack.DefinePlugin({
-    database_migrations: {
-        index: [ ${migrations.map(m => m.date).join(', ')} ],
-        entries: {
-${migrations.map(m => `            ${m.date}: \`${m.sql}\`,`).join('\n')}
+   for await (const [index, migration] of (await fs.readdir(dir)).entries()) {
+        if (migration !== 'migration_lock.toml') {
+            const date = Number(migration.split('_')[0]);
+
+            dates.push({ date, index });
+
+            sql.push(await fs.readFile(path.join(dir, migration, 'migration.sql'), 'utf-8'));
         }
     }
-})`
+
+    dates.sort((a, b) => b.date - a.date);
+
+    await fs.ensureDir(path.join(pkg_dir, 'pack', 'database'));
+
+    await fs.writeFile(path.join(pkg_dir, 'pack', 'database', 'index.js'), trimCode(`
+        const webpack = require('webpack');
+
+        module.exports = new webpack.DefinePlugin({
+            database_migrations: {
+                entries: {
+        ${dates.map(({date, index}) => `            ${date}: \`${sql[index]}\`,`).join('\n')}
+                }
+            }
+        })
+    `))
 }

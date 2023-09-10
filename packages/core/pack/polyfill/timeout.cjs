@@ -42,7 +42,7 @@ function _clearTimeout(id) {
   if (__polyfillTimeout_timers.hasOwnProperty(id)) delete __polyfillTimeout_timers[id]; 
 }
 
-export default timeout = new webpack.DefinePlugin({
+module.exports = new webpack.DefinePlugin({
     __polyfillTimeout_timers,
     __polyfillTimeout_generateNewId,
     __polyfillTimeout_check,

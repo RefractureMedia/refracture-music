@@ -1,11 +1,11 @@
 import { v4 as uuid } from 'uuid';
-import { Music } from '../index';
-import { PluginData } from "../plugin/index";
+import { Music } from '../index.js';
+import { PluginData } from "../plugin/index.js";
 
 export class AccountManager {
-    private account_map: Map<AccountIdentifier, AccountClass>;
+    private account_map: Map<AccountIdentifier, AccountClass> = new Map();
 
-    private current_account: AccountIdentifier;
+    private current_account!: AccountIdentifier;
 
     constructor() {
     }
@@ -20,9 +20,9 @@ export class AccountClass {
 
     id: AccountIdentifier;
 
-    plugin_data: PluginData;
+    plugin_data!: PluginData; // TODO
 
-    plugins_resolved: Promise<PromiseSettledResult<'resolved' | 'rejected' | 'this_sucks'>[]>;
+    plugins_resolved: Promise<PromiseSettledResult<'resolved' | 'rejected'>[]>;
 
     constructor(name: string, avatar: string, imports?: PluginData) {
         this.name = name;
@@ -31,12 +31,12 @@ export class AccountClass {
 
         this.id = uuid();
 
-        const resolving_plugins = [];
+        const resolving_plugins: Promise<any>[] = [];
 
         if (imports)
             for (const plugin of Music.plugins.plugin_map.entries())
                 if (plugin[1].resolveImport) {
-                    resolving_plugins.push(plugin[1].resolveImport(this.plugin_data[plugin[0]], imports[plugin[0]]));
+                    resolving_plugins.push(plugin[1].resolveImport(this.plugin_data.get(plugin[0]), imports.get(plugin[0])));
                 }
 
         // Lets us provide an event.

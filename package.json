@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "license": "MIT",
     "scripts": {
-        "core-dev": "nodemon -w packages/core/ --esm scripts/dev.ts"
+        "dev": "ts-node --esm scripts/dev.ts"
     },
     "workspaces": [
         "packages/**"

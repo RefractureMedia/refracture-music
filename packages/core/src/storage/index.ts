@@ -1,5 +1,5 @@
-import { RawData } from "../plugin/index";
-import { PrismaClient } from '@prisma/client'
+import { RawData } from "../plugin/index.js";
+import { PrismaClient } from '@prisma/client';
 
 interface ConnectionData {
     address: string
@@ -10,7 +10,7 @@ declare const connection_data: ConnectionData
 export class Database {
     public internal = new PrismaClient({ log: [{ level: 'query', emit: 'event' }] });
 
-    protected server_address?: URL;
+    public readonly server_address: URL;
 
     /**
      * Requests 
@@ -26,7 +26,7 @@ export class Database {
             sendMessage('query', JSON.stringify(query));
         })
 
-        if (connection_data) this.server_address = new URL(connection_data.address);
+        this.server_address = new URL(connection_data.address);
     }
 }
 
