@@ -35,7 +35,7 @@ async function update(file: string) {
 
     await fetch('http://127.0.0.1:4578', {
         headers: {
-            "Accept": '*/*'  
+            "Accept": '*/*'
         },
         method: 'POST',
         body: await fs.readFile(path.join(dir, 'dist', 'bundle.js'), { encoding: 'utf8' })

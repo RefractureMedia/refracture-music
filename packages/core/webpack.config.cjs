@@ -1,5 +1,5 @@
 const path = require('path');
-const plugins = require('./pack/plugins');
+const plugins = require('./pack/plugins.cjs');
 
 module.exports = {
   entry: './src/index.ts',
@@ -14,6 +14,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    extensionAlias: {
+      ".js": [".js", ".ts"],
+      ".cjs": [".cjs", ".cts"],
+      ".mjs": [".mjs", ".mts"]
+     }
   },
   output: {
     filename: 'bundle.js',

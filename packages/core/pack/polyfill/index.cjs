@@ -1,3 +1,3 @@
-module.exports = [
-    require('./timeout.cjs')
-]
+module.exports = {
+    ...require('./timeout.cjs')
+}

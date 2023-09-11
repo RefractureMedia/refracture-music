@@ -1,19 +1,19 @@
 {
-    "compilerOptions": {
-      "declaration": true,
-      "module": "NodeNext",
-      "outDir": "lib",
-      "rootDir": "src",
-      "strict": true,
-      "target": "es2019",
-      "lib": [
-        "es2020",
-        "DOM"
-      ],
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true
-    },
-    "include": [
-      "src/**/*"
-    ]
-  }
+  "compilerOptions": {
+    "declaration": true,
+    "module": "NodeNext",
+    "outDir": "lib",
+    "rootDir": "src",
+    "strict": true,
+    "target": "es2019",
+    "lib": [
+      "es2020",
+      "DOM"
+    ],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

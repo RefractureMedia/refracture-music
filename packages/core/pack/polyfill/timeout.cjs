@@ -1,5 +1,3 @@
-const webpack = require('webpack');
-
 var __polyfillTimeout_timers = {};
 function __polyfillTimeout_generateNewId() {
   var r = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -42,10 +40,10 @@ function _clearTimeout(id) {
   if (__polyfillTimeout_timers.hasOwnProperty(id)) delete __polyfillTimeout_timers[id]; 
 }
 
-module.exports = new webpack.DefinePlugin({
+module.exports = {
     __polyfillTimeout_timers,
     __polyfillTimeout_generateNewId,
     __polyfillTimeout_check,
     setTimeout: _setTimeout,
     clearTimeout: _clearTimeout,
-})
+}

@@ -29,15 +29,17 @@ export async function webpackDB(pkg_dir: string) {
 
     await fs.ensureDir(path.join(pkg_dir, 'pack', 'database'));
 
-    await fs.writeFile(path.join(pkg_dir, 'pack', 'database', 'index.js'), trimCode(`
-        const webpack = require('webpack');
-
-        module.exports = new webpack.DefinePlugin({
-            database_migrations: {
+    await fs.writeFile(path.join(pkg_dir, 'pack', 'database', 'index.cjs'), trimCode(`
+        function database_migrations() {
+            return () => ({
                 entries: {
         ${dates.map(({date, index}) => `            ${date}: \`${sql[index]}\`,`).join('\n')}
                 }
-            }
-        })
+            })
+        }
+
+        module.exports = {
+            database_migrations
+        }
     `))
 }

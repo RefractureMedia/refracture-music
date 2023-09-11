@@ -12,6 +12,8 @@ export class Database {
 
     public readonly server_address: URL;
 
+    public readonly migrations = database_migrations();
+
     /**
      * Requests 
      * @param request_type The type of Data you are requesting, eg. track
