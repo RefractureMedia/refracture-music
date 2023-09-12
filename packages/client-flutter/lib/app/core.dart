@@ -132,7 +132,9 @@ class AppCore extends InheritedWidget {
       downloadBundle() async {
         bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
 
-        await secure.write(key: 'bundleHash', value: manifest['core']['tag']);
+        await secure.write(key: 'tag', value: manifest['core']['tag']);
+        
+        await secure.write(key: 'bundleHash', value: manifest['core']['assets']['bundle']['hash']);
 
         await coreFile.writeAsString(bundle!);
       }
