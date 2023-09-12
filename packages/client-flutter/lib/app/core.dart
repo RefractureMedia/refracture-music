@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_js/extensions/fetch.dart';
+import 'package:logger/logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,12 +14,21 @@ import 'package:flutter_js/flutter_js.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:cryptography/cryptography.dart';
+
 
 // ignore: must_be_immutable
 class AppCore extends InheritedWidget {
   late String appDataDir;
 
   late Database db;
+
+  static const secure = FlutterSecureStorage();
+
+  static var logger = Logger();
+
+  String? loadFailure;
 
   late JavascriptRuntime core;
 
@@ -59,6 +69,10 @@ class AppCore extends InheritedWidget {
       return db.query(query);
     });
 
+    core.onMessage('hash', (query) async {
+      return base64Encode((await Sha512().hash(utf8.encode(query))).bytes);
+    });
+
     core.onMessage('print', (message) {
       print(message);
     });
@@ -89,40 +103,91 @@ class AppCore extends InheritedWidget {
 
     const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
 
-    final manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
+    // ignore: avoid_init_to_null
+    dynamic manifest = null;
 
-    String bundle;
+    try {
+      manifest = jsonDecode((await http.get(Uri.parse('${basePath}/manifest.json'))).body);
+    } catch (e) {
+      // Offline
+    }
 
-    dynamic currentTag = false;
+    String? bundle;
 
-    final tagFile = File(join(appDataDir, 'core_tag'));
+    String? currentTag = await secure.read(key: 'tag');
 
     final coreFile = File(join(appDataDir, 'core'));
 
-    try {
-      currentTag = await tagFile.readAsString();
-    } catch (e) {/* do nothing */}
+    String? bundleHash = await secure.read(key: 'bundleHash');
 
-    if (currentTag == false || currentTag != manifest['core']['tag']) {
-      bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
+    const offline = 'and host is offline or otherwise unable to access manifest.';
 
-      await tagFile.writeAsString(manifest['core']['tag']);
+    if (manifest == null && currentTag == null) {
+      const message = 'core bundle is not cached $offline';
 
-      await coreFile.writeAsString(bundle);
+      logger.f('[Music UI] fatal: $message');
+      loadFailure = 'Unable to load; $message';
     } else {
-      bundle = await coreFile.readAsString();
+      String? currentHash;
+      downloadBundle() async {
+        bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
+
+        await secure.write(key: 'bundleHash', value: manifest['core']['tag']);
+
+        await coreFile.writeAsString(bundle!);
+      }
+
+      if (manifest != null && (currentTag == null || currentTag != manifest['core']['tag'])) {
+        await downloadBundle();
+      } else {
+        try {
+          bundle = await coreFile.readAsString();
+
+          currentHash = base64Encode((await Sha512().hash(utf8.encode(bundle!))).bytes);
+        } catch (e) {
+          // Bundle was deleted
+          if (manifest == null) {
+            const message = 'cached core bundle was deleted $offline';
+
+            logger.f('[Music UI] fatal: $message');
+            loadFailure = 'Unable to load; $message';
+          } else {
+            logger.i('[Music UI] info: core bundle was deleted, downloading Core bundle.');
+
+            await downloadBundle();
+          }
+        }
+      }
+
+      if (currentHash != null && currentHash != bundleHash) {
+        const tampered = 'core bundle has been tampered with';
+        if (manifest == null) {
+          const message = '$tampered $offline';
+
+          logger.f('[Music UI] fatal: $message');
+          loadFailure = 'Refusing to load; $message';
+
+          bundle = null;
+        } else {
+          logger.w('[Music UI] warn: $tampered; you probably have a dumb virus. downloading fresh Core bundle.');
+
+          await downloadBundle();
+        }
+      }
+
+      if (bundle != null) {
+        initCore(bundle!);
+
+        if (kDebugMode) {await shelf_io.serve(
+          logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
+            await initCore(await utf8.decodeStream(req.read()));
+
+            return Response(200);
+          })).handler), 
+          
+          InternetAddress.anyIPv4, 4578
+        );}
+      }
     }
-
-    initCore(bundle);
-
-    Future<Response> updateRes(Request req) async {
-      await initCore(await utf8.decodeStream(req.read()));
-
-      return Response(200);
-    }
-
-    final cascade = Cascade().add(shelf_router.Router()..post('/', updateRes));
-
-    if (kDebugMode) await shelf_io.serve(logRequests().addHandler(cascade.handler), InternetAddress.anyIPv4, 4578);
   }
 }

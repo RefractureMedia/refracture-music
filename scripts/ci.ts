@@ -39,7 +39,7 @@ export type Releases = { pkg: string, assets: Record<string, string>, version: s
 
     let changelog = ''
 
-    for await (const pkg of pkgs) {
+    for await (const pkg of pkgs) { // TODO: I don't know how but I broke this
         const pkg_dir = path.join(dir, pkg)
         const files = await fs.readdir(pkg_dir)
 
