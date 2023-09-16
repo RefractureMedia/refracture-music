@@ -1,6 +1,14 @@
-/**
- * @param message Must be valid JSON; '"Helooo"', JSON.stringify({blah: 'foo'}), etc.
- */
-declare function sendMessage(channel_name: string, message: string): any;
+export {}
+declare global {
+    /**
+     * @param message Must be valid JSON; '"Helooo"', JSON.stringify({blah: 'foo'}), etc.
+     * @returns A string, usually a JSON encoded object.
+     */
+    function sendMessage(channel_name: string, message: string): string;
 
-declare function database_migrations(): {entries: Record<number, string>}
+    function database_migrations(): Array<[number, string]>
+
+    const database_version: number
+
+    const Music: import("./index.js").MusicCore
+}

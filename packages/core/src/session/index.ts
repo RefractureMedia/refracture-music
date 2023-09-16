@@ -1,11 +1,8 @@
 import { io, Socket } from "socket.io-client";
-import { MusicCore } from "../index.js";
 import { RawData } from "../plugin/index.js";
 import { DB } from "../storage/index.js";
 
 export default class SessionManager {
-    core: MusicCore;
-
     socket!: Socket;
 
     async _rawRequest (path: string, params: URLSearchParams): Promise<RawData> {
@@ -27,9 +24,5 @@ export default class SessionManager {
                 resolve(true);
             });
         });
-    }
-
-    constructor (core: MusicCore) {
-        this.core = core;
     }
 }

@@ -31,11 +31,9 @@ export async function webpackDB(pkg_dir: string) {
 
     await fs.writeFile(path.join(pkg_dir, 'pack', 'database', 'index.cjs'), trimCode(`
         function database_migrations() {
-            return () => ({
-                entries: {
-        ${dates.map(({date, index}) => `            ${date}: \`${sql[index]}\`,`).join('\n')}
-                }
-            })
+            return () => ([
+        ${dates.map(({date, index}) => `        [${date}, \`${sql[index]}\`],`).join('\n')}
+            ])
         }
 
         module.exports = {

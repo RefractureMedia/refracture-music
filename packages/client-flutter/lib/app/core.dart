@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_js/extensions/fetch.dart';
+import 'package:flutter_js/extensions/xhr.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
@@ -59,15 +60,15 @@ class AppCore extends InheritedWidget {
 
     final databaseInitialized = Completer();
 
-    core.onMessage('initDatabase', (sql) {
-      db.execute(sql);
+    core.onMessage('initDatabase', (init) async {
+      await db.execute(init.sql);
+
+      await secure.write(key: 'databaseVersion', value: init.version);
 
       databaseInitialized.complete();
     });
 
-    core.onMessage('queryDatabase', (query) {
-      return db.query(query);
-    });
+    // TODO: implement XhrHandler once available in library
 
     core.onMessage('hash', (query) async {
       return base64Encode((await Sha512().hash(utf8.encode(query))).bytes);
@@ -78,12 +79,16 @@ class AppCore extends InheritedWidget {
     });
 
     await core.evaluateAsync("""
-      var connection_data = ${json.encode({"address": "http://localhost:4829"})};
+      var window = global = globalThis;
+      
+      var database_version = Number('${await secure.read(key: 'databaseVersion') ?? '0'}');
+
+      var Music;
     """);
 
     await core.evaluateAsync(bundle);
 
-    // await databaseInitialized.future;
+    await databaseInitialized.future;
   }
 
   Future<void> load() async {

@@ -1,5 +1,4 @@
 import { v4 as uuid } from 'uuid';
-import { Music } from '../index.js';
 import { PluginData } from "../plugin/index.js";
 
 export class AccountManager {

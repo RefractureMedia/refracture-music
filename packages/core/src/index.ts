@@ -29,11 +29,11 @@ export class MusicCore {
     }
 
     constructor() {
-        this.session = new SessionManager(this);
+        this.session = new SessionManager();
 
         this.plugins = new PluginManager();
 
-        this.player = new Player(this);
+        this.player = new Player();
         
         this.sources = new ItemManager('source');
         this.tracks = new ItemManager('track');
@@ -43,8 +43,8 @@ export class MusicCore {
     }
 }
 
-export const Music = new MusicCore();
+// Warning: Do not access the global Music within a constructor
+/* @ts-ignore */
+Music = new MusicCore();
 
 Logger.info('Hello World!!')
-
-export default Music;

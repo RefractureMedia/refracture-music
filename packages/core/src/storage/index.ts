@@ -1,12 +1,6 @@
 import { RawData } from "../plugin/index.js";
 import { PrismaClient } from '@prisma/client';
 
-interface ConnectionData {
-    address: string
-}
-
-declare const connection_data: ConnectionData
-
 export class Database {
     public internal = new PrismaClient({ log: [{ level: 'query', emit: 'event' }] });
 
@@ -24,11 +18,9 @@ export class Database {
     }
 
     constructor () {
-        this.internal.$on('query', (query) => {
-            sendMessage('query', JSON.stringify(query));
-        })
+        
 
-        this.server_address = new URL(connection_data.address);
+        this.server_address = new URL("http://localhost:4829");
     }
 }
 
