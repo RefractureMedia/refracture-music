@@ -50,7 +50,7 @@ Cross-platform UI. (All platforms)
 All internal functionality code. Requires codec compatibility info and implemented native user input & playback hooks.
 - Written in TypeScript.
 - Releases will include compatible bundles for Node 18 & Latest Deno/Bun.
-- Will use Refracture [Intern](https://github.com/RefractureMedia/intern) to provide SponsorBlock style crowd-sourced submissions to simplify, optimize, & enrich music metadata.
+- Will use Refracture [Intern](https://github.com/RefractureMedia/intern) to provide [SponsorBlock](https://github.com/ajayyy/SponsorBlock) style crowd-sourced submissions to simplify, optimize, & enrich music metadata.
 
 ### 📄 [docs](/packages/docs)
 Markdown documentation of the project.
