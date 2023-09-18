@@ -43,7 +43,6 @@ dependencies:
   path: ^1.8.3
   path_provider: ^2.1.1
   http: ^1.1.0
-  flutter_js: ^0.8.0
   sqflite_common_ffi: ^2.3.0+2
   sqflite: ^2.3.0
   shelf: ^1.4.1
@@ -51,6 +50,9 @@ dependencies:
   flutter_secure_storage: ^8.1.0
   cryptography: ^2.6.0
   logger: ^2.0.2
+  sync_http: ^0.3.1
+  flutter_js:
+    path: packages/flutter_js
 
 dev_dependencies:
   flutter_test:

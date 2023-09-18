@@ -1,0 +1,47 @@
+{
+  "autorun": true,
+  "terminals": [
+    {
+      "name": "root",
+      "icon": "root-folder",
+      "color": "terminal.ansiRed",
+      "persistent": "music-root",
+      "onlyMultiple": true,
+      "focus": true
+    },
+    {
+      "name": "core",
+      "icon": "folder-library",
+      "color": "terminal.ansiBlue",
+      "persistent": "music-core",
+      "onlyMultiple": true,
+      "cwd": "./packages/core"
+    },
+    {
+      "name": "plugin-base",
+      "icon": "plug",
+      "color": "terminal.ansiGreen",
+      "persistent": "music-plugin-base",
+      "onlyMultiple": true,
+      "cwd": "./packages/plugin-base"
+    },
+    {
+      "name": "client-flutter",
+      "icon": "preview",
+      "color": "terminal.ansiCyan",
+      "persistent": "music-client-flutter",
+      "onlyMultiple": true,
+      "cwd": "./packages/client-flutter"
+    },
+    {
+      "name": "Setup",
+      "icon": "zap",
+      "color": "terminal.ansiYellow",
+      "execute": false,
+      "commands": [
+        "echo \"Press enter to setup environment\"",
+        "Press enter to run me"
+      ]
+    }
+  ]
+}

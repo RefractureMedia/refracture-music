@@ -68,7 +68,16 @@ class AppCore extends InheritedWidget {
       databaseInitialized.complete();
     });
 
-    // TODO: implement XhrHandler once available in library
+    core.addXhrHandler(XhrHandlerStage.preRequest, (url, method, {body, headers, response}) async {
+      print(url);
+      if (url.host == 'app.music') {
+        print({
+          url, method, body, headers, response
+        });
+        return XhrHandle(XhrHandleType.respond, XhtmlHttpResponseInfo(statusCode: 200, statusText: 'OK'), "");
+      }
+      return XhrHandle(XhrHandleType.skip);
+    });
 
     core.onMessage('hash', (query) async {
       return base64Encode((await Sha512().hash(utf8.encode(query))).bytes);
@@ -185,8 +194,9 @@ class AppCore extends InheritedWidget {
       if (bundle != null) {
         initCore(bundle!);
 
-        if (kDebugMode) {await shelf_io.serve(
+        if (true) {await shelf_io.serve(
           logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
+            logger.d('[Music UI] debug: bundle loading from POST');
             await initCore(await utf8.decodeStream(req.read()));
 
             return Response(200);

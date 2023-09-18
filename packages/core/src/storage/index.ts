@@ -18,7 +18,7 @@ export class Database {
     }
 
     constructor () {
-        
+        this.internal.track.findFirst()
 
         this.server_address = new URL("http://localhost:4829");
     }

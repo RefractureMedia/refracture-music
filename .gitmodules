@@ -1,0 +1,4 @@
+[submodule "packages/client-flutter/packages/flutter_js"]
+	path = packages/client-flutter/packages/flutter_js
+	url = https://github.com/refracturemedia/flutter_js
+	branch = feat-xhr-handler
