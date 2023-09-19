@@ -7,8 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_js/extensions/fetch.dart';
 import 'package:flutter_js/extensions/xhr.dart';
 import 'package:logger/logger.dart';
+import 'package:refracture_music/app/unit_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_js/flutter_js.dart';
@@ -16,14 +16,13 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:cryptography/cryptography.dart';
 
 
 // ignore: must_be_immutable
 class AppCore extends InheritedWidget {
   late String appDataDir;
 
-  late Database db;
+  late var unit = <String, UnitManager>{};
 
   static const secure = FlutterSecureStorage();
 
@@ -31,7 +30,7 @@ class AppCore extends InheritedWidget {
 
   String? loadFailure;
 
-  late JavascriptRuntime core;
+  late JavascriptRuntime runtime;
 
   AppCore({
     super.key, 
@@ -39,7 +38,7 @@ class AppCore extends InheritedWidget {
   }) : super(child: child);
 
   @override
-  bool updateShouldNotify(AppCore oldWidget) => core != oldWidget.core;
+  bool updateShouldNotify(AppCore oldWidget) => runtime != oldWidget.runtime;
   
   static AppCore? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<AppCore>();
@@ -51,24 +50,26 @@ class AppCore extends InheritedWidget {
     return result!;
   }
 
-  initCore(String bundle) async {
-    core = getJavascriptRuntime();
+  readSecure(String key) async {
+    return await secure.read(key: key);
+  }
 
-    await core.enableFetch();
+  writeSecure(String key, String value) async {
+    return await secure.write(key: key, value: value);
+  }
 
-    await core.enableHandlePromises();
+  loadRuntime() async {
+    runtime = getJavascriptRuntime();
 
-    final databaseInitialized = Completer();
+    await runtime.enableFetch();
 
-    core.onMessage('initDatabase', (init) async {
-      await db.execute(init.sql);
+    await runtime.enableHandlePromises();
 
-      await secure.write(key: 'databaseVersion', value: init.version);
-
-      databaseInitialized.complete();
+    runtime.onMessage('initDatabase', (init) async {
+      unit[init.name]!.initDB(init);
     });
 
-    core.addXhrHandler(XhrHandlerStage.preRequest, (url, method, {body, headers, response}) async {
+    runtime.addXhrHandler(XhrHandlerStage.preRequest, (url, method, {body, headers, response}) async {
       print(url);
       if (url.host == 'app.music') {
         print({
@@ -79,25 +80,56 @@ class AppCore extends InheritedWidget {
       return XhrHandle(XhrHandleType.skip);
     });
 
-    core.onMessage('hash', (query) async {
-      return base64Encode((await Sha512().hash(utf8.encode(query))).bytes);
-    });
-
-    core.onMessage('print', (message) {
+    runtime.onMessage('print', (message) {
       print(message);
     });
 
-    await core.evaluateAsync("""
-      var window = global = globalThis;
-      
-      var database_version = Number('${await secure.read(key: 'databaseVersion') ?? '0'}');
+    runtime.onMessage('addPlugin', (plugin) async {
+      final String index = ['plugin', ...plugin.index].join('.');
 
-      var Music;
-    """);
+      unit[index] = UnitManager(
+        core: this,
+        logger: logger,
+        name: plugin.name, 
+        index: ['plugin', ...plugin.index], 
+        src: plugin.src,
+        tag: plugin.tag,
+        hash: plugin.hash,
+      );
 
-    await core.evaluateAsync(bundle);
+      String? errored;
 
-    await databaseInitialized.future;
+      unit[index]!.loaded.future.catchError((error) {
+        if (plugin.name == 'Base') {
+          logger.f('[Music UI] fatal: $error');
+          loadFailure = error;
+        } else {
+          logger.e('[Music UI] error: $error');
+        }
+        
+        errored = error;
+      });
+
+      await unit[index]!.load();
+
+      if (unit[index]!.bundle != null) {
+        await loadRuntime();
+
+        return { "success": true };
+      }
+
+      return { "success": false, "error": errored };
+    });
+
+    // await runtime.evaluateAsync("""var window = global = globalThis;""");
+
+    for (final unit in unit.values) {
+      if (unit.bundle != null) {
+        await runtime.evaluateAsync("""var MusicVersion = ${await unit.secure.storage['databaseVersion'] ?? '0'}');""");
+        await runtime.evaluateAsync("""var ${unit.name};""");
+        await runtime.evaluateAsync(unit.bundle!);
+      }
+    }
   }
 
   Future<void> load() async {
@@ -111,10 +143,6 @@ class AppCore extends InheritedWidget {
     // this step, it will use the sqlite version available on the system.
     databaseFactory = databaseFactoryFfi;
 
-    db = await openDatabase(join(appDataDir, 'main.db'));
-
-    // TODO: Add ability to run Refracture offline
-
     const basePath = 'https://github.com/refracturemedia/refracture-music/releases/latest/download';
 
     // ignore: avoid_init_to_null
@@ -126,85 +154,41 @@ class AppCore extends InheritedWidget {
       // Offline
     }
 
-    String? bundle;
+    unit['core'] = UnitManager(
+      core: this, 
+      logger: logger,
+      name: 'Music', 
+      index: ['core'], 
+      src: manifest == null ? null : Uri.parse(manifest['core']['assets']['bundle']['src']),
+      tag: manifest == null ? null : manifest['core']['tag'],
+      hash: manifest == null ? null : manifest['core']['assets']['bundle']['hash'],
+    );
 
-    String? currentTag = await secure.read(key: 'tag');
+    unit['core']!.loaded.future.catchError((error) {
+      logger.f('[Music UI] fatal: $error');
 
-    final coreFile = File(join(appDataDir, 'core'));
+      loadFailure = error;
+    });
 
-    String? bundleHash = await secure.read(key: 'bundleHash');
+    await unit['core']!.load();
 
-    const offline = 'and host is offline or otherwise unable to access manifest.';
-
-    if (manifest == null && currentTag == null) {
-      const message = 'core bundle is not cached $offline';
-
-      logger.f('[Music UI] fatal: $message');
-      loadFailure = 'Unable to load; $message';
-    } else {
-      String? currentHash;
-      downloadBundle() async {
-        bundle = (await http.get(Uri.parse(manifest['core']['assets']['bundle']['src']))).body;
-
-        await secure.write(key: 'tag', value: manifest['core']['tag']);
-        
-        await secure.write(key: 'bundleHash', value: manifest['core']['assets']['bundle']['hash']);
-
-        await coreFile.writeAsString(bundle!);
-      }
-
-      if (manifest != null && (currentTag == null || currentTag != manifest['core']['tag'])) {
-        await downloadBundle();
-      } else {
-        try {
-          bundle = await coreFile.readAsString();
-
-          currentHash = base64Encode((await Sha512().hash(utf8.encode(bundle!))).bytes);
-        } catch (e) {
-          // Bundle was deleted
-          if (manifest == null) {
-            const message = 'cached core bundle was deleted $offline';
-
-            logger.f('[Music UI] fatal: $message');
-            loadFailure = 'Unable to load; $message';
-          } else {
-            logger.i('[Music UI] info: core bundle was deleted, downloading Core bundle.');
-
-            await downloadBundle();
-          }
-        }
-      }
-
-      if (currentHash != null && currentHash != bundleHash) {
-        const tampered = 'core bundle has been tampered with';
-        if (manifest == null) {
-          const message = '$tampered $offline';
-
-          logger.f('[Music UI] fatal: $message');
-          loadFailure = 'Refusing to load; $message';
-
-          bundle = null;
-        } else {
-          logger.w('[Music UI] warn: $tampered; you probably have a dumb virus. downloading fresh Core bundle.');
-
-          await downloadBundle();
-        }
-      }
-
-      if (bundle != null) {
-        initCore(bundle!);
-
-        if (true) {await shelf_io.serve(
-          logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
-            logger.d('[Music UI] debug: bundle loading from POST');
-            await initCore(await utf8.decodeStream(req.read()));
-
-            return Response(200);
-          })).handler), 
-          
-          InternetAddress.anyIPv4, 4578
-        );}
-      }
+    if (unit['core']!.bundle != null) {
+      await loadRuntime();
     }
+
+    // TODO: The kDebugMode thing wasn't working
+    if (true) {await shelf_io.serve(
+      logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
+        logger.d('[Music UI] debug: Core bundle loading from POST');
+
+        unit['core']!.bundle = await utf8.decodeStream(req.read());
+
+        await loadRuntime();
+
+        return Response(200);
+      })).handler), 
+
+      InternetAddress.anyIPv4, 4578
+    );}
   }
 }
