@@ -1,0 +1,8 @@
+*.sql linguist-generated
+*.db linguist-generated
+*.db-journal linguist-generated
+*.kt linguist-vendored
+*.swift linguist-vendored
+*.cc linguist-vendored
+*.h linguist-vendored
+*.cmake linguist-vendored
