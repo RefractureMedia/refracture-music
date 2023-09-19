@@ -1,7 +1,8 @@
 -------
 
-![banner](https://github.com/RefractureMedia/refracture-music/assets/12068027/0ff05b31-2a2d-49c4-96c0-6ce25b1b712f)
-
+<p align="center">
+  <img src="https://github.com/RefractureMedia/refracture-music/assets/12068027/0ff05b31-2a2d-49c4-96c0-6ce25b1b712f" alt="Logo"></img>
+</p>
 
 -------
 
