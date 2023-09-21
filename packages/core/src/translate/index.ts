@@ -1,5 +1,4 @@
 import localeCodes, { ILocale } from "locale-codes"
-import { DB } from "../storage/index.js"
 
 let locale: ILocale = localeCodes.getByTag('en-us');
 

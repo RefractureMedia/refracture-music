@@ -121,13 +121,14 @@ class AppCore extends InheritedWidget {
       return { "success": false, "error": errored };
     });
 
-    // await runtime.evaluateAsync("""var window = global = globalThis;""");
+    await runtime.evaluateAsync("""var window = global = globalThis;""");
 
     for (final unit in unit.values) {
       if (unit.bundle != null) {
         await runtime.evaluateAsync("""var MusicVersion = ${await unit.secure.storage['databaseVersion'] ?? '0'}');""");
         await runtime.evaluateAsync("""var ${unit.name};""");
-        await runtime.evaluateAsync(unit.bundle!);
+        print(await runtime.evaluateAsync(unit.bundle!));
+        runtime.executePendingJob();
       }
     }
   }

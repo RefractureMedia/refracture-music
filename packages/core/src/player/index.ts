@@ -1,5 +1,4 @@
 import { AccessIdentifierType, ItemClass, ItemIdentifierType } from "../media/index.js";
-import { DB } from "../storage/index.js";
 
 interface PlayerSession {
     active: boolean;
@@ -12,7 +11,7 @@ export default class Player {
     current_track?: ItemClass | false;
 
     async startup () {
-        const synced_player = await DB.request('player', Music.current_account.id) as unknown as PlayerSession;
+        const synced_player = await Music.DB.request('player', Music.current_account.id) as unknown as PlayerSession;
 
         if (synced_player.active) {
             const access = await Music.tracks.access(synced_player.current_track);

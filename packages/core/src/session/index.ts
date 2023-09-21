@@ -1,6 +1,5 @@
 import { io, Socket } from "socket.io-client";
 import { RawData } from "../plugin/index.js";
-import { DB } from "../storage/index.js";
 
 export default class SessionManager {
     socket!: Socket;
@@ -18,7 +17,7 @@ export default class SessionManager {
     }
 
     async startup () {
-        this.socket = io(`wss://${DB.server_address.origin}:${DB.server_address.port}`);
+        this.socket = io(`wss://${Music.DB.server_address.origin}:${Music.DB.server_address.port}`);
         await new Promise((resolve, reject) => {
             this.socket.onAny(/*'connect',*/ () => {
                 resolve(true);

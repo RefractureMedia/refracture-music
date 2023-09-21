@@ -1,8 +1,9 @@
 import { RawData } from "../plugin/index.js";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client/edge.js';
+import { LoggerClass } from "../util/logging.js";
 
 export class Database {
-    public internal = new PrismaClient({ log: [{ level: 'query', emit: 'event' }] });
+    public internal!: PrismaClient;
 
     public readonly server_address: URL;
 
@@ -18,10 +19,14 @@ export class Database {
     }
 
     constructor () {
-        this.internal.track.findFirst()
+        this.internal = new PrismaClient({ log: [{ level: 'query', emit: 'event' }] });
+
+        const test = this.internal.track.findFirst();
+
+        test.catch((e) => Music.Logger.error(e));
+
+        test.then((f) => Music.Logger.info(f));
 
         this.server_address = new URL("http://localhost:4829");
     }
 }
-
-export const DB = new Database();
