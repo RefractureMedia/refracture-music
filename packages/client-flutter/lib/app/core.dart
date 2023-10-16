@@ -16,6 +16,8 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:webf/devtools.dart';
+import 'package:webf/webf.dart';
 
 
 // ignore: must_be_immutable
@@ -30,12 +32,12 @@ class AppCore extends InheritedWidget {
 
   String? loadFailure;
 
-  late JavascriptRuntime runtime;
+  late WebF runtime;
 
   AppCore({
     super.key, 
     required Widget child,
-  }) : super(child: child);
+  }) : super(child: Row(children: [child]));
 
   @override
   bool updateShouldNotify(AppCore oldWidget) => runtime != oldWidget.runtime;
@@ -59,78 +61,110 @@ class AppCore extends InheritedWidget {
   }
 
   loadRuntime() async {
-    runtime = getJavascriptRuntime();
+    runtime = WebF(
+      devToolsService: ChromeDevToolsService(),
+      bundle: WebFBundle.fromContent("""
+        <html><head>
+          ${unit.values.map((unit) {
+            if (unit.bundle == null) {
+              return '<!--Failed to load ${unit.name}-->';
+            }
+            return """
+              <script>
+                ${/*unit.bundle*/ "setInterval(() => console.warn('hi'), 2000);"}
+              </script>
+            """;
+          }).join('\n')}
+        </head><body><p>test</p></body></html>
+      """, contentType: ContentType.html, url: 'http://app.music'),
+      onLoad: (controller) {
+        print(runtime.devToolsService!.isolateServer);
+      },
+      onLoadError: (error, trace) {
+        logger.f(error, stackTrace: trace);
+      },
+      onJSError: (error) {
+        logger.f(error);
+      },
+      viewportHeight: 0,
+      viewportWidth: 0,
+    );
 
-    await runtime.enableFetch();
+    runApp(runtime);
 
-    await runtime.enableHandlePromises();
+    print(runtime);
 
-    runtime.onMessage('initDatabase', (init) async {
-      unit[init.name]!.initDB(init);
-    });
+    // runtime = getJavascriptRuntime();
 
-    runtime.addXhrHandler(XhrHandlerStage.preRequest, (url, method, {body, headers, response}) async {
-      print(url);
-      if (url.host == 'app.music') {
-        print({
-          url, method, body, headers, response
-        });
-        return XhrHandle(XhrHandleType.respond, XhtmlHttpResponseInfo(statusCode: 200, statusText: 'OK'), "");
-      }
-      return XhrHandle(XhrHandleType.skip);
-    });
+    // await runtime.enableFetch();
 
-    runtime.onMessage('print', (message) {
-      print(message);
-    });
+    // await runtime.enableHandlePromises();
 
-    runtime.onMessage('addPlugin', (plugin) async {
-      final String index = ['plugin', ...plugin.index].join('.');
+    // runtime.onMessage('initDatabase', (init) async {
+    //   unit[init.name]!.initDB(init);
+    // });
 
-      unit[index] = UnitManager(
-        core: this,
-        logger: logger,
-        name: plugin.name, 
-        index: ['plugin', ...plugin.index], 
-        src: plugin.src,
-        tag: plugin.tag,
-        hash: plugin.hash,
-      );
+    // runtime.addXhrHandler(XhrHandlerStage.preRequest, (url, method, {body, headers, response}) async {
+    //   print(url);
+    //   if (url.host == 'app.music') {
+    //     print({
+    //       url, method, body, headers, response
+    //     });
+    //     return XhrHandle(XhrHandleType.respond, XhtmlHttpResponseInfo(statusCode: 200, statusText: 'OK'), "");
+    //   }
+    //   return XhrHandle(XhrHandleType.skip);
+    // });
 
-      String? errored;
+    // runtime.onMessage('print', (message) {
+    //   print(message);
+    // });
 
-      unit[index]!.loaded.future.catchError((error) {
-        if (plugin.name == 'Base') {
-          logger.f('[Music UI] fatal: $error');
-          loadFailure = error;
-        } else {
-          logger.e('[Music UI] error: $error');
-        }
+    // runtime.onMessage('addPlugin', (plugin) async {
+    //   final String index = ['plugin', ...plugin.index].join('.');
+
+    //   unit[index] = UnitManager(
+    //     core: this,
+    //     logger: logger,
+    //     name: plugin.name, 
+    //     index: ['plugin', ...plugin.index], 
+    //     src: plugin.src,
+    //     tag: plugin.tag,
+    //     hash: plugin.hash,
+    //   );
+
+    //   String? errored;
+
+    //   unit[index]!.loaded.future.catchError((error) {
+    //     if (plugin.name == 'Base') {
+    //       logger.f('[Music UI] fatal: $error');
+    //       loadFailure = error;
+    //     } else {
+    //       logger.e('[Music UI] error: $error');
+    //     }
         
-        errored = error;
-      });
+    //     errored = error;
+    //   });
 
-      await unit[index]!.load();
+    //   await unit[index]!.load();
 
-      if (unit[index]!.bundle != null) {
-        await loadRuntime();
+    //   if (unit[index]!.bundle != null) {
+    //     await loadRuntime();
 
-        return { "success": true };
-      }
+    //     return { "success": true };
+    //   }
 
-      return { "success": false, "error": errored };
-    });
+    //   return { "success": false, "error": errored };
+    // });
 
-    await runtime.evaluateAsync("""var window = global = globalThis;""");
+    // await runtime.evaluateAsync("""var window = global = globalThis;""");
 
-    for (final unit in unit.values) {
-      if (unit.bundle != null) {
-        await runtime.evaluateAsync("""var MusicVersion = ${await unit.secure.storage['databaseVersion'] ?? '0'}');""");
-        await runtime.evaluateAsync("""var ${unit.name};""");
-        print(await runtime.evaluateAsync(unit.bundle!));
-        runtime.executePendingJob();
-      }
-    }
+    // for (final unit in unit.values) {
+    //   if (unit.bundle != null) {
+    //     await runtime.evaluateAsync("""var MusicVersion = ${await unit.secure.storage['databaseVersion'] ?? '0'}');""");
+    //     await runtime.evaluateAsync("""var ${unit.name};""");
+    //     print(await runtime.evaluateAsync(unit.bundle!));
+    //   }
+    // }
   }
 
   Future<void> load() async {

@@ -10,6 +10,7 @@
 #include <flutter_acrylic/flutter_acrylic_plugin.h>
 #include <flutter_js/flutter_js_plugin.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
+#include <webf/webf_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   BitsdojoWindowPluginRegisterWithRegistrar(
@@ -20,4 +21,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FlutterJsPlugin"));
   FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
+  WebfPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("WebfPlugin"));
 }

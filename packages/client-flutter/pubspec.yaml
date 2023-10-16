@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.0.1 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -48,11 +48,12 @@ dependencies:
   shelf: ^1.4.1
   shelf_router: ^1.1.4
   flutter_secure_storage: ^8.1.0
-  cryptography: ^2.6.0
   logger: ^2.0.2
   sync_http: ^0.3.1
   flutter_js:
     path: packages/flutter_js
+  webf: ^0.15.0+2
+  cryptography: ^2.5.0
 
 dev_dependencies:
   flutter_test:

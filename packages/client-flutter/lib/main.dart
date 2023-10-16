@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refracture_music/app/core.dart';
+import 'package:webf/webf.dart';
 
 import 'views/navigation.dart';
 
 void main() {
+  HttpCacheController.mode = HttpCacheMode.NO_CACHE;
+  
+
   runApp(AppCore(child: const MusicApp())..load());
 }
 
