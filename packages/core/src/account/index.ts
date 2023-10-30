@@ -29,7 +29,7 @@ export class AccountClass {
         const resolving_plugins: Promise<any>[] = [];
 
         if (this.raw_plugin_data)
-            for (const plugin of Music.plugins.plugin_map.entries())
+            for (const plugin of music.core.plugins.plugin_map.entries())
                 if (plugin[1].resolveImport) {
                     resolving_plugins.push(plugin[1].resolveImport(this.plugin_data.get(plugin[0]), this.raw_plugin_data.get(plugin[0])));
                 }

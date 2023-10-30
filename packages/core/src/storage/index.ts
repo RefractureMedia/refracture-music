@@ -23,9 +23,11 @@ export class Database {
 
         const test = this.internal.track.findFirst();
 
-        test.catch((e) => Music.Logger.error(e));
+        const { Logger } = music.core;
 
-        test.then((f) => Music.Logger.info(f));
+        test.catch((e) => Logger.error(e));
+
+        test.then((f) => Logger.info(f));
 
         this.server_address = new URL("http://localhost:4829");
     }

@@ -43,7 +43,7 @@ export class MusicCore {
         this.plugins = new PluginManager();
 
         this.player = new Player();
-        
+
         this.sources = new ItemManager('source');
         this.tracks = new ItemManager('track');
         this.artists = new ItemManager('artist');
@@ -54,4 +54,4 @@ export class MusicCore {
 
 // Warning: Do not access the global Music within a constructor
 /* @ts-ignore */
-Music = new MusicCore();
+music.core = new MusicCore();

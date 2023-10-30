@@ -17,7 +17,9 @@ export default class SessionManager {
     }
 
     async startup () {
-        this.socket = io(`wss://${Music.DB.server_address.origin}:${Music.DB.server_address.port}`);
+        const { DB } = music.core;
+
+        this.socket = io(`wss://${DB.server_address.origin}:${DB.server_address.port}`);
         await new Promise((resolve, reject) => {
             this.socket.onAny(/*'connect',*/ () => {
                 resolve(true);

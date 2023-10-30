@@ -3,7 +3,7 @@ import { PluginIdentifier, RawData, PluginData } from '../plugin/index.js';
 
 function getItem(item_type: ItemTypes, item_id: ItemIdentifierType, instance: ItemManager) {
     return (async () => {
-        instance.item_map.set(item_id, new ItemClass(item_id, await Music.DB.request(item_type, item_id)));
+        instance.item_map.set(item_id, new ItemClass(item_id, await music.core.DB.request(item_type, item_id)));
         return instance.item_map.get(item_id) as ItemClass<ItemIdentifierType>;
     });
 }
@@ -28,7 +28,7 @@ export class ItemManager {
         else {
             this.accessed_items.set(item_id, [access_id]);
 
-            this.item_map.set(item_id, new ItemClass(item_id, await Music.DB.request(this.type, item_id)));
+            this.item_map.set(item_id, new ItemClass(item_id, await music.core.DB.request(this.type, item_id)));
         }
 
         return [this.item_map.get(item_id), access_id] as [ItemClass<ItemIdentifierType>, AccessIdentifierType];
@@ -48,7 +48,7 @@ export class ItemManager {
 
         const results: ItemClass<ItemIdentifierType>[] = [];
 
-        ((await Music.DB.request(`${this.type}_sorted`, `${count}`, `${start_at}`, sort_order!)) as RawData[]).forEach((_id, i, data: RawData[]) => {
+        ((await music.core.DB.request(`${this.type}_sorted`, `${count}`, `${start_at}`, sort_order!)) as RawData[]).forEach((_id, i, data: RawData[]) => {
             const id = _id as unknown as string
             const current = this.item_map.get(id);
             if (current) {
@@ -95,7 +95,7 @@ export class ItemManager {
             }
         }
 
-        for (const [i, data] of ((await Music.DB.request(`${this.type}_set`, JSON.stringify(add_items[1]))) as RawData[]).entries()) {
+        for (const [i, data] of ((await music.core.DB.request(`${this.type}_set`, JSON.stringify(add_items[1]))) as RawData[]).entries()) {
             const id = add_items[1][i];
 
             // TypeScript Funny

@@ -11,10 +11,10 @@ export default class Player {
     current_track?: ItemClass | false;
 
     async startup () {
-        const synced_player = await Music.DB.request('player', Music.current_account.id) as unknown as PlayerSession;
+        const synced_player = await music.core.DB.request('player', music.core.current_account.id) as unknown as PlayerSession;
 
         if (synced_player.active) {
-            const access = await Music.tracks.access(synced_player.current_track);
+            const access = await music.core.tracks.access(synced_player.current_track);
             this.current_track = access[0];
             this._access_id = access[1];
         }

@@ -10,5 +10,7 @@ declare global {
 
     const database_version: number
 
-    const Music: import("./index.js").MusicCore
+    const music: {
+        readonly core: import("./index.js").MusicCore
+    }
 }
