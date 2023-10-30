@@ -4,20 +4,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_js/extensions/fetch.dart';
-import 'package:flutter_js/extensions/xhr.dart';
 import 'package:logger/logger.dart';
+import 'package:mercuryjs/devtools.dart';
+import 'package:mercuryjs/mercuryjs.dart';
 import 'package:refracture_music/app/unit_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_js/flutter_js.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:webf/devtools.dart';
-import 'package:webf/webf.dart';
 
 
 // ignore: must_be_immutable
@@ -32,12 +29,12 @@ class AppCore extends InheritedWidget {
 
   String? loadFailure;
 
-  late WebF runtime;
+  late Mercury runtime;
 
   AppCore({
     super.key, 
     required Widget child,
-  }) : super(child: Row(children: [child]));
+  }) : super(child: child);
 
   @override
   bool updateShouldNotify(AppCore oldWidget) => runtime != oldWidget.runtime;
@@ -61,22 +58,9 @@ class AppCore extends InheritedWidget {
   }
 
   loadRuntime() async {
-    runtime = WebF(
+    runtime = Mercury(
       devToolsService: ChromeDevToolsService(),
-      bundle: WebFBundle.fromContent("""
-        <html><head>
-          ${unit.values.map((unit) {
-            if (unit.bundle == null) {
-              return '<!--Failed to load ${unit.name}-->';
-            }
-            return """
-              <script>
-                ${/*unit.bundle*/ "setInterval(() => console.warn('hi'), 2000);"}
-              </script>
-            """;
-          }).join('\n')}
-        </head><body><p>test</p></body></html>
-      """, contentType: ContentType.html, url: 'http://app.music'),
+      bundle: MercuryBundle.fromContent(unit['core']!.bundle!),
       onLoad: (controller) {
         print(runtime.devToolsService!.isolateServer);
       },
@@ -86,13 +70,7 @@ class AppCore extends InheritedWidget {
       onJSError: (error) {
         logger.f(error);
       },
-      viewportHeight: 0,
-      viewportWidth: 0,
     );
-
-    runApp(runtime);
-
-    print(runtime);
 
     // runtime = getJavascriptRuntime();
 
