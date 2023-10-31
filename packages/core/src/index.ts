@@ -55,3 +55,5 @@ export class MusicCore {
 // Warning: Do not access the global Music within a constructor
 /* @ts-ignore */
 music.core = new MusicCore();
+
+music.core.Logger.debug('test');

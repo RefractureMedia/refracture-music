@@ -99,9 +99,6 @@ class AppCore extends InheritedWidget {
       bundle: MercuryBundle.fromContent('const music = { versions: {} };'),
       onControllerCreated: (controller) {
         controller.onLoad = (controller) {
-
-          logger.d(controller.context.dispatcher);
-
           dispatcher = controller.context.dispatcher!;
 
           loaded.complete(true);
@@ -121,7 +118,6 @@ class AppCore extends InheritedWidget {
     );
     
     if (await loaded.future) {
-      logger.d('hello?');
       dispatcher.subscribe('initDatabase', (init) async {
         unit[init[0].name]!.initDB(init);
       });
@@ -167,7 +163,7 @@ class AppCore extends InheritedWidget {
       for (final unit in unit.values) {
         if (unit.bundle != null) {
           runtime.controller!.context.evaluateJavaScripts(
-            'music.versions.${unit.indexPath} = ${await unit.secure.storage['databaseVersion'] ?? '0'};'
+            'music.versions.${unit.index.join('.')} = ${await unit.secure.storage['databaseVersion'] ?? '0'};'
           );
           runtime.controller!.context.evaluateJavaScripts(unit.bundle!);
         }
@@ -223,8 +219,6 @@ class AppCore extends InheritedWidget {
     if (true) {await shelf_io.serve(
       logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
         logger.d('[Music UI] debug: Core bundle loading from POST');
-
-        print('hello?');
 
         unit['core']!.bundle = await utf8.decodeStream(req.read());
 

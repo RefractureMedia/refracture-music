@@ -3,15 +3,4 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "cmake.sourceDirectory": "/home/mulverine/Documents/Workspace/personal/refracture/refracture-music/packages/client-flutter/linux",
     "terminal.integrated.persistentSessionReviveProcess": "never",
-    "dart.flutterSdkPaths": [
-        "packages/client-flutter/.fvm/flutter_sdk"
-    ],
-    "search.exclude": {
-		"**/.fvm": true
-	},
-	// Remove from file watching
-	"files.watcherExclude": {
-		"**/.fvm": true
-    },
-    "dart.flutterSdkPath": "/home/mulverine/Documents/Workspace/personal/refracture/refracture-music/packages/client-flutter/.fvm/flutter_sdk"
 }

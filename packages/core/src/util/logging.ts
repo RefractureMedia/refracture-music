@@ -6,12 +6,8 @@ export class LoggerClass {
     constructor(unit: string, initialize = false) {
         this.unit = unit;
 
-        /* @ts-ignore */
-        if (console.info && console.info.toString() !== '() => {}') {
-            this.provider = (message) => console.log(message);
-        } else {
-            this.provider = (message) => sendMessage('print', `"${message}"`);
-        }
+        // TODO: Move this to Dart logger
+        this.provider = (message) => console.log(message);
     }
 
     /**

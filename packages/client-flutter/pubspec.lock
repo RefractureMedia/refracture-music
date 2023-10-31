@@ -388,10 +388,10 @@ packages:
     dependency: "direct main"
     description:
       name: mercuryjs
-      sha256: "4e21a1a6c996f8702e81e194d28e250252d1d68e6939f9c0ede6288ea4e03dde"
+      sha256: "2c838b592fd8c7af0849e4ed563310e735acaf1e641ca3f3bc9156a4f1708335"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.2"
   meta:
     dependency: transitive
     description:
