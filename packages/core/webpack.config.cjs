@@ -18,6 +18,9 @@ module.exports = {
       ".cjs": [".cjs", ".cts"],
       ".mjs": [".mjs", ".mts"]
      }
+  }, // TODO: Add environment thingy
+  optimization: {
+    minimize: false
   },
   output: {
     filename: 'bundle.js',

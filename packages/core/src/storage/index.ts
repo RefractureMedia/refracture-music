@@ -16,9 +16,7 @@ export class Database {
         return {};
     }
 
-    constructor () {
-        this.internal = new PrismaClient({ log: [{ level: 'query', emit: 'event' }] });
-
+    async init() {
         const test = this.internal.track.findFirst();
 
         const { Logger } = music.core;
@@ -26,6 +24,10 @@ export class Database {
         test.catch((e) => Logger.error(e));
 
         test.then((f) => Logger.info(f));
+    }
+
+    constructor () {
+        this.internal = new PrismaClient({ datasourceUrl: 'prisma://core.app.music/core?api_key=43278ykjsd', log: [{ level: 'query', emit: 'event' }] });
 
         this.server_address = new URL("http://localhost:4829");
     }

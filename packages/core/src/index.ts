@@ -31,6 +31,7 @@ export class MusicCore {
 
     async startup () {
         // await this.session.startup();
+        await this.DB.init()
     }
 
     constructor() {
@@ -56,4 +57,4 @@ export class MusicCore {
 /* @ts-ignore */
 music.core = new MusicCore();
 
-music.core.Logger.debug('test');
+await music.core.startup();

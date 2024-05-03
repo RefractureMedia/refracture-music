@@ -23,6 +23,20 @@ class DBAccess extends HttpClientInterceptor {
 
   @override
   Future<HttpClientRequest?> beforeRequest(HttpClientRequest request) async {
+    if (request.uri.host.endsWith('app.music')) {
+      var client = HttpClient();
+      HttpClientRequest _request = await client.get('localhost', 5647, request.uri.path);
+
+      dynamic req = { "req": request };
+
+      print(['hello?', req]);
+
+      _request.write(request);
+
+      unit[request.uri.host.split('.')[0]]!.db.execute(await utf8.decodeStream(await _request.close()));
+
+      return _request;
+    }
     return request;
   }
 
@@ -33,18 +47,6 @@ class DBAccess extends HttpClientInterceptor {
 
   @override
   Future<HttpClientResponse?> shouldInterceptRequest(HttpClientRequest request) async {
-    if (request.uri.host == 'app.music') {
-      var client = HttpClient();
-      HttpClientRequest _request = await client.get('localhost', 5647, request.uri.path);
-
-      print(request);
-
-      _request.write(request);
-
-      unit[request.uri.pathSegments[0]]!.db.execute(await utf8.decodeStream(await _request.close()));
-
-      return _request.close();
-    }
     return request.close();
   }
 }
@@ -217,7 +219,7 @@ class AppCore extends InheritedWidget {
 
     // TODO: The kDebugMode thing wasn't working
     if (true) {await shelf_io.serve(
-      logRequests().addHandler(Cascade().add(shelf_router.Router()..post('/', (Request req) async {
+      logRequests().addHandler(Cascade().add((shelf_router.Router()..post('/', (Request req) async {
         logger.d('[Music UI] debug: Core bundle loading from POST');
 
         unit['core']!.bundle = await utf8.decodeStream(req.read());
@@ -225,7 +227,7 @@ class AppCore extends InheritedWidget {
         await loadRuntime();
 
         return Response(200);
-      })).handler), 
+      })).call).handler), 
 
       InternetAddress.anyIPv4, 4578
     );}
