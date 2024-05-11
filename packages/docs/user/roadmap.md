@@ -3,12 +3,12 @@
 - ✅ Setup mono-repo release CI
 - ✅ Add sqflite, create transparent initialize/query shims
 - ✅ Setup loading of Core through GitHub release
-- 🚧 Setup hot-loading of Core during development via a local webserver
-- Check Core bundle hash (haha funny app injection)
+- ✅ Setup hot-loading of Core during development via a local webserver
+- ✅ Check Core bundle hash (haha funny app injection)
+- 🚧 Add prisma-dart (waiting on https://github.com/medz/prisma-dart/issues/328)
 - Add settings view & components, add settings manager to Core
 - Add theming API and implement primary themes
 - Setup bundling/release of Base
-- Integrate Prisma & refactor Core
 - Setup PluginProvider class in Core and create BaseProvider
 - Add printing API and test Hello world from Base
 - Add native fs API and implement recursive content hash index in Base

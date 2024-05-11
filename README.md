@@ -13,17 +13,17 @@
 ## Roadmap
 -  **0.0.x - Version Minor 0: Hello World**
   - Desktop release of client with support for local media libraries and OTA updates of the JS app core.
-  - ️ Q4 2023
+  - ️ Q4 2024
 -  **0.1.x - Version Minor 1: On the Go**
   - Mobile release of client with support for self hosted library server featuring rich player sync.
-  - ️ Q1 2024
+  - ️ Q2 2025
 -  **0.2.x - Version Minor 2: Daily Driver**
   - Release of
     - Plugin support in client
     - Hypervisor; required plugin safety review & security authority
     - Official plugin repository 
     - Full Spotify integration plugin (Premium Users only)
-  - ️ Q2 2024
+  - ️ Q4 2025
 -  **0.3.x - Version Minor 3: Better Together**
   - Release of
     - Library server updating featuring painless connection via provided routing service.
@@ -31,7 +31,7 @@
     - Scrobbling via Last.fm plugin
     - Rich Presence/Activity Discord plugin
     - Full [Audius Music](https://audius.co/) integration plugin
-  - ️ Q4 2024
+  - ️ Q2 2025
 -  **[Full Roadmap](/packages/docs/user/roadmap.md)**
 
 ## Packages
