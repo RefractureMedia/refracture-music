@@ -41,16 +41,14 @@ Hosting server for addons (plugins & themes).
 - Written in TypeScript.
 - Support for several deployments; CLI, Docker, NPM/Embedded, CloudFlare Worker/Edge, etc.
 
-###  [client-cli](/packages/client-cli)
-Testing client for development of core.
-
 ###  [client-flutter](/packages/client-flutter)
 Cross-platform UI. (All platforms)
+- Directly embeds `core` & all plugins using https://github.com/openwebf/mercury.
 
 ###  [core](/packages/core)
 All internal functionality code. Requires codec compatibility info and implemented native user input & playback hooks.
 - Written in TypeScript.
-- Releases will include compatible bundles for Node 18 & Latest Deno/Bun.
+- Releases via compiled https://github.com/openwebf/quickjs bytecode targeting https://github.com/openwebf/mercury.
 - Will use Refracture [Intern](https://github.com/RefractureMedia/intern) to provide [SponsorBlock](https://github.com/ajayyy/SponsorBlock) style crowd-sourced submissions to simplify, optimize, & enrich music metadata.
 
 ###  [docs](/packages/docs)
@@ -59,12 +57,12 @@ Markdown documentation of the project.
 ###  [server](/packages/server)
 A self-hosted session & library dameon/service. Provides a centralized location for syncing your profile between devices and streaming/distributing your saved library.
 - Written in TypeScript.
-- A runtime agnostic CLI with Linux tooling & windows support (through the app).
+- A Bun CLI with Linux tooling & windows support (via the client).
 
-###  [web](/packages/addon-host)
+###  [web](/packages/web)
 Hosting server for the project.
 - Written in TypeScript.
-- Support for several deployments; Vercel, Docker, etc.
+- Deploys via Docker, powered by Bun.
 - Includes a website written in [Vue](https://vuejs.org/guide/introduction.html)/[Nuxt](https://v3.nuxtjs.org/guide/concepts/introduction) 3.
 
 ## Official Plugins
